@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "configuration": {
+    "enabled_languages": ["lv", "ru", "en"],
+    "current_language": "lv",
+    "default_language": "en",
+    "language_code_regex": "[a-z]{2,3}"
+  },
+  "cases": [
+    {
+      "id": "empty-string",
+      "category": "plain",
+      "runtimes": ["php", "js"],
+      "raw": "",
+      "expected_php": {"is_multilingual": false, "blocks": [], "split": {"lv": "", "ru": "", "en": ""}, "split_languages": [], "available": false},
+      "round_trip": {"classification": "LOSSLESS", "join_b": "", "join_c": "", "join_s": ""}
+    },
+    {
+      "id": "plain-text",
+      "category": "plain",
+      "runtimes": ["php", "js"],
+      "raw": "Plain text",
+      "expected_php": {"is_multilingual": false, "blocks": ["Plain text"], "split": {"lv": "Plain text", "ru": "Plain text", "en": "Plain text"}, "split_languages": [], "available": false},
+      "round_trip": {"classification": "LOSSLESS", "join_b": "Plain text", "join_c": "Plain text", "join_s": "Plain text"}
+    },
+    {
+      "id": "bracket-three-languages",
+      "category": "bracket",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]Sveiki[:ru]Привет[:en]Hello[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "Sveiki", "[:ru]", "Привет", "[:en]", "Hello", "[:]"], "split": {"lv": "Sveiki", "ru": "Привет", "en": "Hello"}, "split_languages": {"lv": "Sveiki", "ru": "Привет", "en": "Hello"}, "available": ["lv", "ru", "en"], "use": {"lv": "Sveiki", "ru": "Привет", "en": "Hello"}},
+      "round_trip": {"classification": "LOSSLESS", "join_b": "[:lv]Sveiki[:ru]Привет[:en]Hello[:]", "join_c": "<!--:lv-->Sveiki<!--:--><!--:ru-->Привет<!--:--><!--:en-->Hello<!--:-->", "join_s": "{:lv}Sveiki{:ru}Привет{:en}Hello{:}"}
+    },
+    {
+      "id": "comment-two-languages",
+      "category": "comment",
+      "runtimes": ["php", "js"],
+      "raw": "<!--:lv-->Sveiki<!--:--><!--:ru-->Привет<!--:-->",
+      "expected_php": {"is_multilingual": true, "blocks": ["<!--:lv-->", "Sveiki", "<!--:-->", "<!--:ru-->", "Привет", "<!--:-->"], "split": {"lv": "Sveiki", "ru": "Привет", "en": ""}, "split_languages": {"lv": "Sveiki", "ru": "Привет"}, "available": ["lv", "ru"], "use": {"lv": "Sveiki", "ru": "Привет", "en": "Sveiki"}},
+      "round_trip": {"classification": "NORMALIZED", "join_b": "[:lv]Sveiki[:ru]Привет[:]", "join_c": "<!--:lv-->Sveiki<!--:--><!--:ru-->Привет<!--:-->", "join_s": "{:lv}Sveiki{:ru}Привет{:}"}
+    },
+    {
+      "id": "curly-actual-closing",
+      "category": "curly",
+      "runtimes": ["php", "js"],
+      "raw": "{:lv}Sveiki{:ru}Привет{:}",
+      "expected_php": {"is_multilingual": true, "blocks": ["{:lv}", "Sveiki", "{:ru}", "Привет", "{:}"], "split": {"lv": "Sveiki", "ru": "Привет", "en": ""}, "split_languages": {"lv": "Sveiki", "ru": "Привет"}, "available": ["lv", "ru"]},
+      "round_trip": {"classification": "LOSSLESS", "join_b": "[:lv]Sveiki[:ru]Привет[:]", "join_c": "<!--:lv-->Sveiki<!--:--><!--:ru-->Привет<!--:-->", "join_s": "{:lv}Sveiki{:ru}Привет{:}"}
+    },
+    {
+      "id": "curly-double-colon-closing",
+      "category": "curly-quirk",
+      "runtimes": ["php", "js"],
+      "raw": "{:lv}Sveiki{:ru}Привет{::}",
+      "expected_php": {"is_multilingual": true, "blocks": ["{:lv}", "Sveiki", "{:ru}", "Привет{::}"], "split": {"lv": "Sveiki", "ru": "Привет{::}", "en": ""}, "split_languages": {"lv": "Sveiki", "ru": "Привет{::}"}, "available": ["lv", "ru"]},
+      "round_trip": {"classification": "LEGACY-QUIRK", "join_b": "[:lv]Sveiki[:ru]Привет{::}[:]", "join_c": "<!--:lv-->Sveiki<!--:--><!--:ru-->Привет{::}<!--:-->", "join_s": "{:lv}Sveiki{:ru}Привет{::}{:}"}
+    },
+    {
+      "id": "one-language",
+      "category": "bracket",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]Sveiki[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "Sveiki", "[:]"], "split": {"lv": "Sveiki", "ru": "", "en": ""}, "split_languages": {"lv": "Sveiki"}, "available": ["lv"], "use": {"lv": "Sveiki", "ru": "Sveiki", "en": "Sveiki"}},
+      "round_trip": {"classification": "LOSSLESS", "join_b": "[:lv]Sveiki[:]", "join_c": "<!--:lv-->Sveiki<!--:-->", "join_s": "{:lv}Sveiki{:}"}
+    },
+    {
+      "id": "explicit-empty-overwritten-marker",
+      "category": "empty-translation",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv][:ru]Привет[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "[:ru]", "Привет", "[:]"], "split": {"lv": "", "ru": "Привет", "en": ""}, "split_languages": {"ru": "Привет"}, "available": ["ru"], "use": {"lv": "Привет", "ru": "Привет", "en": "Привет"}, "use_show_empty": {"lv": "", "en": ""}},
+      "round_trip": {"classification": "LEGACY-QUIRK", "join_b": "[:ru]Привет[:]", "join_c": "<!--:ru-->Привет<!--:-->", "join_s": "{:ru}Привет{:}"}
+    },
+    {
+      "id": "missing-requested-language",
+      "category": "fallback",
+      "runtimes": ["php", "js"],
+      "raw": "[:ru]Только русский[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:ru]", "Только русский", "[:]"], "split": {"lv": "", "ru": "Только русский", "en": ""}, "split_languages": {"ru": "Только русский"}, "available": ["ru"], "use": {"lv": "Только русский", "ru": "Только русский", "en": "Только русский"}}
+    },
+    {
+      "id": "unknown-language",
+      "category": "unknown-language",
+      "runtimes": ["php", "js"],
+      "raw": "[:zz]Unknown[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:zz]", "Unknown", "[:]"], "split": {"lv": "", "ru": "", "en": "", "zz": "Unknown"}, "split_languages": {"zz": "Unknown"}, "available": ["zz"]}
+    },
+    {
+      "id": "uppercase-language",
+      "category": "legacy-case",
+      "runtimes": ["php", "js"],
+      "raw": "[:LV]Uppercase[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:LV]", "Uppercase", "[:]"], "split": {"lv": "", "ru": "", "en": "", "LV": "Uppercase"}, "split_languages": {"LV": "Uppercase"}, "available": ["LV"]}
+    },
+    {
+      "id": "duplicate-language",
+      "category": "duplicate",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]A[:lv]B[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "A", "[:lv]", "B", "[:]"], "split": {"lv": "AB", "ru": "", "en": ""}, "split_languages": {"lv": "AB"}, "available": ["lv"]},
+      "round_trip": {"classification": "NORMALIZED", "join_b": "[:lv]AB[:]", "join_c": "<!--:lv-->AB<!--:-->", "join_s": "{:lv}AB{:}"}
+    },
+    {
+      "id": "neutral-prefix",
+      "category": "neutral-text",
+      "runtimes": ["php", "js"],
+      "raw": "Prefix [:lv]A[:ru]B[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["Prefix ", "[:lv]", "A", "[:ru]", "B", "[:]"], "split": {"lv": "Prefix A", "ru": "Prefix B", "en": "Prefix"}, "split_languages": {"lv": "A", "ru": "B"}, "available": ["lv", "ru"]},
+      "round_trip": {"classification": "NORMALIZED", "join_b": "[:lv]Prefix A[:ru]Prefix B[:en]Prefix[:]", "join_c": "<!--:lv-->Prefix A<!--:--><!--:ru-->Prefix B<!--:--><!--:en-->Prefix<!--:-->", "join_s": "{:lv}Prefix A{:ru}Prefix B{:en}Prefix{:}"}
+    },
+    {
+      "id": "neutral-suffix",
+      "category": "neutral-text",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]A[:ru]B[:] tail",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "A", "[:ru]", "B", "[:]", " tail"], "split": {"lv": "A tail", "ru": "B tail", "en": "tail"}, "split_languages": {"lv": "A", "ru": "B"}, "available": ["lv", "ru"]}
+    },
+    {
+      "id": "missing-closing-marker",
+      "category": "malformed",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]Unclosed",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "Unclosed"], "split": {"lv": "Unclosed", "ru": "", "en": ""}, "split_languages": {"lv": "Unclosed"}, "available": ["lv"]},
+      "round_trip": {"classification": "NORMALIZED", "join_b": "[:lv]Unclosed[:]", "join_c": "<!--:lv-->Unclosed<!--:-->", "join_s": "{:lv}Unclosed{:}"}
+    },
+    {
+      "id": "malformed-short-code",
+      "category": "malformed",
+      "runtimes": ["php", "js"],
+      "raw": "[:l]Not a marker[:]",
+      "expected_php": {"is_multilingual": false, "blocks": ["[:l]Not a marker", "[:]"], "split": {"lv": "[:l]Not a marker", "ru": "[:l]Not a marker", "en": "[:l]Not a marker"}, "split_languages": [], "available": ["lv"]},
+      "round_trip": {"classification": "LEGACY-QUIRK", "join_b": "[:l]Not a marker", "join_c": "[:l]Not a marker", "join_s": "[:l]Not a marker"}
+    },
+    {
+      "id": "nested-looking-markers",
+      "category": "malformed",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]outer [:ru]inner[:] tail",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "outer ", "[:ru]", "inner", "[:]", " tail"], "split": {"lv": "outer  tail", "ru": "inner tail", "en": "tail"}, "split_languages": {"lv": "outer", "ru": "inner"}, "available": ["lv", "ru"]}
+    },
+    {
+      "id": "adjacent-markers",
+      "category": "adjacent",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]A[:ru]B[:en]C[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "A", "[:ru]", "B", "[:en]", "C", "[:]"], "split": {"lv": "A", "ru": "B", "en": "C"}, "split_languages": {"lv": "A", "ru": "B", "en": "C"}, "available": ["lv", "ru", "en"]}
+    },
+    {
+      "id": "outer-whitespace",
+      "category": "whitespace",
+      "runtimes": ["php", "js"],
+      "raw": "  [:lv] A \n [:ru] Б \n [:]  ",
+      "expected_php": {"is_multilingual": true, "blocks": ["  ", "[:lv]", " A \n ", "[:ru]", " Б \n ", "[:]", "  "], "split": {"lv": "A", "ru": "Б", "en": ""}, "split_languages": {"lv": "A", "ru": "Б"}, "available": ["lv", "ru"]},
+      "round_trip": {"classification": "NORMALIZED", "join_b": "[:lv]A[:ru]Б[:]", "join_c": "<!--:lv-->A<!--:--><!--:ru-->Б<!--:-->", "join_s": "{:lv}A{:ru}Б{:}"}
+    },
+    {
+      "id": "internal-newlines",
+      "category": "newlines",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]Rinda 1\nRinda 2[:ru]Строка 1\nСтрока 2[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "Rinda 1\nRinda 2", "[:ru]", "Строка 1\nСтрока 2", "[:]"], "split": {"lv": "Rinda 1\nRinda 2", "ru": "Строка 1\nСтрока 2", "en": ""}, "split_languages": {"lv": "Rinda 1\nRinda 2", "ru": "Строка 1\nСтрока 2"}, "available": ["lv", "ru"]}
+    },
+    {
+      "id": "unicode-latvian-cyrillic-emoji",
+      "category": "unicode",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]Ābols, ķirsis 😊[:ru]Ёжик, привет 🚀[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "Ābols, ķirsis 😊", "[:ru]", "Ёжик, привет 🚀", "[:]"], "split": {"lv": "Ābols, ķirsis 😊", "ru": "Ёжик, привет 🚀", "en": ""}, "split_languages": {"lv": "Ābols, ķirsis 😊", "ru": "Ёжик, привет 🚀"}, "available": ["lv", "ru"]}
+    },
+    {
+      "id": "html-content",
+      "category": "html",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]<strong>Sveiki</strong>[:ru]<em>Привет</em>[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "<strong>Sveiki</strong>", "[:ru]", "<em>Привет</em>", "[:]"], "split": {"lv": "<strong>Sveiki</strong>", "ru": "<em>Привет</em>", "en": ""}, "split_languages": {"lv": "<strong>Sveiki</strong>", "ru": "<em>Привет</em>"}, "available": ["lv", "ru"]}
+    },
+    {
+      "id": "html-attributes-and-quotes",
+      "category": "html",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]<a title=\"Sveiki 'draugs'\" data-x=\"1\">Saite</a>[:ru]<a title=\"Привет\">Ссылка</a>[:]",
+      "expected_php": {"is_multilingual": true, "split": {"lv": "<a title=\"Sveiki 'draugs'\" data-x=\"1\">Saite</a>", "ru": "<a title=\"Привет\">Ссылка</a>", "en": ""}, "available": ["lv", "ru"]}
+    },
+    {
+      "id": "json-looking-content",
+      "category": "opaque",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]{\"key\":\"value\"}[:ru]{\"ключ\":\"значение\"}[:]",
+      "expected_php": {"is_multilingual": true, "split": {"lv": "{\"key\":\"value\"}", "ru": "{\"ключ\":\"значение\"}", "en": ""}, "available": ["lv", "ru"]}
+    },
+    {
+      "id": "serialized-looking-content",
+      "category": "opaque",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]a:1:{s:3:\"key\";s:5:\"value\";}[:ru]O:8:\"Example\":0:{}[:]",
+      "expected_php": {"is_multilingual": true, "split": {"lv": "a:1:{s:3:\"key\";s:5:\"value\";}", "ru": "O:8:\"Example\":0:{}", "en": ""}, "available": ["lv", "ru"]}
+    },
+    {
+      "id": "script-looking-content",
+      "category": "security",
+      "runtimes": ["php", "js"],
+      "raw": "[:lv]<script>alert(1)</script>[:ru]test[:]",
+      "expected_php": {"is_multilingual": true, "blocks": ["[:lv]", "<script>alert(1)</script>", "[:ru]", "test", "[:]"], "split": {"lv": "<script>alert(1)</script>", "ru": "test", "en": ""}, "split_languages": {"lv": "<script>alert(1)</script>", "ru": "test"}, "available": ["lv", "ru"], "use": {"lv": "<script>alert(1)</script>", "ru": "test"}}
+    },
+    {
+      "id": "very-large-content",
+      "category": "large",
+      "runtimes": ["php", "js"],
+      "raw_generator": {"prefix": "[:lv]", "repeat": "x", "count": 65536, "suffix": "[:]"},
+      "expected_php": {"is_multilingual": true, "split_length": {"lv": 65536, "ru": 0, "en": 0}, "available": ["lv"]}
+    }
+  ]
+}

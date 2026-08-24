@@ -70,23 +70,23 @@ class QTX_Admin_Settings_Language_List extends WP_List_Table {
                     $action = '<span class="disabled ' . $icon_disable . '"></span>';
                 } else {
                     $status = '<span class="dashicons dashicons-star-empty" title="' . esc_attr( __( 'Enabled', 'qtranslate' ) ) . '"></span>';
-                    $action = '<a class="edit" href="' . $options_uri . '&disable=' . $lang . '#languages" title="' . esc_attr( __( 'Disable', 'qtranslate' ) ) . '"><span class="' . $icon_disable . '"></span></a>';
+                    $action = '<button type="submit" class="button-link edit" name="disable" value="' . esc_attr( $lang ) . '" title="' . esc_attr__( 'Disable', 'qtranslate' ) . '"><span class="' . esc_attr( $icon_disable ) . '"></span></button>';
                 }
                 $action .= '<span class="disabled ' . $icon_enable . '"></span>';
             } else {
                 $status = '';
                 $action = '<span class="disabled ' . $icon_disable . '"></span>';
-                $action .= '<a class="edit" href="' . $options_uri . '&enable=' . $lang . '#languages" title="' . esc_attr( __( 'Enable', 'qtranslate' ) ) . '"><span class="' . $icon_enable . '"></span></a>';
+                $action .= '<button type="submit" class="button-link edit" name="enable" value="' . esc_attr( $lang ) . '" title="' . esc_attr__( 'Enable', 'qtranslate' ) . '"><span class="' . esc_attr( $icon_enable ) . '"></span></button>';
             }
 
-            $edit = '<a class="edit" href="' . $options_uri . '&edit=' . $lang . '" title="' . esc_attr( __( 'Edit', 'qtranslate' ) ) . '"><span class="dashicons dashicons-edit"></span></a>';
+            $edit = '<a class="edit" href="' . esc_url( add_query_arg( 'edit', $lang, $options_uri ) ) . '" title="' . esc_attr__( 'Edit', 'qtranslate' ) . '"><span class="dashicons dashicons-edit"></span></a>';
 
             if ( ! isset( $languages_stored[ $lang ] ) ) {
                 $stored = '<span class="dashicons dashicons-saved" title="' . __( 'Pre-Defined', 'qtranslate' ) . '"></span>';
             } else {
                 $label  = isset( $languages_predef[ $lang ] ) ? __( 'Reset', 'qtranslate' ) : __( 'Delete', 'qtranslate' );
                 $icon   = isset( $languages_predef[ $lang ] ) ? 'dashicons-undo' : 'dashicons-trash';
-                $stored = '<a class="delete" href="' . $options_uri . '&delete=' . $lang . '#languages" title="' . esc_attr( $label ) . '"><span class="dashicons ' . $icon . '"></span></a>';
+                $stored = '<button type="submit" class="button-link delete" name="delete" value="' . esc_attr( $lang ) . '" title="' . esc_attr( $label ) . '"><span class="dashicons ' . esc_attr( $icon ) . '"></span></button>';
             }
 
             $data[] = array(

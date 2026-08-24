@@ -987,16 +987,17 @@ class QTX_Module_Slugs {
         $page_path     = str_replace( '%2F', '/', $page_path );
         $page_path     = str_replace( '%20', ' ', $page_path );
         $parts         = explode( '/', trim( $page_path, '/' ) );
-        $parts         = array_map( function ( $a ) use ( $wpdb ) {
-            return sanitize_title_for_query( $wpdb->remove_placeholder_escape( esc_sql( $a ) ) );
-        },
-            $parts );
-        $in_string     = "'" . implode( "','", $parts ) . "'";
+        $parts         = array_map( 'sanitize_title_for_query', $parts );
         $meta_key      = QTX_SLUGS_META_PREFIX . $this->get_temp_lang();
-        $post_type_sql = $post_type;
-        $wpdb->escape_by_ref( $post_type_sql );
-
-        $pages = $wpdb->get_results( "SELECT $wpdb->posts.ID, $wpdb->posts.post_parent, $wpdb->postmeta.meta_value FROM $wpdb->posts,$wpdb->postmeta WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id AND $wpdb->postmeta.meta_key = '$meta_key' AND $wpdb->postmeta.meta_value IN ($in_string) AND ($wpdb->posts.post_type = '$post_type_sql' OR $wpdb->posts.post_type = 'attachment')", OBJECT_K );
+        $placeholders  = implode( ', ', array_fill( 0, count( $parts ), '%s' ) );
+        $query_values  = array_merge( array( $meta_key ), $parts, array( $post_type ) );
+        $pages = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT $wpdb->posts.ID, $wpdb->posts.post_parent, $wpdb->postmeta.meta_value FROM $wpdb->posts,$wpdb->postmeta WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id AND $wpdb->postmeta.meta_key = %s AND $wpdb->postmeta.meta_value IN ($placeholders) AND ($wpdb->posts.post_type = %s OR $wpdb->posts.post_type = 'attachment')",
+                $query_values
+            ),
+            OBJECT_K
+        );
 
         $revparts = array_reverse( $parts );
 
@@ -1026,7 +1027,7 @@ class QTX_Module_Slugs {
 
         } else {
             $last_part = array_pop( $parts );
-            $page_id   = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$last_part' AND (post_type = '$post_type_sql' OR post_type = 'attachment')" );
+            $page_id   = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name = %s AND (post_type = %s OR post_type = 'attachment')", $last_part, $post_type ) );
 
             if ( $page_id ) {
                 return $page_id;

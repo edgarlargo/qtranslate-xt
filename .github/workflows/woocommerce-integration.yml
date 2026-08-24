@@ -1,0 +1,80 @@
+name: WooCommerce integration
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: woo-integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  transactional-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wordpress
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+      redis:
+        image: redis:7.4-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping" --health-interval=5s
+          --health-timeout=5s --health-retries=20
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: intl, json, mysqli, redis
+          coverage: none
+      - name: Install WP-CLI
+        run: |
+          curl --fail --location --retry 3 -o /tmp/wp-cli.phar https://github.com/wp-cli/wp-cli/releases/latest/download/wp-cli.phar
+          chmod +x /tmp/wp-cli.phar
+          sudo mv /tmp/wp-cli.phar /usr/local/bin/wp
+      - name: Provision isolated WordPress 7.1 and WooCommerce 11.0.1
+        env:
+          WP_PATH: /tmp/qtx-woo-wordpress
+        run: |
+          mkdir -p "$WP_PATH"
+          wp core download --version=7.1 --path="$WP_PATH" --force
+          wp config create --path="$WP_PATH" --dbname=wordpress --dbuser=root --dbpass='' --dbhost=127.0.0.1:3306 --skip-check
+          wp config set WP_REDIS_HOST 127.0.0.1 --path="$WP_PATH"
+          wp config set WP_REDIS_PORT 6379 --raw --path="$WP_PATH"
+          wp config set WP_ENVIRONMENT_TYPE local --path="$WP_PATH"
+          QTX_ADMIN_PASSWORD="$(openssl rand -hex 24)"
+          wp core install --path="$WP_PATH" --url=http://qtx.test --title='QTX Woo Lab' --admin_user=qtx-admin --admin_password="$QTX_ADMIN_PASSWORD" --admin_email=nobody@example.test --skip-email
+          unset QTX_ADMIN_PASSWORD
+          wp plugin install woocommerce --version=11.0.1 --activate --path="$WP_PATH"
+          wp option update woocommerce_custom_orders_table_enabled yes --path="$WP_PATH"
+          wp option update woocommerce_custom_orders_table_data_sync_enabled yes --path="$WP_PATH"
+          wp plugin install redis-cache --activate --path="$WP_PATH"
+          wp redis enable --path="$WP_PATH"
+          ln -s "$GITHUB_WORKSPACE" "$WP_PATH/wp-content/plugins/qtranslate-xt"
+          wp plugin activate qtranslate-xt --path="$WP_PATH"
+          wp option update qtranslate_enabled_languages --format=json '["lv","ru","en"]' --path="$WP_PATH"
+          wp option update qtranslate_default_language en --path="$WP_PATH"
+      - name: Execute WooCommerce transactional matrix
+        env:
+          WP_PATH: /tmp/qtx-woo-wordpress
+        run: wp eval-file "$GITHUB_WORKSPACE/tests/Integration/WooCommerce/transaction-matrix.php" --path="$WP_PATH"
+      - name: Prove persistent cache backend remains connected
+        if: always()
+        env:
+          WP_PATH: /tmp/qtx-woo-wordpress
+        run: wp redis status --path="$WP_PATH"

@@ -68,7 +68,7 @@ function qtranxf_wp_head_meta_generator(): void {
     echo '<meta name="generator" content="qTranslate-XT ' . QTX_VERSION . '" />' . PHP_EOL;
 }
 
-function qtranxf_wp_get_nav_menu_items( $items, $menu, $args ) {
+function qtranxf_legacy_wp_get_nav_menu_items( $items, $menu, $args ) {
     global $q_config;
     $language     = $q_config['language'];
     $itemid       = 0;
@@ -172,6 +172,10 @@ function qtranxf_wp_get_nav_menu_items( $items, $menu, $args ) {
     }
 
     return $items;
+}
+
+function qtranxf_wp_get_nav_menu_items( $items, $menu, $args ) {
+    return \QTX\Integration\WordPress\FrontendTranslationAdapter::translateMenuItems( $items, $menu, $args );
 }
 
 function qtranxf_add_language_menu_item( &$items, &$menu_order, &$itemid, $key, $language ) {
@@ -361,7 +365,7 @@ function qtranxf_translate_deep( $value, $lang ) {
             return $value;
         } //most frequent case
         if ( is_serialized( $value ) ) {
-            $value = unserialize( $value );
+            $value = qtranxf_maybe_unserialize_safe( $value );
             $value = qtranxf_translate_deep( $value, $lang );//recursive call
 
             return serialize( $value );
@@ -398,6 +402,22 @@ function qtranxf_translate_option( $value, $lang = null ) {
 }
 
 /**
+ * Detect an option managed by ACF through its stable field-key reference.
+ *
+ * ACF stores a companion option named `_<value option>` containing `field_*`.
+ * Such values must remain raw until ACF's field-aware format pipeline runs;
+ * otherwise global option translation would also mutate technical field types.
+ */
+function qtranxf_is_acf_managed_option( string $option_name ): bool {
+    if ( ! function_exists( 'acf' ) ) {
+        return false;
+    }
+    $reference = get_option( '_' . $option_name, null );
+
+    return is_string( $reference ) && preg_match( '/^field_[A-Za-z0-9_-]+$/', $reference ) === 1;
+}
+
+/**
  * Filter all options for language tags
  */
 function qtranxf_filter_options() {
@@ -405,17 +425,35 @@ function qtranxf_filter_options() {
     switch ( $q_config['filter_options_mode'] ) {
         case QTX_FILTER_OPTIONS_ALL:
             // Exclude the 'cron' option because the cron jobs can't be deleted after translation.
-            $where = ' WHERE autoload=\'yes\' AND option_name != \'cron\' AND (option_value LIKE \'%![:__!]%\' ESCAPE \'!\' OR option_value LIKE \'%{:__}%\' OR option_value LIKE \'%<!--:__-->%\')';
+            $marker_patterns = array( '[:', '{:', '<!--:' );
+            $marker_likes = array_map( static function ( string $marker ) use ( $wpdb ): string {
+                return '%' . $wpdb->esc_like( $marker ) . '%';
+            }, $marker_patterns );
+            $where = $wpdb->prepare(
+                " WHERE autoload='yes' AND option_name != 'cron' AND (option_value LIKE %s OR option_value LIKE %s OR option_value LIKE %s)",
+                $marker_likes
+            );
             break;
 
         case QTX_FILTER_OPTIONS_LIST:
             if ( empty( $q_config['filter_options'] ) ) {
                 return;
             }
-            $where = ' WHERE FALSE';
+            $option_clauses = array();
+            $option_patterns = array();
             foreach ( $q_config['filter_options'] as $nm ) {
-                $where .= ' OR option_name LIKE "' . $nm . '"';
+                if ( ! is_string( $nm ) || $nm === '' ) {
+                    continue;
+                }
+                $option_clauses[] = 'option_name LIKE %s';
+                // A percent sign is the documented option-list wildcard. All
+                // other LIKE metacharacters are treated literally.
+                $option_patterns[] = str_replace( '\\%', '%', $wpdb->esc_like( $nm ) );
             }
+            if ( $option_clauses === array() ) {
+                return;
+            }
+            $where = $wpdb->prepare( ' WHERE ' . implode( ' OR ', $option_clauses ), $option_patterns );
             break;
 
         default:
@@ -427,6 +465,9 @@ function qtranxf_filter_options() {
     }
     foreach ( $result as $row ) {
         $option = $row->option_name;
+        if ( ! is_string( $option ) || qtranxf_is_acf_managed_option( $option ) ) {
+            continue;
+        }
         add_filter( 'option_' . $option, 'qtranxf_translate_option', 5 );
     }
 }
@@ -492,7 +533,7 @@ function qtranxf_translate_post( $post, $lang ) {
     }
 }
 
-function qtranxf_postsFilter( $posts, $query ) {
+function qtranxf_legacy_postsFilter( $posts, $query ) {
     global $q_config;
     if ( ! is_array( $posts ) ) {
         return $posts;
@@ -510,6 +551,10 @@ function qtranxf_postsFilter( $posts, $query ) {
     }
 
     return $posts;
+}
+
+function qtranxf_postsFilter( $posts, $query ) {
+    return \QTX\Integration\WordPress\FrontendTranslationAdapter::translatePosts( $posts, $query );
 }
 
 /** allow all filters within WP_Query - many other add_filters may not be needed now? */
@@ -710,6 +755,15 @@ function qtranxf_translate_metadata( string $meta_type, $original_value, int $ob
         }
         $meta_unserialized = array();//clear this cache if we are re-doing meta_cache
         foreach ( $meta_cache as $mkey => $mval ) {
+            // ACF's companion `_name => field_*` reference is authoritative.
+            // Leave the raw value for ACF's field-type-specific formatter.
+            $acf_reference_key = '_' . ltrim( (string) $mkey, '_' );
+            $acf_reference = $meta_cache[ $acf_reference_key ][0] ?? null;
+            if ( function_exists( 'acf' )
+                 && is_string( $acf_reference )
+                 && preg_match( '/^field_[A-Za-z0-9_-]+$/', $acf_reference ) === 1 ) {
+                continue;
+            }
             $meta_unserialized[ $mkey ] = array();
             if ( strpos( $mkey, '_url' ) !== false ) {
                 switch ( $mkey ) {
@@ -719,7 +773,7 @@ function qtranxf_translate_metadata( string $meta_type, $original_value, int $ob
                         foreach ( $mval as $k => $v ) {
                             $s = is_serialized( $v );
                             if ( $s ) {
-                                $v = unserialize( $v );
+                                $v = qtranxf_maybe_unserialize_safe( $v );
                             }
                             $v                                = qtranxf_convertURLs( $v, $lang );
                             $meta_unserialized[ $mkey ][ $k ] = $v;
@@ -737,7 +791,7 @@ function qtranxf_translate_metadata( string $meta_type, $original_value, int $ob
                     }
                     $s = is_serialized( $v );
                     if ( $s ) {
-                        $v = unserialize( $v );
+                        $v = qtranxf_maybe_unserialize_safe( $v );
                     }
                     $v                                = qtranxf_use( $lang, $v, false, false );
                     $meta_unserialized[ $mkey ][ $k ] = $v;
@@ -764,12 +818,12 @@ function qtranxf_translate_metadata( string $meta_type, $original_value, int $ob
         $meta_key_unserialized = &$meta_unserialized[ $meta_key ];
         if ( $single ) {
             if ( ! isset( $meta_key_unserialized[0] ) ) {
-                $meta_key_unserialized[0] = maybe_unserialize( $meta_cache[ $meta_key ][0] );
+                $meta_key_unserialized[0] = qtranxf_maybe_unserialize_safe( $meta_cache[ $meta_key ][0] );
             }
         } else {
             foreach ( $meta_cache[ $meta_key ] as $k => $v ) {
                 if ( ! isset( $meta_key_unserialized[ $k ] ) ) {
-                    $meta_key_unserialized[ $k ] = maybe_unserialize( $meta_cache[ $meta_key ][ $k ] );
+                    $meta_key_unserialized[ $k ] = qtranxf_maybe_unserialize_safe( $meta_cache[ $meta_key ][ $k ] );
                 }
             }
         }
@@ -870,10 +924,10 @@ function qtranxf_add_front_filters(): void {
 
     add_action( 'wp_head', 'qtranxf_wp_head' );
     add_action( 'wp_head', 'qtranxf_wp_head_meta_generator' );
-    add_filter( 'wp_get_nav_menu_items', 'qtranxf_wp_get_nav_menu_items', 20, 3 );
+    add_filter( 'wp_get_nav_menu_items', array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateMenuItems' ), 20, 3 );
     add_filter( 'wp_get_attachment_image_attributes', 'qtranxf_get_attachment_image_attributes', 5, 3 );
     add_filter( 'esc_html', 'qtranxf_esc_html', 0 );
-    add_filter( 'the_posts', 'qtranxf_postsFilter', 5, 2 );
+    add_filter( 'the_posts', array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translatePosts' ), 5, 2 );
     add_action( 'pre_get_posts', 'qtranxf_pre_get_posts', 99 );
     add_filter( 'get_post_metadata', 'qtranxf_filter_postmeta', 5, 4 );
     add_action( 'updated_postmeta', 'qtranxf_updated_postmeta', 5, 4 );

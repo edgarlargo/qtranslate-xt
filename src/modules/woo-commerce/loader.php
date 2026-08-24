@@ -66,7 +66,13 @@ function qtranxf_wc_deliver_webhook_async( $webhook_id, $arg ): void {
      */
     add_filter( 'get_term', 'qtranxf_wc_get_term_raw_ML' );
     add_filter( 'get_terms', 'qtranxf_wc_get_term_raw_ML' );
-    wp_cache_flush();
+    global $q_config;
+    if ( function_exists( 'wp_cache_supports' ) && wp_cache_supports( 'flush_group' ) ) {
+        $policy = new \QTX\Integration\WooCommerce\WooCommerceDataPolicy();
+        foreach ( $policy->webhookCacheGroups( $q_config['enabled_languages'] ) as $cache_group ) {
+            wp_cache_flush_group( $cache_group );
+        }
+    }
 
     /* Remove admin filters which can affect webhooks
      * TODO: check if any test is applicable to prevent qtranxf_wc_add_filters_admin() call when webhook is fired (through AJAX for cases where $urlinfo['doing_front_end'] is false).

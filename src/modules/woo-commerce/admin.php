@@ -253,6 +253,31 @@ add_filter( 'woocommerce_email_get_option', 'qtranxf_wc_email_get_option', 0, 4 
 
 add_filter( 'woocommerce_variation_option_name', 'qtranxf_term_name_encoded', 5 );
 
+function qtranxf_wc_get_order_language( int $order_id ): string {
+    global $q_config;
+
+    $policy = new \QTX\Integration\WooCommerce\WooCommerceDataPolicy();
+    $order  = wc_get_order( $order_id );
+
+    return $policy->orderLanguage(
+        $order ? $order->get_meta( '_user_language', true ) : '',
+        $q_config['language'],
+        $q_config['enabled_languages']
+    );
+}
+
+function qtranxf_wc_get_explicit_order_language( int $order_id ): ?string {
+    global $q_config;
+
+    $policy = new \QTX\Integration\WooCommerce\WooCommerceDataPolicy();
+    $order  = wc_get_order( $order_id );
+
+    return $policy->explicitOrderLanguage(
+        $order ? $order->get_meta( '_user_language', true ) : '',
+        $q_config['enabled_languages']
+    );
+}
+
 /**
  * Append the language to the link for changing the order status, so that mails are sent in the language the customer
  * used during the order process
@@ -269,7 +294,7 @@ function qtranxf_wc_admin_url_append_language( $url ) {
         parse_str( $components['query'], $params );
 
         $order_id      = absint( $params['order_id'] );
-        $user_language = get_post_meta( $order_id, '_user_language', true );
+        $user_language = qtranxf_wc_get_explicit_order_language( $order_id );
 
         if ( $user_language ) {
             $url .= '&lang=' . $user_language;
@@ -305,7 +330,7 @@ function qtranxf_wc_admin_url_append_language_edit_page( $url ) {
         return $url;
     }
 
-    $user_language = get_post_meta( $order_id, '_user_language', true );
+    $user_language = qtranxf_wc_get_explicit_order_language( $order_id );
     if ( $user_language ) {
         return $url . '?lang=' . $user_language;
     }
@@ -351,7 +376,7 @@ function qtranxf_wc_admin_email_translate( $content, $order = null ) {
 
     $lang = null;
     if ( $order && $order->get_id() ) {
-        $lang = get_post_meta( $order->get_id(), '_user_language', true );
+        $lang = qtranxf_wc_get_order_language( $order->get_id() );
     }
     if ( ! $lang ) {
         $lang = $q_config['language'];
@@ -373,7 +398,7 @@ function qtranxf_wc_admin_before_resend_order_emails( $order ): void {
         return;
     }
 
-    $lang = get_post_meta( $order->get_id(), '_user_language', true );
+    $lang = qtranxf_wc_get_explicit_order_language( $order->get_id() );
     if ( ! $lang ) {
         return;
     }

@@ -7,7 +7,7 @@
  *
  * @return bool
  */
-function qtranxf_isMultilingual( ?string $str ): bool {
+function qtranxf_legacy_isMultilingual( ?string $str ): bool {
     $lang_code = QTX_LANG_CODE_FORMAT;
 
     return ! is_null( $str ) && preg_match( "/<!--:$lang_code-->|\[:$lang_code]|{:$lang_code}/im", $str );
@@ -22,7 +22,7 @@ function qtranxf_isMultilingual( ?string $str ): bool {
  * @return string[] array of string tokens, including the ML tags.
  * @since 3.3.6 swirly bracket encoding added
  */
-function qtranxf_get_language_blocks( $text ): array {
+function qtranxf_legacy_get_language_blocks( $text ): array {
     $lang_code   = QTX_LANG_CODE_FORMAT;
     $split_regex = "#(<!--:$lang_code-->|<!--:-->|\[:$lang_code\]|\[:\]|\{:$lang_code\}|\{:\})#ism";
 
@@ -37,10 +37,10 @@ function qtranxf_get_language_blocks( $text ): array {
  *
  * @return string[] array of string items indexed by language.
  */
-function qtranxf_split( string $text ): array {
-    $blocks = qtranxf_get_language_blocks( $text );
+function qtranxf_legacy_split( string $text ): array {
+    $blocks = qtranxf_legacy_get_language_blocks( $text );
 
-    return qtranxf_split_blocks( $blocks );
+    return qtranxf_legacy_split_blocks( $blocks );
 }
 
 /**
@@ -52,7 +52,7 @@ function qtranxf_split( string $text ): array {
  * @return string[] array of string items indexed by language.
  * @since 3.4.5.2 $found added
  */
-function qtranxf_split_blocks( array $blocks, array &$found = array() ): array {
+function qtranxf_legacy_split_blocks( array $blocks, array &$found = array() ): array {
     global $q_config;
 
     $result = array();
@@ -111,7 +111,7 @@ function qtranxf_split_blocks( array $blocks, array &$found = array() ): array {
 /**
  * gets only part with encoded languages
  */
-function qtranxf_split_languages( array $blocks ): array {
+function qtranxf_legacy_split_languages( array $blocks ): array {
     $result           = array();
     $current_language = false;
     $lang_code        = QTX_LANG_CODE_FORMAT;
@@ -157,14 +157,14 @@ function qtranxf_split_languages( array $blocks ): array {
 }
 
 
-function qtranxf_getAvailableLanguages( $text ) {
+function qtranxf_legacy_getAvailableLanguages( $text ) {
     global $q_config;
-    $blocks = qtranxf_get_language_blocks( $text );
+    $blocks = qtranxf_legacy_get_language_blocks( $text );
     if ( count( $blocks ) <= 1 ) {
         return false; // no languages set
     }
     $result  = array();
-    $content = qtranxf_split_languages( $blocks );
+    $content = qtranxf_legacy_split_languages( $blocks );
     foreach ( $content as $language => $lang_text ) {
         $lang_text = trim( $lang_text );
         if ( ! empty( $lang_text ) ) {
@@ -177,6 +177,151 @@ function qtranxf_getAvailableLanguages( $text ) {
     }
 
     return $result;
+}
+
+/**
+ * Internal Phase A3 escape hatch. Define as false before plugin bootstrap to
+ * route the migrated facade functions back to their preserved legacy bodies.
+ */
+if ( ! defined( 'QTX_MULTILINGUAL_CORE_FACADE' ) ) {
+    define( 'QTX_MULTILINGUAL_CORE_FACADE', true );
+}
+
+/** @internal */
+function qtranxf_core_multilingual_parser_configuration_key(): string {
+    global $q_config;
+
+    $enabled = isset( $q_config['enabled_languages'] ) && is_array( $q_config['enabled_languages'] )
+        ? $q_config['enabled_languages']
+        : array();
+    $current = isset( $q_config['language'] ) && is_string( $q_config['language'] )
+        ? $q_config['language']
+        : '';
+
+    $key = strlen( $current ) . ':' . $current . '|' . QTX_LANG_CODE_FORMAT . '|';
+    foreach ( $enabled as $language ) {
+        $key .= strlen( $language ) . ':' . $language . ';';
+    }
+
+    return $key;
+}
+
+/** @internal */
+function qtranxf_core_multilingual_parser(): \QTX\Core\Multilingual\MultilingualParser {
+    global $q_config;
+    static $parsers = array();
+
+    $enabled = isset( $q_config['enabled_languages'] ) && is_array( $q_config['enabled_languages'] )
+        ? $q_config['enabled_languages']
+        : array();
+    $current = isset( $q_config['language'] ) && is_string( $q_config['language'] )
+        ? $q_config['language']
+        : '';
+    $key = qtranxf_core_multilingual_parser_configuration_key();
+    if ( isset( $parsers[ $key ] ) ) {
+        return $parsers[ $key ];
+    }
+
+    if ( count( $parsers ) >= 4 ) {
+        array_shift( $parsers );
+    }
+
+    $parsers[ $key ] = new \QTX\Core\Multilingual\MultilingualParser( $enabled, $current, QTX_LANG_CODE_FORMAT );
+
+    return $parsers[ $key ];
+}
+
+/** @internal */
+function qtranxf_core_multilingual_detector(): \QTX\Core\Multilingual\MultilingualDetector {
+    static $detector;
+    if ( $detector === null ) {
+        $detector = new \QTX\Core\Multilingual\MultilingualDetector( QTX_LANG_CODE_FORMAT );
+    }
+
+    return $detector;
+}
+
+/** @internal */
+function qtranxf_core_multilingual_builder(): \QTX\Core\Multilingual\MultilingualBuilder {
+    static $builder;
+    if ( $builder === null ) {
+        $builder = new \QTX\Core\Multilingual\MultilingualBuilder();
+    }
+
+    return $builder;
+}
+
+/** @internal */
+function qtranxf_core_parse_multilingual( string $text ): \QTX\Core\Multilingual\MultilingualValue {
+    return qtranxf_core_multilingual_parser()->parse( $text );
+}
+
+/** @param string[] $blocks @internal */
+function qtranxf_core_parse_multilingual_blocks( array $blocks ): \QTX\Core\Multilingual\MultilingualValue {
+    return qtranxf_core_multilingual_parser()->parseBlocks( $blocks );
+}
+
+function qtranxf_isMultilingual( ?string $str ): bool {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_isMultilingual( $str );
+    }
+
+    return qtranxf_core_multilingual_detector()->isMultilingual( $str );
+}
+
+function qtranxf_get_language_blocks( $text ): array {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_get_language_blocks( $text );
+    }
+
+    return array_map(
+        static function ( \QTX\Core\Multilingual\MultilingualEntry $entry ): string {
+            return $entry->raw();
+        },
+        qtranxf_core_parse_multilingual( $text )->entries()
+    );
+}
+
+function qtranxf_split( string $text ): array {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_split( $text );
+    }
+
+    return qtranxf_core_parse_multilingual( $text )->translations();
+}
+
+function qtranxf_split_blocks( array $blocks, array &$found = array() ): array {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_split_blocks( $blocks, $found );
+    }
+
+    $value = qtranxf_core_parse_multilingual_blocks( $blocks );
+    foreach ( array_keys( $value->encodedTranslations() ) as $language ) {
+        $found[ $language ] = true;
+    }
+
+    return $value->translations();
+}
+
+function qtranxf_split_languages( array $blocks ): array {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_split_languages( $blocks );
+    }
+
+    return qtranxf_core_parse_multilingual_blocks( $blocks )->encodedTranslations();
+}
+
+function qtranxf_getAvailableLanguages( $text ) {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_getAvailableLanguages( $text );
+    }
+
+    $value = qtranxf_core_parse_multilingual( $text );
+    if ( count( $value->entries() ) <= 1 ) {
+        return false;
+    }
+
+    return $value->availableLanguages();
 }
 
 function qtranxf_allthesame( array $texts ): ?string {
@@ -201,7 +346,7 @@ function qtranxf_allthesame( array $texts ): ?string {
     return $text;
 }
 
-function qtranxf_join_c( array $texts ): string {
+function qtranxf_legacy_join_c( array $texts ): string {
     $text = qtranxf_allthesame( $texts );
     if ( ! is_null( $text ) ) {
         return $text;
@@ -217,7 +362,7 @@ function qtranxf_join_c( array $texts ): string {
     return $text;
 }
 
-function qtranxf_join_b_no_closing( array $texts ): string {
+function qtranxf_legacy_join_b_no_closing( array $texts ): string {
     $text = qtranxf_allthesame( $texts );
     if ( ! is_null( $text ) ) {
         return $text;
@@ -233,7 +378,7 @@ function qtranxf_join_b_no_closing( array $texts ): string {
     return $text;
 }
 
-function qtranxf_join_b( array $texts ): string {
+function qtranxf_legacy_join_b( array $texts ): string {
     $text = qtranxf_allthesame( $texts );
     if ( ! is_null( $text ) ) {
         return $text;
@@ -255,7 +400,7 @@ function qtranxf_join_b( array $texts ): string {
 /**
  * @since 3.3.6 swirly bracket encoding
  */
-function qtranxf_join_s( array $texts ): string {
+function qtranxf_legacy_join_s( array $texts ): string {
     $text = qtranxf_allthesame( $texts );
     if ( ! is_null( $text ) ) {
         return $text;
@@ -274,11 +419,43 @@ function qtranxf_join_s( array $texts ): string {
     return $text;
 }
 
+function qtranxf_join_c( array $texts ): string {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_join_c( $texts );
+    }
+
+    return qtranxf_core_multilingual_builder()->buildTranslations( $texts, 'comment' );
+}
+
+function qtranxf_join_b_no_closing( array $texts ): string {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_join_b_no_closing( $texts );
+    }
+
+    return qtranxf_core_multilingual_builder()->buildTranslations( $texts, 'bracket', false );
+}
+
+function qtranxf_join_b( array $texts ): string {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_join_b( $texts );
+    }
+
+    return qtranxf_core_multilingual_builder()->buildTranslations( $texts, 'bracket' );
+}
+
+function qtranxf_join_s( array $texts ): string {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_join_s( $texts );
+    }
+
+    return qtranxf_core_multilingual_builder()->buildTranslations( $texts, 'curly' );
+}
+
 /**
  * Prepares multilingual text leaving text that matches $regex_sep outside of language tags.
  * @since 3.4.6.2
  */
-function qtranxf_join_byseparator( array $texts, string $regex_sep ): string {
+function qtranxf_legacy_join_byseparator( array $texts, string $regex_sep ): string {
     $text = qtranxf_allthesame( $texts );
     if ( ! is_null( $text ) ) {
         return $text;
@@ -309,7 +486,7 @@ function qtranxf_join_byseparator( array $texts, string $regex_sep ): string {
         if ( $done ) {
             break;
         }
-        $text .= qtranxf_join_b( $to_join ) . $sep;
+        $text .= qtranxf_legacy_join_b( $to_join ) . $sep;
     }
 
     return $text;
@@ -318,7 +495,7 @@ function qtranxf_join_byseparator( array $texts, string $regex_sep ): string {
 /**
  * Prepare multilingal text leaving new line outside of language tags '[:]'.
  */
-function qtranxf_join_byline( array $texts ): string {
+function qtranxf_legacy_join_byline( array $texts ): string {
     $text = qtranxf_allthesame( $texts );
     if ( ! is_null( $text ) ) {
         return $text;
@@ -347,19 +524,35 @@ function qtranxf_join_byline( array $texts ): string {
         if ( $done ) {
             break;
         }
-        $text .= qtranxf_join_b( $to_join ) . PHP_EOL;
+        $text .= qtranxf_legacy_join_b( $to_join ) . PHP_EOL;
     }
 
     return $text;
 }
 
+function qtranxf_join_byseparator( array $texts, string $regex_sep ): string {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_join_byseparator( $texts, $regex_sep );
+    }
+
+    return qtranxf_core_multilingual_builder()->buildBySeparator( $texts, $regex_sep );
+}
+
+function qtranxf_join_byline( array $texts ): string {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_join_byline( $texts );
+    }
+
+    return qtranxf_core_multilingual_builder()->buildByLine( $texts );
+}
+
 // TODO: this function signature is way too generic and weakly typed, break it by input type.
-function qtranxf_use( string $lang, $text, bool $show_available = false, bool $show_empty = false ) {
+function qtranxf_legacy_use( string $lang, $text, bool $show_available = false, bool $show_empty = false ) {
     // return full string if language is not enabled
     if ( is_array( $text ) ) {
         // handle arrays recursively
         foreach ( $text as $key => $t ) {
-            $text[ $key ] = qtranxf_use( $lang, $t, $show_available, $show_empty );
+            $text[ $key ] = qtranxf_legacy_use( $lang, $t, $show_available, $show_empty );
         }
 
         return $text;
@@ -370,7 +563,7 @@ function qtranxf_use( string $lang, $text, bool $show_available = false, bool $s
             if ( ! isset( $text->$key ) ) {
                 continue;
             }
-            $text->$key = qtranxf_use( $lang, $t, $show_available, $show_empty );
+            $text->$key = qtranxf_legacy_use( $lang, $t, $show_available, $show_empty );
         }
 
         return $text;
@@ -381,28 +574,28 @@ function qtranxf_use( string $lang, $text, bool $show_available = false, bool $s
         return $text;
     }
 
-    return qtranxf_use_language( $lang, $text, $show_available, $show_empty );
+    return qtranxf_legacy_use_language( $lang, $text, $show_available, $show_empty );
 }
 
 /** when $text is already known to be string */
-function qtranxf_use_language( string $lang, string $text, bool $show_available = false, bool $show_empty = false ) {
-    $blocks = qtranxf_get_language_blocks( $text );
+function qtranxf_legacy_use_language( string $lang, string $text, bool $show_available = false, bool $show_empty = false ) {
+    $blocks = qtranxf_legacy_get_language_blocks( $text );
     if ( count( $blocks ) <= 1 )//no language is encoded in the $text, the most frequent case
     {
         return $text;
     }
 
-    return qtranxf_use_block( $lang, $blocks, $show_available, $show_empty );
+    return qtranxf_legacy_use_block( $lang, $blocks, $show_available, $show_empty );
 }
 
-function qtranxf_use_block( string $lang, array $blocks, bool $show_available = false, bool $show_empty = false ): string {
+function qtranxf_legacy_use_block( string $lang, array $blocks, bool $show_available = false, bool $show_empty = false ): string {
     $available_langs = array();
-    $content         = qtranxf_split_blocks( $blocks, $available_langs );
+    $content         = qtranxf_legacy_split_blocks( $blocks, $available_langs );
 
-    return qtranxf_use_content( $lang, $content, $available_langs, $show_available, $show_empty );
+    return qtranxf_legacy_use_content( $lang, $content, $available_langs, $show_available, $show_empty );
 }
 
-function qtranxf_use_content( string $lang, $content, array $available_langs, bool $show_available = false, bool $show_empty = false ): string {
+function qtranxf_legacy_use_content( string $lang, $content, array $available_langs, bool $show_available = false, bool $show_empty = false ): string {
     global $q_config;
     // show the content in the requested language, if available
     if ( ! empty( $available_langs[ $lang ] ) ) {
@@ -469,6 +662,128 @@ function qtranxf_use_content( string $lang, $content, array $available_langs, bo
         $alt_content,
         $msg,
         $q_config
+    ), '3.15.0', 'qtranslate_content_translation_not_available' );
+
+    return apply_filters( 'qtranslate_content_translation_not_available', $output, $lang, $language_list, $alt_lang, $alt_content, $msg, $q_config );
+}
+
+/** @internal */
+function qtranxf_core_translation_service(): \QTX\Core\Multilingual\TranslationService {
+    static $service;
+    if ( $service === null ) {
+        $service = new \QTX\Core\Multilingual\TranslationService();
+    }
+
+    return $service;
+}
+
+// TODO: this function signature is intentionally preserved for compatibility.
+function qtranxf_use( string $lang, $text, bool $show_available = false, bool $show_empty = false ) {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_use( $lang, $text, $show_available, $show_empty );
+    }
+    if ( is_array( $text ) ) {
+        foreach ( $text as $key => $item ) {
+            $text[ $key ] = qtranxf_use( $lang, $item, $show_available, $show_empty );
+        }
+
+        return $text;
+    }
+    if ( is_object( $text ) || $text instanceof __PHP_Incomplete_Class ) {
+        foreach ( get_object_vars( $text ) as $key => $item ) {
+            if ( isset( $text->$key ) ) {
+                $text->$key = qtranxf_use( $lang, $item, $show_available, $show_empty );
+            }
+        }
+
+        return $text;
+    }
+    if ( ! is_string( $text ) || empty( $text ) ) {
+        return $text;
+    }
+
+    return qtranxf_use_language( $lang, $text, $show_available, $show_empty );
+}
+
+function qtranxf_use_language( string $lang, string $text, bool $show_available = false, bool $show_empty = false ) {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_use_language( $lang, $text, $show_available, $show_empty );
+    }
+    $value = qtranxf_core_parse_multilingual( $text );
+    if ( count( $value->entries() ) <= 1 ) {
+        return $text;
+    }
+
+    $available = array();
+    foreach ( array_keys( $value->encodedTranslations() ) as $language ) {
+        $available[ $language ] = true;
+    }
+
+    return qtranxf_use_content( $lang, $value->translations(), $available, $show_available, $show_empty );
+}
+
+function qtranxf_use_block( string $lang, array $blocks, bool $show_available = false, bool $show_empty = false ): string {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_use_block( $lang, $blocks, $show_available, $show_empty );
+    }
+    $value     = qtranxf_core_parse_multilingual_blocks( $blocks );
+    $available = array();
+    foreach ( array_keys( $value->encodedTranslations() ) as $language ) {
+        $available[ $language ] = true;
+    }
+
+    return qtranxf_use_content( $lang, $value->translations(), $available, $show_available, $show_empty );
+}
+
+function qtranxf_use_content( string $lang, $content, array $available_langs, bool $show_available = false, bool $show_empty = false ): string {
+    if ( ! QTX_MULTILINGUAL_CORE_FACADE ) {
+        return qtranxf_legacy_use_content( $lang, $content, $available_langs, $show_available, $show_empty );
+    }
+    global $q_config;
+    $selection = qtranxf_core_translation_service()->select(
+        $content,
+        $available_langs,
+        $lang,
+        $q_config['enabled_languages'],
+        $show_empty
+    );
+    if ( $selection->reason() === 'exact' || $selection->reason() === 'empty' || $selection->reason() === 'unavailable' ) {
+        return $selection->text();
+    }
+
+    $alt_lang    = $selection->language();
+    $alt_content = $selection->text();
+    if ( ! $show_available ) {
+        return $q_config['show_displayed_language_prefix']
+            ? '(' . $q_config['language_name'][ $alt_lang ] . ') ' . $alt_content
+            : $alt_content;
+    }
+
+    $available_langs = $selection->availableLanguages();
+    $language_list   = '';
+    if ( preg_match( '/%LANG:([^:]*):([^%]*)%/', $q_config['not_available'][ $lang ], $match ) ) {
+        $normal_separator = $match[1];
+        $end_separator    = $match[2];
+        $i                = 0;
+        foreach ( array_reverse( $available_langs ) as $language ) {
+            if ( $i == 1 ) {
+                $language_list = $end_separator . $language_list;
+            } elseif ( $i > 1 ) {
+                $language_list = $normal_separator . $language_list;
+            }
+            $language_name = qtranxf_getLanguageName( $language );
+            $language_list = '<a href="' . qtranxf_convertURL( '', $language, false, true ) . '" class="qtranxs-available-language-link qtranxs-available-language-link-' . $language . '" title="' . $q_config['language_name'][ $language ] . '">' . $language_name . '</a>' . $language_list;
+            ++$i;
+        }
+    }
+
+    $msg    = preg_replace( '/%LANG:([^:]*):([^%]*)%/', $language_list, $q_config['not_available'][ $lang ] );
+    $output = '<p class="qtranxs-available-languages-message qtranxs-available-languages-message-' . $lang . '">' . $msg . '</p>';
+    if ( ! empty( $q_config['show_alternative_content'] ) ) {
+        $output .= $alt_content;
+    }
+    $output = apply_filters_deprecated( 'i18n_content_translation_not_available', array(
+        $output, $lang, $language_list, $alt_lang, $alt_content, $msg, $q_config
     ), '3.15.0', 'qtranslate_content_translation_not_available' );
 
     return apply_filters( 'qtranslate_content_translation_not_available', $output, $lang, $language_list, $alt_lang, $alt_content, $msg, $q_config );

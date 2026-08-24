@@ -50,6 +50,22 @@
     "ext-intl": "*",
     "ext-json": "*"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5 || ^11.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "QTX\\Core\\": "src/Core/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
+  },
   "extra": {
     "installer-name": "qtranslate-xt"
   }

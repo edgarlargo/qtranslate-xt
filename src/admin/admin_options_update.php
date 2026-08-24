@@ -10,6 +10,13 @@ require_once QTRANSLATE_DIR . '/src/modules/admin_module_manager.php';
 
 function qtranxf_edit_config(): void {
     global $q_config;
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die(
+            esc_html__( 'Sorry, you are not allowed to manage these settings.', 'qtranslate' ),
+            esc_html__( 'Forbidden', 'qtranslate' ),
+            array( 'response' => 403 )
+        );
+    }
     if ( ! qtranxf_verify_nonce( 'qtranslate-x_configuration_form' ) ) {
         return;
     }
@@ -37,10 +44,40 @@ function qtranxf_edit_config(): void {
     $lang_props    = &$q_config['posted']['lang_props'];
     $original_lang = &$q_config['posted']['original_lang'];
 
+    $state_action_names     = array( 'convert', 'markdefault', 'delete', 'enable', 'disable', 'moveup', 'movedown' );
+    $state_action_count     = 0;
+    foreach ( $state_action_names as $state_action_name ) {
+        if ( isset( $_POST[ $state_action_name ] ) ) {
+            ++$state_action_count;
+        }
+    }
+    $state_action_requested = $state_action_count > 0;
+    if ( $state_action_count > 1 ) {
+        $errors[] = __( 'Invalid request: multiple actions were submitted.', 'qtranslate' );
+    }
+    $get_posted_language = static function ( string $action ): string {
+        if ( ! isset( $_POST[ $action ] ) || ! is_string( $_POST[ $action ] ) ) {
+            return '';
+        }
+
+        return sanitize_text_field( wp_unslash( $_POST[ $action ] ) );
+    };
+    $is_valid_language_code = static function ( string $lang ): bool {
+        return (bool) preg_match( '/^' . QTX_LANG_CODE_FORMAT . '$/', $lang )
+               || (bool) preg_match( '/^[A-Z]{2}$/', $lang );
+    };
+    foreach ( array( 'convert', 'markdefault' ) as $boolean_action ) {
+        if ( isset( $_POST[ $boolean_action ] )
+             && ( ! is_string( $_POST[ $boolean_action ] ) || sanitize_text_field( wp_unslash( $_POST[ $boolean_action ] ) ) !== '1' )
+        ) {
+            $errors[] = __( 'Invalid action value.', 'qtranslate' );
+        }
+    }
+
     // check for action
     if ( isset( $_POST['qtranslate_reset_all'] ) && isset( $_POST['qtranslate_reset_confirm'] ) ) {
         $messages[] = __( 'qTranslate has been reset.', 'qtranslate' );
-    } elseif ( isset( $_POST['default_language'] ) ) {
+    } elseif ( isset( $_POST['default_language'] ) && ! $state_action_requested ) {
         qtranxf_update_settings();
         // execute actions
         qtranxf_executeOnUpdate();
@@ -141,7 +178,7 @@ function qtranxf_edit_config(): void {
             $lang_props    = array();
             $original_lang = '';
         }
-    } elseif ( isset( $_GET['convert'] ) ) {
+    } elseif ( $state_action_count === 1 && isset( $_POST['convert'] ) && is_string( $_POST['convert'] ) && sanitize_text_field( wp_unslash( $_POST['convert'] ) ) === '1' ) {
         // update language tags
         global $wpdb;
         $wpdb->show_errors();
@@ -158,7 +195,7 @@ function qtranxf_edit_config(): void {
         } else {
             $messages[] = __( 'No database entry has been affected while processing the conversion request.', 'qtranslate' );
         }
-    } elseif ( isset( $_GET['markdefault'] ) ) {
+    } elseif ( $state_action_count === 1 && isset( $_POST['markdefault'] ) && is_string( $_POST['markdefault'] ) && sanitize_text_field( wp_unslash( $_POST['markdefault'] ) ) === '1' ) {
         // update language tags
         global $wpdb;
         $wpdb->show_errors();
@@ -221,71 +258,84 @@ function qtranxf_edit_config(): void {
         $lang_props['time_format']   = $langs['time_format'][ $lang ] ?? '';
         $lang_props['not_available'] = $langs['not_available'][ $lang ] ?? '';
         $lang_props['flag']          = $langs['flag'][ $lang ] ?? '';
-    } elseif ( isset( $_GET['delete'] ) ) {
-        $lang = sanitize_text_field( $_GET['delete'] );
-        $err  = qtranxf_deleteLanguage( $lang );
-        if ( ! empty( $err ) ) {
-            $errors[] = $err;
+    } elseif ( $state_action_count === 1 && isset( $_POST['delete'] ) ) {
+        $lang = $get_posted_language( 'delete' );
+        if ( ! $is_valid_language_code( $lang ) ) {
+            $errors[] = __( 'Invalid language code!', 'qtranslate' );
+        } else {
+            $err = qtranxf_deleteLanguage( $lang );
+            if ( ! empty( $err ) ) {
+                $errors[] = $err;
+            }
         }
-    } elseif ( isset( $_GET['enable'] ) ) {
-        $lang = sanitize_text_field( $_GET['enable'] );
-        // enable validate
-        if ( ! qtranxf_enableLanguage( $lang ) ) {
+    } elseif ( $state_action_count === 1 && isset( $_POST['enable'] ) ) {
+        $lang = $get_posted_language( 'enable' );
+        if ( ! $is_valid_language_code( $lang ) ) {
+            $errors[] = __( 'Invalid language code!', 'qtranslate' );
+        } elseif ( ! qtranxf_enableLanguage( $lang ) ) {
             $errors[] = __( 'Language is already enabled or invalid!', 'qtranslate' );
         }
-    } elseif ( isset( $_GET['disable'] ) ) {
-        $lang = sanitize_text_field( $_GET['disable'] );
-        // enable validate
-        if ( $lang == $q_config['default_language'] ) {
-            $errors[] = __( 'Cannot disable Default Language!', 'qtranslate' );
-        }
-        if ( ! qtranxf_isEnabled( $lang ) ) {
-            if ( ! isset( $q_config['language_name'][ $lang ] ) ) {
+    } elseif ( $state_action_count === 1 && isset( $_POST['disable'] ) ) {
+        $lang = $get_posted_language( 'disable' );
+        if ( ! $is_valid_language_code( $lang ) ) {
+            $errors[] = __( 'Invalid language code!', 'qtranslate' );
+        } else {
+            if ( $lang == $q_config['default_language'] ) {
+                $errors[] = __( 'Cannot disable Default Language!', 'qtranslate' );
+            }
+            if ( ! qtranxf_isEnabled( $lang ) && ! isset( $q_config['language_name'][ $lang ] ) ) {
                 $errors[] = __( 'No such language!', 'qtranslate' );
             }
+            if ( empty( $errors ) && ! qtranxf_disableLanguage( $lang ) ) {
+                $errors[] = __( 'Language is already disabled!', 'qtranslate' );
+            }
         }
-        // everything seems fine, disable language
-        if ( empty( $errors ) && ! qtranxf_disableLanguage( $lang ) ) {
-            $errors[] = __( 'Language is already disabled!', 'qtranslate' );
-        }
-    } elseif ( isset( $_GET['moveup'] ) ) {
-        $lang      = sanitize_text_field( $_GET['moveup'] );
+    } elseif ( $state_action_count === 1 && isset( $_POST['moveup'] ) ) {
+        $lang      = $get_posted_language( 'moveup' );
         $languages = qtranxf_getSortedLanguages();
         $msg       = __( 'No such language!', 'qtranslate' );
-        foreach ( $languages as $key => $language ) {
-            if ( $language != $lang ) {
-                continue;
-            }
-            if ( $key == 0 ) {
-                $msg = __( 'Language is already first!', 'qtranslate' );
+        if ( ! $is_valid_language_code( $lang ) ) {
+            $errors[] = __( 'Invalid language code!', 'qtranslate' );
+        } else {
+            foreach ( $languages as $key => $language ) {
+                if ( $language != $lang ) {
+                    continue;
+                }
+                if ( $key == 0 ) {
+                    $msg = __( 'Language is already first!', 'qtranslate' );
+                    break;
+                }
+                $languages[ $key ]             = $languages[ $key - 1 ];
+                $languages[ $key - 1 ]         = $language;
+                $q_config['enabled_languages'] = $languages;
+                $msg                           = __( 'New order saved.', 'qtranslate' );
+                qtranxf_update_config_header_css();
                 break;
             }
-            $languages[ $key ]             = $languages[ $key - 1 ];
-            $languages[ $key - 1 ]         = $language;
-            $q_config['enabled_languages'] = $languages;
-            $msg                           = __( 'New order saved.', 'qtranslate' );
-            qtranxf_update_config_header_css();
-            break;
         }
         $messages[] = $msg;
-    } elseif ( isset( $_GET['movedown'] ) ) {
-        $lang      = sanitize_text_field( $_GET['movedown'] );
+    } elseif ( $state_action_count === 1 && isset( $_POST['movedown'] ) ) {
+        $lang      = $get_posted_language( 'movedown' );
         $languages = qtranxf_getSortedLanguages();
         $msg       = __( 'No such language!', 'qtranslate' );
-        foreach ( $languages as $key => $language ) {
-            if ( $language != $lang ) {
-                continue;
-            }
-            if ( $key == sizeof( $languages ) - 1 ) {
-                $msg = __( 'Language is already last!', 'qtranslate' );
+        if ( ! $is_valid_language_code( $lang ) ) {
+            $errors[] = __( 'Invalid language code!', 'qtranslate' );
+        } else {
+            foreach ( $languages as $key => $language ) {
+                if ( $language != $lang ) {
+                    continue;
+                }
+                if ( $key == sizeof( $languages ) - 1 ) {
+                    $msg = __( 'Language is already last!', 'qtranslate' );
+                    break;
+                }
+                $languages[ $key ]             = $languages[ $key + 1 ];
+                $languages[ $key + 1 ]         = $language;
+                $q_config['enabled_languages'] = $languages;
+                $msg                           = __( 'New order saved.', 'qtranslate' );
+                qtranxf_update_config_header_css();
                 break;
             }
-            $languages[ $key ]             = $languages[ $key + 1 ];
-            $languages[ $key + 1 ]         = $language;
-            $q_config['enabled_languages'] = $languages;
-            $msg                           = __( 'New order saved.', 'qtranslate' );
-            qtranxf_update_config_header_css();
-            break;
         }
         $messages[] = $msg;
     }
@@ -293,7 +343,7 @@ function qtranxf_edit_config(): void {
     do_action( 'qtranslate_edit_config' );
     do_action_deprecated( 'qtranslate_editConfig', array(), '3.10.0', 'qtranslate_edit_config' );
 
-    $everything_fine = ( ( isset( $_POST['submit'] ) || isset( $_GET['delete'] ) || isset( $_GET['enable'] ) || isset( $_GET['disable'] ) || isset( $_GET['moveup'] ) || isset( $_GET['movedown'] ) ) && empty( $errors ) );
+    $everything_fine = ( ( isset( $_POST['submit'] ) || isset( $_POST['delete'] ) || isset( $_POST['enable'] ) || isset( $_POST['disable'] ) || isset( $_POST['moveup'] ) || isset( $_POST['movedown'] ) ) && empty( $errors ) );
     if ( $everything_fine ) {
         // settings might have changed, so save
         qtranxf_save_config();
@@ -937,10 +987,19 @@ function qtranxf_executeOnUpdate(): void {
 
     // ==== import/export msg was here
     if ( isset( $_POST['convert_database'] ) ) {
-        require_once QTRANSLATE_DIR . '/src/admin/admin_utils_db.php';
-        $msg = qtranxf_convert_database( $_POST['convert_database'] );
-        if ( $msg ) {
-            $messages[] = $msg;
+        $action = is_string( $_POST['convert_database'] ) ? sanitize_key( wp_unslash( $_POST['convert_database'] ) ) : '';
+        $allowed_actions = array( 'none', 'b_only', 'c_dual', 'db_split', 'db_clean_terms' );
+        if ( in_array( $action, $allowed_actions, true ) ) {
+            $destructive = in_array( $action, array( 'b_only', 'c_dual', 'db_clean_terms' ), true );
+            if ( $destructive && empty( $_POST['convert_database_confirm'] ) ) {
+                $messages[] = __( 'Database conversion was not run because the confirmation checkbox was not selected.', 'qtranslate' );
+            } else {
+                require_once QTRANSLATE_DIR . '/src/admin/admin_utils_db.php';
+                $msg = qtranxf_convert_database( $action );
+                if ( $msg ) {
+                    $messages[] = $msg;
+                }
+            }
         }
     }
 

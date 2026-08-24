@@ -592,12 +592,12 @@ class QTX_Module_Acf_Admin {
                 $filter['post_id'] = acf_get_valid_post_id( 'options' );
             }
         } elseif ( $pagenow === 'edit-tags.php' && isset( $_GET['taxonomy'] ) ) {
-            $filter['taxonomy'] = filter_var( $_GET['taxonomy'], FILTER_SANITIZE_STRING );
+            $filter['taxonomy'] = sanitize_key( wp_unslash( $_GET['taxonomy'] ) );
         } elseif ( $pagenow === 'profile.php' ) {
             $filter['user_id']   = get_current_user_id();
             $filter['user_form'] = 'edit';
         } elseif ( $pagenow === 'user-edit.php' && isset( $_GET['user_id'] ) ) {
-            $filter['user_id']   = filter_var( $_GET['user_id'], FILTER_SANITIZE_NUMBER_INT );
+            $filter['user_id']   = absint( $_GET['user_id'] );
             $filter['user_form'] = 'edit';
         } elseif ( $pagenow === 'user-new.php' ) {
             $filter['user_id']   = 'new';

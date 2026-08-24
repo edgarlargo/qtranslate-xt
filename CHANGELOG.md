@@ -1,3 +1,33 @@
+### 4.0.0-rc1 — QTX 4 development release candidate
+
+This is a development release candidate, not an official upstream
+qTranslate-XT release. Production promotion remains subject to the external
+WooCommerce transactional gate recorded in the repository release-readiness
+report.
+
+* Added a lossless multilingual core and compatibility facades backed by the
+  characterization corpus; existing inline storage is unchanged.
+* Hardened admin state changes, module loading, local JSON/SQL file boundaries,
+  redirects, deserialization and SQL value handling.
+* Added explicit REST/editor language policy, optimistic Gutenberg revisions
+  and HTTP 409 stale-save conflicts.
+* Modernized PHP 8.1–8.5 date handling and fixed numeric extended formats;
+  CI also lints production sources on the WordPress 7.1 minimum PHP 7.4 and 8.0.
+* Added runtime-capability ACF detection including theme-bundled ACF, nested
+  schema/editing foundations and dynamic admin field handling.
+* Register ACF Options value filters before a theme-embedded runtime starts, so
+  standard Text/Textarea/WYSIWYG values no longer require an external bridge.
+* Accept stable Unicode ACF field keys (for example Latvian and Cyrillic keys)
+  while continuing to reject spaces, path separators and control characters.
+* Repair the packaged `i18n-config.json` option when upgrading from a plugin
+  directory named `qtranslate-xt-master` to the canonical `qtranslate-xt`.
+* Added WooCommerce technical-data/order-language/cache policies.
+* Added PHP 8.1–8.5, JavaScript corpus and real WordPress 7.1 smoke testing.
+* Declared WordPress 7.1 in the public `Tested up to` metadata after validating
+  activation, frontend, REST and block-editor save/autosave/conflict paths.
+* This is not yet an RC: comprehensive WooCommerce transactional, email, REST
+  and persistent-cache tests remain blocked by the missing integration lab.
+
 ### 3.16.1
 * Fix `array_any` not supported in PHP 7.4 (#1473)
 

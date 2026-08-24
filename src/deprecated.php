@@ -244,7 +244,7 @@ function qtranxf_strftime( $format, $date, $default = '', $before = '', $after =
     }
 
     // add date suffix ability (%q) to strftime
-    $day     = intval( ltrim( strftime( "%d", $date ), '0' ) );
+    $day     = intval( date( 'd', $date ) );
     $search  = array();
     $replace = array();
 
@@ -300,7 +300,7 @@ function qtranxf_strftime( $format, $date, $default = '', $before = '', $after =
     $replace[] = '${2}' . $date; // date U
     $format    = preg_replace( $search, $replace, $format );
 
-    return $before . strftime( $format, $date ) . $after;
+    return $before . qxtranxf_intl_strftime( $format, $date ) . $after;
 }
 
 function qtranxf_validateBool( $var, $default_value ) {

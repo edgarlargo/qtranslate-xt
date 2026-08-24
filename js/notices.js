@@ -16,7 +16,12 @@ $(function () {
             $notice.on('click',
                 function () {
                     $div.css('display', 'none');
-                    $.post(ajaxurl, {action: 'qtranslate_admin_notice', notice_id: id, notice_action: action});
+                    $.post(ajaxurl, {
+                        action: 'qtranslate_admin_notice',
+                        notice_id: id,
+                        notice_action: action,
+                        nonce: qtxAdminNotices.nonce
+                    });
                 }
             );
         }

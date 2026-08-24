@@ -309,6 +309,9 @@ class QTX_Admin_Settings {
                 ?>
             </div>
         </form>
+        <form id="qtranxs-state-action-form" action="<?php echo esc_url( $this->options_uri ); ?>" method="post">
+            <?php wp_nonce_field( $nonce_action ); ?>
+        </form>
         <?php
     }
 
@@ -336,15 +339,15 @@ class QTX_Admin_Settings {
                             $flag_location = qtranxf_flag_location();
                             foreach ( qtranxf_getSortedLanguages() as $language ) {
                                 echo '<tr>';
-                                echo '<td><label title="' . $q_config['language_name'][ $language ] . '"><input type="radio" name="default_language" value="' . $language . '"';
+                                echo '<td><label title="' . esc_attr( $q_config['language_name'][ $language ] ) . '"><input type="radio" name="default_language" value="' . esc_attr( $language ) . '"';
                                 checked( $language, $q_config['default_language'] );
                                 echo ' />';
-                                echo ' <a href="' . add_query_arg( 'moveup', $language, $this->options_uri ) . '"><img src="' . $pluginurl . 'img/arrowup.png" alt="up" /></a>';
-                                echo ' <a href="' . add_query_arg( 'movedown', $language, $this->options_uri ) . '"><img src="' . $pluginurl . 'img/arrowdown.png" alt="down" /></a>';
-                                echo ' <img src="' . $flag_location . $q_config['flag'][ $language ] . '" alt="' . $q_config['language_name'][ $language ] . '" /> ';
-                                echo ' ' . $q_config['language_name'][ $language ];
+                                echo ' <button type="submit" form="qtranxs-state-action-form" class="button-link" name="moveup" value="' . esc_attr( $language ) . '"><img src="' . esc_url( $pluginurl . 'img/arrowup.png' ) . '" alt="' . esc_attr__( 'Move up', 'qtranslate' ) . '" /></button>';
+                                echo ' <button type="submit" form="qtranxs-state-action-form" class="button-link" name="movedown" value="' . esc_attr( $language ) . '"><img src="' . esc_url( $pluginurl . 'img/arrowdown.png' ) . '" alt="' . esc_attr__( 'Move down', 'qtranslate' ) . '" /></button>';
+                                echo ' <img src="' . esc_url( $flag_location . $q_config['flag'][ $language ] ) . '" alt="' . esc_attr( $q_config['language_name'][ $language ] ) . '" /> ';
+                                echo ' ' . esc_html( $q_config['language_name'][ $language ] );
                                 echo '</label></td>';
-                                echo '<td>[:' . $language . ']</td><td><a href="' . $this->options_uri . '&edit=' . $language . '">' . __( 'Edit', 'qtranslate' ) . '</a></td><td><a href="' . $this->options_uri . '&disable=' . $language . '">' . __( 'Disable', 'qtranslate' ) . '</a></td>';
+                                echo '<td>[:' . esc_html( $language ) . ']</td><td><a href="' . esc_url( add_query_arg( 'edit', $language, $this->options_uri ) ) . '">' . esc_html__( 'Edit', 'qtranslate' ) . '</a></td><td><button type="submit" form="qtranxs-state-action-form" class="button-link" name="disable" value="' . esc_attr( $language ) . '">' . esc_html__( 'Disable', 'qtranslate' ) . '</button></td>';
                                 echo '</tr>' . PHP_EOL;
                             }
                             ?>
@@ -957,8 +960,13 @@ class QTX_Admin_Settings {
                     <?php
                     $language_list = new QTX_Admin_Settings_Language_List( $language_names, $this->options_uri );
                     $language_list->prepare_items();
-                    $language_list->display();
                     ?>
+                    <form action="<?php echo esc_url( $this->options_uri ); ?>" method="post">
+                        <?php wp_nonce_field( $nonce_action ); ?>
+                        <?php
+                        $language_list->display();
+                        ?>
+                    </form>
                     <p class="qtranxs-notes"><?php _e( 'Enabling a language will cause qTranslate to update the Gettext-Database for the language, which can take a while depending on your server\'s connection speed.', 'qtranslate' ) ?></p>
                 </div>
             </div>

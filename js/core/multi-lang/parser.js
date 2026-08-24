@@ -114,5 +114,10 @@ export const parseTokens = function (tokens) {
             }
         }
     }
+    // Match the legacy PHP split contract for multilingual input. Neutral text
+    // can introduce boundary whitespace in languages without an explicit block.
+    for (const key in result) {
+        result[key] = result[key].trim();
+    }
     return result;
 };

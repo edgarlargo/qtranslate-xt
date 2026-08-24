@@ -68,6 +68,14 @@ class QTX_Admin_Module_Manager {
             return true; // Attention: should not be interpreted as "having a plugin".
         }
 
+        // Runtime-discovered integrations (for example theme-bundled ACF)
+        // use their provider predicate before plugin basenames are consulted.
+        if ( is_string( $module->runtime_hook )
+             && $module->runtime_hook !== ''
+             && QTX_Module_Loader::is_module_available( $module->id ) ) {
+            return true;
+        }
+
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
         // TODO the call_user_func should be replaced by direct calls from PHP7
         foreach ( $module->plugins as $plugin ) {

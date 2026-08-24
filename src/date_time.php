@@ -172,7 +172,7 @@ function qxtranxf_intl_strftime( string $format, $timestamp = null, ?string $loc
         '%4' => 'U',  // Seconds since the Unix Epoch
     ];
 
-    $out = preg_replace_callback( '/(?<!%)(%[a-zA-Z])/', function ( $match ) use ( $translation_table, $timestamp ) {
+    $out = preg_replace_callback( '/(?<!%)(%[a-zA-Z1-4])/', function ( $match ) use ( $translation_table, $timestamp ) {
         if ( $match[1] == '%n' ) {
             return "\n";
         } elseif ( $match[1] == '%t' ) {

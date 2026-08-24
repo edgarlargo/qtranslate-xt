@@ -77,9 +77,11 @@ function qtranxf_slugs_uninstall(): void {
     foreach ( $q_config['enabled_languages'] as $lang ) {
         $meta_keys[] = QTX_SLUGS_META_PREFIX . $lang;
     }
-    $meta_keys = "'" . implode( "','", $meta_keys ) . "'";
-    $wpdb->query( "DELETE from $wpdb->postmeta WHERE meta_key IN ($meta_keys)" );
-    $wpdb->query( "DELETE from $wpdb->termmeta WHERE meta_key IN ($meta_keys)" );
+    if ( $meta_keys !== array() ) {
+        $placeholders = implode( ', ', array_fill( 0, count( $meta_keys ), '%s' ) );
+        $wpdb->query( $wpdb->prepare( "DELETE from $wpdb->postmeta WHERE meta_key IN ($placeholders)", $meta_keys ) );
+        $wpdb->query( $wpdb->prepare( "DELETE from $wpdb->termmeta WHERE meta_key IN ($placeholders)", $meta_keys ) );
+    }
 
     qtranxf_slugs_deactivate();
 
@@ -571,12 +573,11 @@ function qtranxf_slugs_get_object_terms( array $terms, $obj_id, $taxonomy, array
     // issue I limit this 'hack' to the post manage
     // page only.
     if ( $pagenow == 'edit.php' ) {
-        $meta = get_option( 'qtranslate_term_name' );
-
         if ( ! empty( $terms ) ) {
             foreach ( $terms as $term ) {
-                if ( isset( $term->name ) && isset( $meta[ $term->name ][ $q_config['language'] ] ) ) {
-                    $term->name = $meta[ $term->name ][ $q_config['language'] ];
+                $translations = qtx_get_term_translation_repository()->translations( $term );
+                if ( isset( $translations[ $q_config['language'] ] ) ) {
+                    $term->name = $translations[ $q_config['language'] ];
                 }
             }
         }
@@ -604,8 +605,6 @@ function qtranxf_slugs_get_terms( array $terms, $taxonomy ): array {
 
     if ( $pagenow != 'admin-ajax.php' ) {
 
-        $meta = get_option( 'qtranslate_term_name' );
-
         if ( ! empty( $terms ) ) {
             foreach ( $terms as $term ) {
                 // after saving, dont do anything
@@ -613,8 +612,9 @@ function qtranxf_slugs_get_terms( array $terms, $taxonomy ): array {
                      ! is_object( $term ) ) {
                     return $terms;
                 }
-                if ( isset( $meta[ $term->name ][ $q_config['language'] ] ) ) {
-                    $term->name = $meta[ $term->name ][ $q_config['language'] ];
+                $translations = qtx_get_term_translation_repository()->translations( $term );
+                if ( isset( $translations[ $q_config['language'] ] ) ) {
+                    $term->name = $translations[ $q_config['language'] ];
                 }
             }
         }

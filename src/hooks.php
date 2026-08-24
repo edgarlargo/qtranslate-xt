@@ -127,9 +127,9 @@ function qtranxf_add_main_filters(): void {
     add_filter( 'comment_moderation_text', 'qtranxf_useDefaultLanguage', 0 );
     // since 3.1 changed priority from 0 to 100, since other plugins,
     // like https://wordpress.org/plugins/siteorigin-panels generate additional content, which also needs to be translated.
-    add_filter( 'the_content', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 100 );
-    add_filter( 'the_excerpt', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 0 );
-    add_filter( 'the_excerpt_rss', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 0 );
+    add_filter( 'the_content', array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateContent' ), 100 );
+    add_filter( 'the_excerpt', array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateExcerpt' ), 0 );
+    add_filter( 'the_excerpt_rss', array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateRssExcerpt' ), 0 );
     add_filter( 'locale', 'qtranxf_localeForCurrentLanguage', 99 );
     add_filter( 'core_version_check_locale', 'qtranxf_versionLocale' );
     add_filter( 'post_title', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );
@@ -142,8 +142,8 @@ function qtranxf_add_main_filters(): void {
     add_filter( 'get_bloginfo_rss', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );
     add_filter( 'get_wp_title_rss', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );
     add_filter( 'wp_title_rss', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );
-    add_filter( 'the_title_rss', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );
-    add_filter( 'the_content_rss', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );
+    add_filter( 'the_title_rss', array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateRssText' ), 0 );
+    add_filter( 'the_content_rss', array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateRssText' ), 0 );
     add_filter( 'get_pages', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );
     add_filter( 'bloginfo_rss', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );
     add_filter( 'the_category_rss', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0 );

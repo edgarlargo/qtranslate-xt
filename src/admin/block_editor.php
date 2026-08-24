@@ -103,13 +103,41 @@ class QTX_Admin_Block_Editor {
             return $response;
         }
 
+        if ( ! $this->request_targets_registered_post( $request ) ) {
+            return $response;
+        }
+
+        global $q_config;
+        if ( ! is_string( $editor_lang ) || ! in_array( $editor_lang, $q_config['enabled_languages'], true ) ) {
+            return new WP_Error( 'qtx_editor_invalid_language', 'Invalid multilingual editor language.', array( 'status' => 400 ) );
+        }
+
         $request_body = json_decode( $request->get_body(), true );
         $post         = get_post( $request->get_param( 'id' ), ARRAY_A );
+
+        if ( ! is_array( $request_body ) || ! is_array( $post ) ) {
+            return new WP_Error( 'qtx_editor_invalid_request', 'Invalid multilingual editor request.', array( 'status' => 400 ) );
+        }
+
+        $revisions = $request->get_param( 'qtx_editor_revisions' );
+        if ( ! is_array( $revisions ) ) {
+            return new WP_Error( 'qtx_editor_revision_required', 'Multilingual editor revisions are required.', array( 'status' => 409 ) );
+        }
 
         $fields = [ 'title', 'content', 'excerpt' ];
         foreach ( $fields as $field ) {
             if ( ! isset( $request_body[ $field ] ) ) {
                 continue; // only the changed fields are set in the REST request
+            }
+
+            $current_raw = (string) $post[ 'post_' . $field ];
+            if ( ! isset( $revisions[ $field ] ) || ! is_string( $revisions[ $field ] )
+                 || ! hash_equals( hash( 'sha256', $current_raw ), $revisions[ $field ] ) ) {
+                return new WP_Error(
+                    'qtx_editor_conflict',
+                    'Multilingual content changed after the editor loaded.',
+                    array( 'status' => 409, 'field' => $field, 'revision' => hash( 'sha256', $current_raw ) )
+                );
             }
 
             // Local function to replace the new value with full ML content, updated with the input for the current language
@@ -206,19 +234,41 @@ class QTX_Admin_Block_Editor {
      */
     private function select_raw_response_language( $response, string $editor_lang ) {
         $response_data = $response->get_data();
+        $response_data['qtx_editor_revisions'] = array();
         if ( isset( $response_data['title']['raw'] ) ) {
+            $response_data['qtx_editor_revisions']['title'] = hash( 'sha256', $response_data['title']['raw'] );
             $response_data['title']['raw'] = qtranxf_use( $editor_lang, $response_data['title']['raw'], false, true );
         }
         if ( isset( $response_data['content']['raw'] ) ) {
+            $response_data['qtx_editor_revisions']['content'] = hash( 'sha256', $response_data['content']['raw'] );
             $response_data['content']['raw'] = qtranxf_use( $editor_lang, $response_data['content']['raw'], false, true );
         }
         if ( isset( $response_data['excerpt']['raw'] ) ) {
+            $response_data['qtx_editor_revisions']['excerpt'] = hash( 'sha256', $response_data['excerpt']['raw'] );
             $response_data['excerpt']['raw'] = qtranxf_use( $editor_lang, $response_data['excerpt']['raw'], false, true );
         }
         $response_data['qtx_editor_lang'] = $editor_lang;
         $response->set_data( $response_data );
 
         return $response;
+    }
+
+    private function request_targets_registered_post( WP_REST_Request $request ): bool {
+        $post_id = absint( $request->get_param( 'id' ) );
+        $post = $post_id > 0 ? get_post( $post_id ) : null;
+        if ( ! $post instanceof WP_Post ) {
+            return false;
+        }
+        $post_type = get_post_type_object( $post->post_type );
+        if ( ! is_object( $post_type ) || empty( $post_type->show_in_rest ) ) {
+            return false;
+        }
+        $rest_base = ! empty( $post_type->rest_base ) ? $post_type->rest_base : $post->post_type;
+        if ( ! is_string( $rest_base ) || preg_match( '/^[a-z0-9_-]+$/', $rest_base ) !== 1 ) {
+            return false;
+        }
+
+        return preg_match( '#^/wp/v2/' . preg_quote( $rest_base, '#' ) . '/' . $post_id . '(?:/autosaves)?$#', $request->get_route() ) === 1;
     }
 
 }

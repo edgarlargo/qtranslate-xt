@@ -5,6 +5,53 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once QTRANSLATE_DIR . '/src/class_translator.php';
 require_once QTRANSLATE_DIR . '/src/deprecated.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/MultilingualEntry.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/MultilingualValue.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/MultilingualDetector.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/MultilingualParser.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/MultilingualBuilder.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/TranslationResult.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/TranslationService.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/LanguageCatalog.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/LanguageContext.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/FallbackPolicy.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/LanguageRequest.php';
+require_once QTRANSLATE_DIR . '/src/Core/Multilingual/LanguageResolver.php';
+require_once QTRANSLATE_DIR . '/src/Core/Storage/FieldDefinition.php';
+require_once QTRANSLATE_DIR . '/src/Core/Storage/FieldRegistry.php';
+require_once QTRANSLATE_DIR . '/src/Core/Storage/RegisteredValueAdapter.php';
+require_once QTRANSLATE_DIR . '/src/Core/Storage/MetadataValue.php';
+require_once QTRANSLATE_DIR . '/src/Core/Integration/IntegrationDefinition.php';
+require_once QTRANSLATE_DIR . '/src/Core/Integration/IntegrationRegistry.php';
+require_once QTRANSLATE_DIR . '/src/Core/Integration/BuiltinModuleProvider.php';
+require_once QTRANSLATE_DIR . '/src/Core/Config/I18nConfigFilePolicy.php';
+require_once QTRANSLATE_DIR . '/src/Core/Config/I18nConfigPathMigration.php';
+require_once QTRANSLATE_DIR . '/src/Core/Config/LocalSqlFilePolicy.php';
+require_once QTRANSLATE_DIR . '/src/Core/Rest/RestTranslationContext.php';
+require_once QTRANSLATE_DIR . '/src/Core/Rest/RestLanguagePolicy.php';
+require_once QTRANSLATE_DIR . '/src/Core/Rest/RestRouteDefinition.php';
+require_once QTRANSLATE_DIR . '/src/Core/Rest/RestRouteRegistry.php';
+require_once QTRANSLATE_DIR . '/src/Core/Rest/RestRoutePolicyAdapter.php';
+require_once QTRANSLATE_DIR . '/src/Core/Rest/EditorFieldState.php';
+require_once QTRANSLATE_DIR . '/src/Core/Rest/EditorMergeResult.php';
+require_once QTRANSLATE_DIR . '/src/Core/Rest/EditorFieldMergeService.php';
+require_once QTRANSLATE_DIR . '/src/integration_api.php';
+require_once QTRANSLATE_DIR . '/src/Integration/WordPress/FrontendTranslationAdapter.php';
+require_once QTRANSLATE_DIR . '/src/Integration/WordPress/RegisteredOptionAdapter.php';
+require_once QTRANSLATE_DIR . '/src/Integration/WordPress/RegisteredMetadataAdapter.php';
+require_once QTRANSLATE_DIR . '/src/Integration/WordPress/TermTranslationRepository.php';
+require_once QTRANSLATE_DIR . '/src/Integration/WordPress/RegisteredPostRestFieldAdapter.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfRuntime.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfRuntimeDetector.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfRuntimeBootstrap.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfValueContext.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfFieldDefinition.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfFieldSchema.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfValueProjector.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfLifecycleAdapter.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfScalarTranslator.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfAdminEditingService.php';
+require_once QTRANSLATE_DIR . '/src/Integration/WooCommerce/WooCommerceDataPolicy.php';
 require_once QTRANSLATE_DIR . '/src/language_blocks.php';
 require_once QTRANSLATE_DIR . '/src/language_config.php';
 require_once QTRANSLATE_DIR . '/src/language_detect.php';
@@ -27,6 +74,7 @@ function qtranxf_init_language(): void {
     global $q_config, $pagenow;
 
     qtranxf_load_config();
+    qtx_boot_integration_registry();
 
     // 'url_info' hash is not for external use, it is subject to change at any time.
     // 'url_info' is preserved on reloadConfig

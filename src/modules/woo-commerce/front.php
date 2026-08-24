@@ -42,12 +42,15 @@ function qtranxf_wc_add_filters_front(): void {
 }
 
 function qtranxf_wc_filter_postmeta( $original_value, int $object_id, string $meta_key = '', bool $single = false ) {
-    switch ( $meta_key ) {
-        case '_product_attributes':
-            return $original_value;
-        default:
-            return qtranxf_filter_postmeta( $original_value, $object_id, $meta_key, $single );
+    static $policy;
+    if ( $policy === null ) {
+        $policy = new \QTX\Integration\WooCommerce\WooCommerceDataPolicy();
     }
+    if ( $policy->isTechnicalMetaKey( $meta_key ) ) {
+        return $original_value;
+    }
+
+    return qtranxf_filter_postmeta( $original_value, $object_id, $meta_key, $single );
 }
 
 /**
@@ -80,10 +83,25 @@ function qtranxf_wc_dropdown_variation_attribute_options_args( $args ) {
  * do_action( 'woocommerce_checkout_update_order_meta', $order_id, $this->posted );
  * in /woocommerce/includes/class-wc-checkout.php
  */
-add_action( 'woocommerce_checkout_update_order_meta', 'qtranxf_wc_save_post_meta', 100 );
-function qtranxf_wc_save_post_meta( $order_id ) {
+add_action( 'woocommerce_checkout_update_order_meta', 'qtranxf_wc_save_order_language', 100 );
+add_action( 'woocommerce_checkout_order_created', 'qtranxf_wc_save_order_language', 100 );
+function qtranxf_wc_save_order_language( $order_or_id ): void {
     global $q_config;
-    add_post_meta( $order_id, '_user_language', $q_config['language'], true );
+
+    $order = is_object( $order_or_id ) && is_a( $order_or_id, 'WC_Abstract_Order' )
+        ? $order_or_id
+        : wc_get_order( absint( $order_or_id ) );
+    if ( ! $order || $order->get_meta( '_user_language', true ) ) {
+        return;
+    }
+
+    $order->update_meta_data( '_user_language', $q_config['language'] );
+    $order->save_meta_data();
+}
+
+/** @deprecated Use qtranxf_wc_save_order_language(). */
+function qtranxf_wc_save_post_meta( $order_id ): void {
+    qtranxf_wc_save_order_language( $order_id );
 }
 
 function qtranxf_wc_paypal_args( $args ) {
@@ -106,8 +124,9 @@ if ( ! wp_doing_cron() ) {
  */
 function qtranxf_wc_get_cart_hash( $cart ): string {
     $lang = qtranxf_getLanguage();
+    $policy = new \QTX\Integration\WooCommerce\WooCommerceDataPolicy();
 
-    return md5( json_encode( $cart ) . $lang );
+    return $policy->cartHash( $cart, $lang );
 }
 
 /**

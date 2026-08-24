@@ -1,0 +1,114 @@
+# ACF compatibility
+
+Date: 2026-08-24
+Branch: `modernisation`
+
+## Native architecture
+
+qTranslate-XT now registers the ACF module before themes load when the module
+is enabled. The trusted loader does not load ACF itself and does not inspect an
+ACF filesystem path. `AcfRuntimeBootstrap` waits for the official `acf/init`
+lifecycle, retries at `after_setup_theme`/`init` for late embedded runtimes, and
+initializes the adapter exactly once. An already-fired `acf/init` is detected
+through `did_action()`.
+
+Module availability uses the generic runtime-provider predicate
+`qtx_module_runtime_available_{module}`. The stored module state remains an
+enable/disable preference; it cannot supply code paths. ACF plugin basenames
+are fallback information for the legacy settings screen, not the authoritative
+runtime signal. qTranslate-XT never adds fake ACF entries to `active_plugins`.
+
+## Value contract
+
+- Storage remains one unchanged inline multilingual value per leaf.
+- Admin/editor context is `raw`; frontend context is `translated`.
+- The mode is derived from QTX's resolved request context, not from
+  `is_admin()`, and can be narrowly overridden by trusted PHP through
+  `qtx_acf_value_context`.
+- Translation is registered only on official field-specific ACF hooks for
+  `text`, `textarea` and `wysiwyg` (plus their deprecated QTX equivalents).
+- Options values are supported for both `option` and `options` post IDs.
+- ACF stable `field_*` references prevent global QTX option/metadata filters
+  from translating values before ACF has supplied the field type.
+- Group, Repeater and Flexible Content use ACF's own recursive formatting;
+  only whitelisted child leaves receive QTX's field-specific formatter.
+- image, file, number, boolean, IDs, URL, email, relationship, post object,
+  color, coordinates, layouts, objects and serialized technical values are not
+  translated by the ACF adapter.
+- The parser remains an opaque-text parser; it performs no HTML sanitation.
+
+The existing qTranslate ACF admin JavaScript attaches the normal QTX content
+hook to standard Text/Textarea/WYSIWYG fields. Official ACF `new_field/type=*`
+actions cover dynamically appended Group/Repeater/Flexible leaves. It does not
+create `name_lv`/`name_ru`/`name_en` fields and requires no external bridge.
+
+## Executed compatibility matrix
+
+| Scenario | Result | Evidence |
+|---|---|---|
+| ACF Free plugin runtime | **PASS**, 6.8.8 | clean WordPress 7.1 lab |
+| Theme-bundled/custom-path ACF | **PASS**, 6.8.8 | plugin deactivated; theme `inc/acf/acf.php`; no fake active entry |
+| ACF loaded after QTX bootstrap | **PASS** | real theme load plus bootstrap unit test |
+| Exactly-once initialization | **PASS** | lifecycle unit tests |
+| ACF Pro runtime capability detection | **PASS unit contract** | injectable Pro runtime predicate; no basename/path dependency |
+| ACF Pro runtime | **PASS, 5.7.7** | supplied package; WordPress 7.1 / PHP 8.4 disposable lab |
+| Options storage via `option` / `options` | **PASS with ACF Free core API** | real `update_field`/`get_field`; raw DB values retained |
+| Text/Textarea/WYSIWYG frontend LV/RU/EN | **PASS**, ACF Free 6.8.8 | four observed production fixtures |
+| Admin raw/edit/reload UI | **PASS server lifecycle/render; interactive JS NOT EXECUTED** | raw markers rendered; QTX core/ACF bundles present in real Options Page HTML |
+| Group | **PASS, real ACF Pro runtime** | multilingual and technical child leaves |
+| Repeater/Flexible Content | **PASS, real ACF Pro runtime** | multilingual leaves projected; technical/layout values retained |
+| ACF Pro Options Page | **PASS runtime/storage/enqueue** | registration/lookup, raw storage, translated reads, required admin assets |
+| Technical fields unchanged | **PASS unit and storage-boundary tests** | field whitelist and stable reference boundary |
+
+Real fixture values included:
+
+```text
+[:lv]Sazināties ar mums[:ru]Связаться с нами[:en]Contact us[:]
+[:lv]Nosūti mums ziņu![:ru]Отправьте нам сообщение![:en]Send us a message![:]
+[:lv]Vārds Uzvārds[:ru]Имя Фамилия[:en]Name Surname[:]
+[:lv]Sūtīt[:ru]Отправить[:en]Send[:]
+```
+
+All normal ACF Text/Textarea/WYSIWYG frontend reads returned only the selected
+language. The corresponding WordPress options remained byte-for-byte inline
+multilingual strings after LV/RU/EN reads.
+
+## External bridge
+
+No production or test code references `qTranslate-XT ACF Options Bridge Safe`.
+The native value adapter now registers its type-specific format filters before
+the late ACF runtime bootstrap. Theme-embedded Options reads therefore do not
+depend on that external bridge or on mutation of `active_plugins`.
+The native runtime does not require it, a second ACF installation, fake plugin
+state, or theme field-definition changes.
+
+## ACF Pro validation result
+
+The supplied ACF Pro 5.7.7 package was exercised in a disposable WordPress 7.1 /
+PHP 8.4 installation. Native Options Page registration/lookup, scalar raw
+storage and LV/RU/EN projection, Group, Repeater and Flexible Content all
+passed. Technical values and Flexible layout keys remained unchanged, and the
+runner removed its fixture values.
+
+The test exposed and fixed an admin lifecycle ordering defect: the ACF admin
+object was previously created only at `acf/init`, after QTX had already applied
+`qtranslate_admin_config`. Admin hook registration now occurs when the trusted
+module loader runs, while value adapters still initialize on `acf/init`.
+The real Options Page HTML now contains both `dist/core.js` and
+`dist/modules/acf.js`. The available browser surface did not execute page
+JavaScript, so mouse/keyboard language-tab interaction is not claimed as an
+executed browser test. No ACF-specific external-resource blocker remains for
+the tested 5.7.7 package; compatibility with newer ACF Pro versions is not
+inferred.
+
+The disposable vendor-runtime runner is
+`tests/Integration/acf-native-runtime-smoke.php`. In a dedicated installation
+with QTX, ACF and LV/RU/EN enabled, execute it once per requested language:
+
+```text
+wp eval-file tests/Integration/acf-native-runtime-smoke.php
+```
+
+It tests scalar Options storage plus Group and, when the real Pro field types
+exist, Repeater/Flexible Content and Options Page capability. It refuses an
+existing fixture namespace and removes all fixture options in `finally`.

@@ -9,19 +9,26 @@ class QTX_Module_Acf_Extended {
      */
     const ACF_CATEGORY_QTX = 'qTranslate-XT';
 
+    private bool $fields_registered = false;
+
     /**
      * Constructor
      */
     public function __construct() {
-        // a higher priority is needed for custom admin options (ACF PRO)
-        add_filter( 'acf/format_value', array( $this, 'format_value' ), 5 );
         add_action( 'acf/include_fields', array( $this, 'include_fields' ), 5 );
+        if ( function_exists( 'did_action' ) && did_action( 'acf/include_fields' ) > 0 ) {
+            $this->include_fields();
+        }
     }
 
     /**
      * Register the fields in the ACF plugin.
      */
     public function include_fields(): void {
+        if ( $this->fields_registered ) {
+            return;
+        }
+        $this->fields_registered = true;
         require_once __DIR__ . '/fields/file.php';
         require_once __DIR__ . '/fields/image.php';
         require_once __DIR__ . '/fields/post_object.php';
@@ -37,25 +44,6 @@ class QTX_Module_Acf_Extended {
         acf()->fields->register_field_type( new QTX_Module_Acf_Field_Textarea() );
         acf()->fields->register_field_type( new QTX_Module_Acf_Field_Url() );
         acf()->fields->register_field_type( new QTX_Module_Acf_Field_Wysiwyg() );
-    }
-
-    /**
-     * Hook/override ACF format_value
-     *
-     * This filter is applied to the $value after it is loaded from the db and
-     * before it is returned to the template via functions such as get_field().
-     *
-     * @param mixed $value
-     *
-     * @return array|mixed|string|void
-     */
-    public function format_value( $value ) {
-        if ( is_string( $value ) ) {
-            $value = qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage( $value );
-            $value = maybe_unserialize( $value );
-        }
-
-        return $value;
     }
 
     /**

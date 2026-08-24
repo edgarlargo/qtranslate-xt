@@ -574,6 +574,21 @@ function qtranxf_write_config_log( array $config, string $suffix = '', ?string $
 }
 
 /**
+ * Unserialize legacy qTranslate data without instantiating application classes.
+ * Scalar and array formats remain compatible with WordPress maybe_unserialize().
+ *
+ * @param mixed $value
+ * @return mixed
+ */
+function qtranxf_maybe_unserialize_safe( $value ) {
+    if ( ! is_string( $value ) || ! is_serialized( $value ) ) {
+        return $value;
+    }
+
+    return @unserialize( trim( $value ), array( 'allowed_classes' => false ) );
+}
+
+/**
  * @since 3.4
  */
 function qtranxf_add_filters( array $filters ): void {
@@ -582,7 +597,10 @@ function qtranxf_add_filters( array $filters ): void {
             if ( $prio === '' ) {
                 continue;
             }
-            add_filter( $name, 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', $prio );
+            $callback = $name === 'the_title'
+                ? array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateTitle' )
+                : 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage';
+            add_filter( $name, $callback, $prio );
         }
     }
     if ( ! empty( $filters['url'] ) ) {
@@ -598,7 +616,7 @@ function qtranxf_add_filters( array $filters ): void {
             if ( $prio === '' ) {
                 continue;
             }
-            add_filter( $name, 'qtranxf_useTermLib', $prio );
+            add_filter( $name, array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateTerm' ), $prio );
         }
     }
 }
@@ -612,7 +630,10 @@ function qtranxf_remove_filters( array $filters ): void {
             if ( $prio === '' ) {
                 continue;
             }
-            remove_filter( $name, 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', $prio );
+            $callback = $name === 'the_title'
+                ? array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateTitle' )
+                : 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage';
+            remove_filter( $name, $callback, $prio );
         }
     }
     if ( ! empty( $filters['url'] ) ) {
@@ -628,7 +649,7 @@ function qtranxf_remove_filters( array $filters ): void {
             if ( $prio === '' ) {
                 continue;
             }
-            remove_filter( $name, 'qtranxf_useTermLib', $prio );
+            remove_filter( $name, array( \QTX\Integration\WordPress\FrontendTranslationAdapter::class, 'translateTerm' ), $prio );
         }
     }
 }
@@ -662,4 +683,3 @@ function qtranxf_match_language_locale( string $locale ): ?string {
 
     return null;
 }
-

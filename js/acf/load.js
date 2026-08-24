@@ -50,6 +50,18 @@ wp.hooks.addAction('qtranx.load', 'qtranx/acf/load', function () {
         // The general case is for content fields, not in ACF settings.
         return isTranslatableStandardField(element.type);
     }
+    const attachStandardField = function (field, selector) {
+        if (!field) {
+            return;
+        }
+        const fieldElement = field.$el ? field.$el : $(field);
+        fieldElement.find(selector).each(function () {
+            if (!qTranx.hooks.hasContentHook(this) && isTranslatableElementForPostType(this, postType)) {
+                qTranx.hooks.addContentHook(this);
+            }
+        });
+    };
+
     // Add hooks for translatable standard fields, defined as field type -> selector.
     const fieldTypes = {
         text: 'input:text',
@@ -57,12 +69,16 @@ wp.hooks.addAction('qtranx.load', 'qtranx/acf/load', function () {
     };
     $.each(fieldTypes, function (fieldType, selector) {
         acf.findFields({type: fieldType}).each(function () {
-            // The hooks must be set on the child elements found by the selector, assuming a single one by field.
-            $(this).find(selector).each(function () {
-                if (!qTranx.hooks.hasContentHook(this) && isTranslatableElementForPostType(this, postType)) {
-                    qTranx.hooks.addContentHook(this);
-                }
-            });
+            attachStandardField(this, selector);
+        });
+        // ACF emits this official action for fields appended later by Group,
+        // Repeater and Flexible Content. Initial fields are handled by the scan
+        // above because their new_field action may predate qtranx.load.
+        acf.addAction('new_field/type=' + fieldType, function (field) {
+            attachStandardField(field, selector);
+            if (qTranx.config.isEditorModeLSB()) {
+                syncLanguageSwitch(qTranx.hooks.getActiveLanguage());
+            }
         });
     });
 

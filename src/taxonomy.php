@@ -14,8 +14,8 @@ function qtranxf_term_set_i18n_config( $term ) {
     if ( isset( $term->name ) ) {
         global $q_config;
         $default_language = $q_config['default_language'];
-        if ( isset( $q_config['term_name'][ $term->name ] ) ) {
-            $ts                      = $q_config['term_name'][ $term->name ];
+        $ts = qtx_get_term_translation_repository()->translations( $term );
+        if ( $ts !== array() ) {
             $ts[ $default_language ] = $term->name;
         } else {
             $ts = array( $default_language => $term->name );

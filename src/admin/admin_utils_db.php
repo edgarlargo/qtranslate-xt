@@ -14,15 +14,27 @@ function qtranxf_convert_database( string $action ): string {
             }
             break;
         case 'db_split':
-            if ( ! empty( $_POST['db_file'] ) ) {
+            if ( ! empty( $_POST['db_file'] ) && is_string( $_POST['db_file'] ) ) {
                 global $q_config;
-                $ifp                 = wp_unslash( sanitize_text_field( $_POST['db_file'] ) );
+                $requested_path = wp_unslash( $_POST['db_file'] );
+                $roots = apply_filters( 'qtranslate_database_file_roots', array( ABSPATH, WP_CONTENT_DIR ) );
+                $policy = new \QTX\Core\Config\LocalSqlFilePolicy( is_array( $roots ) ? $roots : array() );
+                $ifp = $policy->approveInput( $requested_path );
+                if ( $ifp === null ) {
+                    return __( 'Database split was not run: the input must be a readable .sql file inside an approved WordPress directory.', 'qtranslate' );
+                }
                 $q_config['db_file'] = $ifp;
-                $db_langs            = wp_unslash( sanitize_text_field( $_POST['db_langs'] ) );
-                $languages_to_keep   = preg_split( '/[,\\s]+/', $db_langs );
+                $db_langs = isset( $_POST['db_langs'] ) && is_string( $_POST['db_langs'] ) ? wp_unslash( $_POST['db_langs'] ) : '';
+                $requested_languages = preg_split( '/[,\\s]+/', strtolower( $db_langs ), -1, PREG_SPLIT_NO_EMPTY );
+                $languages_to_keep = array_values( array_unique( array_filter(
+                    is_array( $requested_languages ) ? $requested_languages : array(),
+                    static function ( $language ): bool {
+                        return is_string( $language ) && preg_match( '/^' . QTX_LANG_CODE_FORMAT . '$/', $language ) === 1;
+                    }
+                ) ) );
                 $enabled_languages   = $q_config['enabled_languages'];
                 $default_language    = $q_config['default_language'];
-                if ( ! is_array( $languages_to_keep ) ) {
+                if ( $languages_to_keep === array() ) {
                     $languages_to_keep = array( $default_language );
                 }
                 $q_config['db_langs']          = implode( ', ', $languages_to_keep );
@@ -193,7 +205,7 @@ function qtranxf_convert_database_options( string $action ): void {
                 if ( ! qtranxf_isMultilingual( $row->option_value ) ) {
                     continue;
                 }
-                $value            = maybe_unserialize( $row->option_value );
+                $value            = qtranxf_maybe_unserialize_safe( $row->option_value );
                 $value_converted  = qtranxf_convert_to_b_deep( $value );
                 $value_serialized = maybe_serialize( $value_converted );
                 if ( $value_serialized === $row->option_value ) {
@@ -208,7 +220,7 @@ function qtranxf_convert_database_options( string $action ): void {
                 if ( ! qtranxf_isMultilingual( $row->option_value ) ) {
                     continue;
                 }
-                $value            = maybe_unserialize( $row->option_value );
+                $value            = qtranxf_maybe_unserialize_safe( $row->option_value );
                 $value_converted  = qtranxf_convert_to_b_no_closing_deep( $value );
                 $value_serialized = maybe_serialize( $value_converted );
                 if ( $value_serialized === $row->option_value ) {
@@ -272,7 +284,7 @@ function qtranxf_convert_database_postmeta( string $action ): void {
                 if ( ! qtranxf_isMultilingual( $row->meta_value ) ) {
                     continue;
                 }
-                $value            = maybe_unserialize( $row->meta_value );
+                $value            = qtranxf_maybe_unserialize_safe( $row->meta_value );
                 $value_converted  = qtranxf_convert_to_b_deep( $value );
                 $value_serialized = maybe_serialize( $value_converted );
                 if ( $value_serialized === $row->meta_value ) {
@@ -286,7 +298,7 @@ function qtranxf_convert_database_postmeta( string $action ): void {
                 if ( ! qtranxf_isMultilingual( $row->meta_value ) ) {
                     continue;
                 }
-                $value            = maybe_unserialize( $row->meta_value );
+                $value            = qtranxf_maybe_unserialize_safe( $row->meta_value );
                 $value_converted  = qtranxf_convert_to_b_no_closing_deep( $value );
                 $value_serialized = maybe_serialize( $value_converted );
                 if ( $value_serialized === $row->meta_value ) {
@@ -304,7 +316,7 @@ function qtranxf_convert_database_postmeta( string $action ): void {
  */
 function qtranxf_split_database_file( string $ifp, array $languages_to_keep ): string {
     global $q_config;
-    $errors = $q_config['url_info']['errors'];
+    $errors = &$q_config['url_info']['errors'];
     $ifh    = fopen( $ifp, 'r' );
     if ( ! $ifh ) {
         $errors[] = sprintf( __( 'Failed to open input database file "%s"', 'qtranslate' ), $ifp );

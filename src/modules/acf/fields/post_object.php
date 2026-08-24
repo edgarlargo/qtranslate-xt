@@ -26,7 +26,7 @@ class QTX_Module_Acf_Field_Post_Object extends acf_field_post_object {
         global $q_config;
         $languages       = qtranxf_getSortedLanguages( true );
         $decoded         = QTX_Module_Acf_Extended::decode_language_values( $field['value'] );
-        $values          = array_map( 'maybe_unserialize', $decoded );
+        $values          = array_map( 'qtranxf_maybe_unserialize_safe', $decoded );
         $currentLanguage = qtranxf_getLanguage();
 
         $atts = array(
@@ -73,7 +73,7 @@ class QTX_Module_Acf_Field_Post_Object extends acf_field_post_object {
      */
     function format_value( $value, $post_id, $field ) {
         $value = qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage( $value );
-        $value = maybe_unserialize( $value );
+        $value = qtranxf_maybe_unserialize_safe( $value );
 
         return parent::format_value( $value, $post_id, $field );
     }

@@ -446,6 +446,51 @@ function qtranxf_slugs_language_detect_redirect( $url_lang, $url_orig, $url_info
 }
 
 /**
+ * Add only configured qTranslate/WordPress hosts to WordPress' safe redirect
+ * allowlist. Trusted PHP may still extend the standard WordPress filter.
+ *
+ * @param string[] $hosts
+ * @return string[]
+ */
+function qtranxf_redirect_allowed_hosts( array $hosts ): array {
+    global $q_config;
+
+    $candidates = array( home_url(), site_url() );
+    if ( is_multisite() ) {
+        $candidates[] = network_home_url();
+    }
+    if ( isset( $q_config['domains'] ) && is_array( $q_config['domains'] ) ) {
+        $candidates = array_merge( $candidates, array_values( $q_config['domains'] ) );
+    }
+    foreach ( $candidates as $candidate ) {
+        if ( ! is_string( $candidate ) || $candidate === '' ) {
+            continue;
+        }
+        $parsed = parse_url( strpos( $candidate, '://' ) === false ? 'https://' . ltrim( $candidate, '/' ) : $candidate );
+        if ( ! is_array( $parsed ) || ! isset( $parsed['host'] ) ) {
+            continue;
+        }
+        $host = strtolower( rtrim( $parsed['host'], '.' ) );
+        $validation_host = trim( $host, '[]' );
+        $valid_host = filter_var( $validation_host, FILTER_VALIDATE_IP ) !== false
+            || filter_var( $validation_host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME ) !== false;
+        if ( $host !== '' && $valid_host ) {
+            $hosts[] = $host;
+        }
+    }
+
+    return array_values( array_unique( $hosts ) );
+}
+
+function qtranxf_safe_language_redirect( string $target, int $status = 301 ): bool {
+    add_filter( 'allowed_redirect_hosts', 'qtranxf_redirect_allowed_hosts' );
+    $redirected = wp_safe_redirect( $target, $status, 'qTranslate-XT' );
+    remove_filter( 'allowed_redirect_hosts', 'qtranxf_redirect_allowed_hosts' );
+
+    return $redirected;
+}
+
+/**
  * Check if a URL redirection (301 permanent) is needed and attempt to do so.
  * Two main causes of redirect:
  *  - the fetched URL info contains already a 'doredirect' order, previously set;
@@ -482,9 +527,11 @@ function qtranxf_check_url_maybe_redirect( &$url_info ) {
          */
         $target = apply_filters( 'qtranslate_language_detect_redirect', $url_lang, $url_orig, $url_info );
         if ( $target !== false && $target != $url_orig ) {
-            wp_redirect( $target, 301, 'qTranslate-XT' );  # Permanent redirect.
-            nocache_headers(); // prevent browser from caching redirection
-            exit();
+            if ( qtranxf_safe_language_redirect( $target ) ) {
+                nocache_headers(); // prevent browser from caching redirection
+                exit();
+            }
+            $url_info['doredirect'] .= ' - cancelled, because target host is not allowed';
         } else {
             // neutral path
             $url_info['doredirect'] .= ' - cancelled, because it goes to the same target - neutral URL';

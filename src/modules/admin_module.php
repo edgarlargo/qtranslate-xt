@@ -37,6 +37,9 @@ class QTX_Admin_Module {
      */
     public bool $has_settings;
 
+    /** @var string|null Runtime lifecycle hook for late dependencies. */
+    public $runtime_hook;
+
     /**
      * Constructor from fields array.
      *
@@ -50,6 +53,7 @@ class QTX_Admin_Module {
         $this->plugins      = $fields['plugins'] ?? array();
         $this->incompatible = $fields['incompatible'] ?? null;
         $this->has_settings = $fields['has_settings'] ?? false;
+        $this->runtime_hook = $fields['runtime_hook'] ?? null;
     }
 
     /**
@@ -81,6 +85,7 @@ class QTX_Admin_Module {
                 'plugins'      => [ 'advanced-custom-fields/acf.php', 'advanced-custom-fields-pro/acf.php' ],
                 'incompatible' => 'acf-qtranslate/acf-qtranslate.php',
                 'has_settings' => true,
+                'runtime_hook' => 'acf/init',
             ],
             [
                 'id'           => 'all-in-one-seo-pack',

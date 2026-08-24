@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 function qtranxf_migrate_options_update( string $name_to, string $name_from ): void {
     global $wpdb;
-    $option_names = $wpdb->get_col( "SELECT `option_name` FROM {$wpdb->options} WHERE `option_name` LIKE '$name_to\_%'" );
+    $option_like = $wpdb->esc_like( $name_to . '_' ) . '%';
+    $option_names = $wpdb->get_col( $wpdb->prepare( "SELECT `option_name` FROM {$wpdb->options} WHERE `option_name` LIKE %s", $option_like ) );
     foreach ( $option_names as $name ) {
         if ( strpos( $name, '_flag_location' ) > 0 ) {
             continue;
@@ -21,7 +22,8 @@ function qtranxf_migrate_options_update( string $name_to, string $name_from ): v
 
 function qtranxf_migrate_options_copy( string $name_to, string $name_from ): void {
     global $wpdb;
-    $options = $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->options} WHERE `option_name` LIKE '$name_from\_%'" );
+    $option_like = $wpdb->esc_like( $name_from . '_' ) . '%';
+    $options = $wpdb->get_results( $wpdb->prepare( "SELECT option_name, option_value FROM {$wpdb->options} WHERE `option_name` LIKE %s", $option_like ) );
 
     $skip_options = [
         'qtranslate_flag_location',
@@ -48,7 +50,7 @@ function qtranxf_migrate_options_copy( string $name_to, string $name_from ): voi
     foreach ( $options as $option ) {
         $name = $option->option_name;
         if ( ! in_array( $name, $skip_options ) and ! strpos( $name, '_flag_location' ) ) {
-            $value = maybe_unserialize( $option->option_value );
+            $value = qtranxf_maybe_unserialize_safe( $option->option_value );
             $nm    = str_replace( $name_from, $name_to, $name );
             update_option( $nm, $value );
         }
@@ -177,8 +179,11 @@ function qtranxf_admin_section_import_export( string $request_uri ): void {
         <tr id="qtranslate-convert-database">
             <th scope="row"><?php _e( 'Convert Database', 'qtranslate' ) ?></th>
             <td>
-                <?php printf( __( 'If you are updating from qTranslate 1.x or Polyglot, <a href="%s">click here</a> to convert posts to the new language tag format.', 'qtranslate' ), $request_uri . '&convert=true#import' ) ?>
-                <?php printf( __( 'If you have installed qTranslate for the first time on a Wordpress with existing posts, you can either go through all your posts manually and save them in the correct language or <a href="%s">click here</a> to mark all existing posts as written in the default language.', 'qtranslate' ), $request_uri . '&markdefault=true#import' ) ?>
+                <?php esc_html_e( 'If you are updating from qTranslate 1.x or Polyglot, use this action to convert posts to the new language tag format:', 'qtranslate' ); ?>
+                <button type="submit" form="qtranxs-state-action-form" class="button-link" name="convert" value="1"><?php esc_html_e( 'convert posts', 'qtranslate' ); ?></button>
+                <br>
+                <?php esc_html_e( 'If you have installed qTranslate for the first time on a WordPress site with existing posts, use this action to mark all existing posts as written in the default language:', 'qtranslate' ); ?>
+                <button type="submit" form="qtranxs-state-action-form" class="button-link" name="markdefault" value="1"><?php esc_html_e( 'mark existing posts', 'qtranslate' ); ?></button>
                 <?php _e( 'Both processes are <b>irreversible</b>! Be sure to make a full database backup before clicking one of the links.', 'qtranslate' ) ?>
                 <br/><br/>
                 <label for="qtranxs_convert_database_none"><input type="radio" name="convert_database"
@@ -216,6 +221,10 @@ function qtranxf_admin_section_import_export( string $request_uri ): void {
                             value="<?php if ( ! empty( $q_config['db_langs'] ) ) {
                                 echo $q_config['db_langs'];
                             } ?>"/><br/><br/>
+                <label for="qtranxs_convert_database_confirm"><input type="checkbox"
+                        name="convert_database_confirm" id="qtranxs_convert_database_confirm" value="1"/>
+                    <?php esc_html_e( 'I have a current database backup and confirm the selected irreversible database conversion.', 'qtranslate' ); ?>
+                </label><br/><br/>
                 <small><?php echo sprintf( __( 'In order to remove one or more languages from entire database, you may dump the database into a %s file, then run this procedure and upload one of the new clean %s files back to the server. A separate clean database will also be saved fir each excluded language.', 'qtranslate' ), '.sql', '.sql' )//.sprintf(__('%sRead more%s.', 'qtranslate'), '&nbsp;<a href="">', '</a>')
                     ?></small>
             </td>

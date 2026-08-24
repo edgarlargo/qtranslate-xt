@@ -91,31 +91,23 @@ function qtranxf_default_default_language(): string {
  * @since 3.3.2
  */
 function qtranxf_load_config_files( array $json_files ): array {
-    $content_dir = null;
-    $qtransx_dir = null;
+    $roots = apply_filters( 'qtranslate_i18n_config_roots', array( QTRANSLATE_DIR, WP_CONTENT_DIR ) );
+    if ( ! is_array( $roots ) ) {
+        $roots = array( QTRANSLATE_DIR, WP_CONTENT_DIR );
+    }
+    $maximum_bytes = (int) apply_filters( 'qtranslate_i18n_config_maximum_bytes', 1048576 );
+    $file_policy = new \QTX\Core\Config\I18nConfigFilePolicy( $roots, $maximum_bytes );
     foreach ( $json_files as $index => $config_file ) {
-        if ( file_exists( $config_file ) ) {
-            continue;
-        }
-        $full_path = null;
-        if ( $config_file[0] == '.' && $config_file[1] == '/' ) {
-            if ( ! $qtransx_dir ) {
-                $qtransx_dir = QTRANSLATE_DIR;
-            }
-            $full_path = $qtransx_dir . substr( $config_file, 1 );
-        }
-        if ( ! file_exists( $full_path ) ) {
-            if ( ! $content_dir ) {
-                $content_dir = trailingslashit( WP_CONTENT_DIR );
-            }
-            $full_path = $content_dir . $config_file;
-        }
-        if ( file_exists( $full_path ) ) {
-            $json_files[ $index ] = $full_path;
-        } else {
+        $full_path = is_string( $config_file )
+            ? $file_policy->resolve( $config_file, QTRANSLATE_DIR, WP_CONTENT_DIR )
+            : null;
+        if ( $full_path === null ) {
+            $config_file = is_scalar( $config_file ) ? (string) $config_file : '[invalid path]';
             qtranxf_error_log( sprintf( __( 'Could not find file "%s" listed in option "%s".', 'qtranslate' ), '<strong>' . $config_file . '</strong>', '<a href="' . admin_url( 'options-general.php?page=qtranslate-xt#integration' ) . '">' . __( 'Configuration Files', 'qtranslate' ) . '</a>' ) . ' ' . __( 'Please, either put file in place or update the option.', 'qtranslate' ) . ' ' . sprintf( __( 'Once the problem is fixed, re-save the configuration by pressing button "%s" on plugin %ssettings page%s.', 'qtranslate' ), __( 'Save Changes', 'qtranslate' ), '<a href="' . admin_url( 'options-general.php?page=qtranslate-xt#integration' ) . '">', '</a>' ) );
             unset( $json_files[ $index ] );
+            continue;
         }
+        $json_files[ $index ] = $full_path;
     }
 
     $cfg_all               = [ 'admin-config' => [], 'front-config' => [] ];
@@ -123,13 +115,13 @@ function qtranxf_load_config_files( array $json_files ): array {
     $deprecated_js_configs = [];
 
     foreach ( $json_files as $config_file ) {
-        $cfg_json = file_get_contents( $config_file );
-        if ( ! $cfg_json ) {
+        $cfg_json = $file_policy->read( $config_file );
+        if ( $cfg_json === null || $cfg_json === '' ) {
             qtranxf_error_log( sprintf( __( 'Could not load file "%s" listed in option "%s".', 'qtranslate' ), '<strong>' . $config_file . '</strong>', '<a href="' . admin_url( 'options-general.php?page=qtranslate-xt#integration' ) . '">' . __( 'Configuration Files', 'qtranslate' ) . '</a>' ) . ' ' . __( 'Please, make sure the file is accessible and readable.', 'qtranslate' ) . ' ' . sprintf( __( 'Once the problem is fixed, re-save the configuration by pressing button "%s" on plugin %ssettings page%s.', 'qtranslate' ), __( 'Save Changes', 'qtranslate' ), '<a href="' . admin_url( 'options-general.php?page=qtranslate-xt#integration' ) . '">', '</a>' ) );
             break;
         }
         $cfg = json_decode( $cfg_json, true );
-        if ( empty( $cfg ) || ! is_array( $cfg ) ) {
+        if ( empty( $cfg ) || ! is_array( $cfg ) || ! $file_policy->validateSchema( $cfg ) ) {
             qtranxf_error_log( sprintf( __( 'Could not parse %s file "%s" listed in option "%s".', 'qtranslate' ), 'JSON', '<strong>' . $config_file . '</strong>', '<a href="' . admin_url( 'options-general.php?page=qtranslate-xt#integration' ) . '">' . __( 'Configuration Files', 'qtranslate' ) . '</a>' ) . ' ' . __( 'Please, correct the syntax error in the file.', 'qtranslate' ) . ' ' . sprintf( __( 'Once the problem is fixed, re-save the configuration by pressing button "%s" on plugin %ssettings page%s.', 'qtranslate' ), __( 'Save Changes', 'qtranslate' ), '<a href="' . admin_url( 'options-general.php?page=qtranslate-xt#integration' ) . '">', '</a>' ) );
             break;
         }
@@ -192,6 +184,12 @@ function qtranxf_get_option_config_files(): array {
     if ( ! is_array( $config_files ) ) {
         $config_files = $config_files_def;
         delete_option( 'qtranslate_config_files' );
+    } else {
+        $repaired = \QTX\Core\Config\I18nConfigPathMigration::repairBundledPath( $config_files );
+        if ( $repaired !== $config_files && is_readable( QTRANSLATE_DIR . '/i18n-config.json' ) ) {
+            $config_files = $repaired;
+            update_option( 'qtranslate_config_files', $config_files );
+        }
     }
 
     return $config_files;

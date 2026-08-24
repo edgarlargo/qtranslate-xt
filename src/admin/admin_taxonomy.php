@@ -248,24 +248,14 @@ function qtranxf_term_del_translation( int $term_id, int $tt_id, string $taxonom
         return;
     }
     global $q_config;
-    $term_name = &$q_config['term_name'];
     $name      = $term->name;
-    $changed   = false;
-    if ( isset( $term_name[ $name ] ) ) {
-        unset( $term_name[ $name ] );
-        $changed = true;
-    }
+    $legacy_names = array( $name );
     if ( qtranxf_isMultilingual( $name ) ) {
         $default_language = $q_config['default_language'];
         $name             = qtranxf_use_language( $default_language, $name, false, true );
-        if ( isset( $term_name[ $name ] ) ) {
-            unset( $term_name[ $name ] );
-            $changed = true;
-        }
+        $legacy_names[]   = $name;
     }
-    if ( $changed ) {
-        update_option( 'qtranslate_term_name', $term_name );
-    }
+    qtx_get_term_translation_repository()->delete( $term_id, array_unique( $legacy_names ) );
 }
 
 add_action( 'edit_term', 'qtranxf_term_del_translation', 5, 3 );
@@ -320,9 +310,7 @@ function qtranxf_term_set_translation( int $term_id, int $tt_id, string $taxonom
     }
 
     // store new translations
-    $term_name          = &$q_config['term_name'];
-    $term_name[ $name ] = $ts;
-    update_option( 'qtranslate_term_name', $term_name );
+    qtx_get_term_translation_repository()->store( $term_id, $name, $ts );
 }
 
 add_action( 'created_term', 'qtranxf_term_set_translation', 5, 3 );
@@ -335,12 +323,7 @@ function qtranxf_term_delete( int $term, int $tt_id, string $taxonomy, $deleted_
     } else {
         $name = $deleted_term->name;
     }
-    $term_name = &$q_config['term_name'];
-    if ( ! isset( $term_name[ $name ] ) ) {
-        return;
-    }
-    unset( $term_name[ $name ] );
-    update_option( 'qtranslate_term_name', $term_name );
+    qtx_get_term_translation_repository()->delete( $term, array( $name ) );
 }
 
 add_action( 'delete_term', 'qtranxf_term_delete', 5, 5 );

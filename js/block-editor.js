@@ -36,11 +36,16 @@
                 console.log('QT-XT API: missing field [qtx_editor_lang] in post id=' + post.id);
                 return next(options);
             }
+            if (!post.hasOwnProperty('qtx_editor_revisions')) {
+                console.log('QT-XT API: missing field [qtx_editor_revisions] in post id=' + post.id);
+                return next(options);
+            }
             const newOptions = {
                 ...options,
                 data: {
                     ...options.data,
-                    'qtx_editor_lang': post.qtx_editor_lang
+                    'qtx_editor_lang': post.qtx_editor_lang,
+                    'qtx_editor_revisions': post.qtx_editor_revisions
                 }
             };
             // console.log('QT-XT API: using options=', options);

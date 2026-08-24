@@ -10,6 +10,9 @@ function qtranxf_admin_notice_dismiss_script(): void {
     }
     $admin_notice_dismiss_script = true;
     wp_register_script( 'qtx_admin_notices', plugins_url( 'dist/notices.js', QTRANSLATE_FILE ), array( 'jquery' ), QTX_VERSION );
+    wp_localize_script( 'qtx_admin_notices', 'qtxAdminNotices', array(
+        'nonce' => wp_create_nonce( 'qtranslate_admin_notice' ),
+    ) );
     wp_enqueue_script( 'qtx_admin_notices' );
 }
 
@@ -317,12 +320,20 @@ function qtranxf_admin_notices_deprecated_settings(): void {
 }
 
 function qtranxf_ajax_qtranslate_admin_notice(): void {
-    if ( ! isset( $_POST['notice_id'] ) ) {
-        return;
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die( -1, 403 );
     }
-    $id  = sanitize_text_field( $_POST['notice_id'] );
+    check_ajax_referer( 'qtranslate_admin_notice', 'nonce' );
+    if ( ! isset( $_POST['notice_id'] ) || ! is_string( $_POST['notice_id'] ) ) {
+        wp_die( -1, 400 );
+    }
+    $id = sanitize_key( wp_unslash( $_POST['notice_id'] ) );
+    if ( $id === '' ) {
+        wp_die( -1, 400 );
+    }
     $set = empty( $_POST['notice_action'] );
     qtranxf_update_admin_notice( $id, $set );
+    wp_die( '1' );
 }
 
 add_action( 'wp_ajax_qtranslate_admin_notice', 'qtranxf_ajax_qtranslate_admin_notice' );
