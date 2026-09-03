@@ -559,6 +559,9 @@ function qtranxf_admin_enqueue_scripts() {
 
     if ( qtranxf_admin_is_config_page() ) {
         wp_enqueue_script( 'qtranslate-admin-options', plugins_url( 'dist/options.js', QTRANSLATE_FILE ), array( 'jquery' ), QTX_VERSION );
+        wp_localize_script( 'qtranslate-admin-options', 'qtxAdminOptions', array(
+            'debugNonce' => wp_create_nonce( 'qtx_admin_debug_info' ),
+        ) );
     }
 }
 

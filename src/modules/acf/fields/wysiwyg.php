@@ -66,7 +66,7 @@ class QTX_Module_Acf_Field_Wysiwyg extends acf_field_wysiwyg {
 
         foreach ( $languages as $language ) {
             $class = ( $language === $currentLanguage ) ? 'wp-switch-editor current-language' : 'wp-switch-editor';
-            echo '<a class="' . $class . '" data-language="' . $language . '">' . $q_config['language_name'][ $language ] . '</a>';
+            echo '<a class="' . esc_attr( $class ) . '" data-language="' . esc_attr( $language ) . '">' . esc_html( $q_config['language_name'][ $language ] ) . '</a>';
         }
 
         $uid       = uniqid( 'acf-editor-' );
@@ -79,35 +79,35 @@ class QTX_Module_Acf_Field_Wysiwyg extends acf_field_wysiwyg {
                 $class .= ' current-language';
             }
 
-            $button = 'data-wp-editor-id="' . $id . '"';
-
             $value = apply_filters( 'acf_the_editor_content', $values[ $language ], $default_editor );
+            // Match the native WordPress editor safeguard without double-escaping rich content.
+            $value = preg_replace( '#</textarea#i', '&lt;/textarea', (string) $value );
 
             ?>
-            <div id="wp-<?php echo $id; ?>-wrap" class="acf-editor-wrap wp-core-ui wp-editor-wrap <?php echo $class; ?>"
-                 data-toolbar="<?php echo $field['toolbar']; ?>" data-upload="<?php echo $field['media_upload']; ?>"
-                 data-language="<?php echo $language; ?>">
-                <div id="wp-<?php echo $id; ?>-editor-tools" class="wp-editor-tools hide-if-no-js">
+            <div id="wp-<?php echo esc_attr( $id ); ?>-wrap" class="acf-editor-wrap wp-core-ui wp-editor-wrap <?php echo esc_attr( $class ); ?>"
+                 data-toolbar="<?php echo esc_attr( $field['toolbar'] ); ?>" data-upload="<?php echo esc_attr( $field['media_upload'] ); ?>"
+                 data-language="<?php echo esc_attr( $language ); ?>">
+                <div id="wp-<?php echo esc_attr( $id ); ?>-editor-tools" class="wp-editor-tools hide-if-no-js">
                     <?php if ( $field['media_upload'] ): ?>
-                        <div id="wp-<?php echo $id; ?>-media-buttons" class="wp-media-buttons">
+                        <div id="wp-<?php echo esc_attr( $id ); ?>-media-buttons" class="wp-media-buttons">
                             <?php do_action( 'media_buttons' ); ?>
                         </div>
                     <?php endif; ?>
                     <?php if ( user_can_richedit() && $show_tabs ): ?>
                         <div class="wp-editor-tabs">
-                            <button id="<?php echo $id; ?>-tmce"
-                                    class="wp-switch-editor switch-tmce" <?php echo $button; ?>
-                                    type="button"><?php echo __( 'Visual', 'acf' ); ?></button>
-                            <button id="<?php echo $id; ?>-html"
-                                    class="wp-switch-editor switch-html" <?php echo $button; ?>
-                                    type="button"><?php echo _x( 'Text', 'Name for the Text editor tab (formerly HTML)', 'acf' ); ?></button>
+                            <button id="<?php echo esc_attr( $id ); ?>-tmce"
+                                    class="wp-switch-editor switch-tmce" data-wp-editor-id="<?php echo esc_attr( $id ); ?>"
+                                    type="button"><?php echo esc_html__( 'Visual', 'acf' ); ?></button>
+                            <button id="<?php echo esc_attr( $id ); ?>-html"
+                                    class="wp-switch-editor switch-html" data-wp-editor-id="<?php echo esc_attr( $id ); ?>"
+                                    type="button"><?php echo esc_html_x( 'Text', 'Name for the Text editor tab (formerly HTML)', 'acf' ); ?></button>
                         </div>
                     <?php endif; ?>
                 </div>
-                <div id="wp-<?php echo $id; ?>-editor-container" class="wp-editor-container">
-                    <textarea id="<?php echo $id; ?>" class="qtx-wp-editor-area qtranxs-translatable"
-                              name="<?php echo $name; ?>"
-                              <?php if ( $height ): ?>style="height:<?php echo $height; ?>px;"<?php endif; ?>><?php echo $value; ?></textarea>
+                <div id="wp-<?php echo esc_attr( $id ); ?>-editor-container" class="wp-editor-container">
+                    <textarea id="<?php echo esc_attr( $id ); ?>" class="qtx-wp-editor-area qtranxs-translatable"
+                              name="<?php echo esc_attr( $name ); ?>"
+                              <?php if ( $height ): ?>style="height:<?php echo absint( $height ); ?>px;"<?php endif; ?>><?php echo $value; ?></textarea>
                 </div>
             </div>
 

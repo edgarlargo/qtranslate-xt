@@ -47,7 +47,7 @@ class QTX_Module_Acf_Field_Textarea extends acf_field_textarea {
 
         foreach ( $languages as $language ) {
             $class = ( $language === $currentLanguage ) ? 'wp-switch-editor current-language' : 'wp-switch-editor';
-            echo '<a class="' . $class . '" data-language="' . $language . '">' . $q_config['language_name'][ $language ] . '</a>';
+            echo '<a class="' . esc_attr( $class ) . '" data-language="' . esc_attr( $language ) . '">' . esc_html( $q_config['language_name'][ $language ] ) . '</a>';
         }
 
         foreach ( $languages as $language ) {

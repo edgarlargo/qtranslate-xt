@@ -47,4 +47,12 @@ final class LanguageRedirectSecurityTest extends TestCase {
         self::assertSame( 'allowed_redirect_hosts', $GLOBALS['qtx_test_filters'][0][0] );
         self::assertSame( 'allowed_redirect_hosts', $GLOBALS['qtx_test_removed_filters'][0][0] );
     }
+
+    public function testLanguageDetectionContainsNoDirectRedirectSink(): void {
+        $source = file_get_contents( dirname( __DIR__, 2 ) . '/src/language_detect.php' );
+
+        self::assertIsString( $source );
+        self::assertStringNotContainsString( 'wp_redirect( $target )', $source );
+        self::assertStringContainsString( 'qtranxf_safe_language_redirect( $target, 302 )', $source );
+    }
 }

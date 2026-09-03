@@ -1026,7 +1026,7 @@ export const createSetOfLSBwith = function (lsb_style_extra_wrap_classes) {
             tabItem = domCreateElement('button', {className: 'button button-secondary', type: 'button'}, tabSwitch);
         }
         domCreateElement('img', {src: config.path.flags + lang_conf.flag}, tabItem);
-        domCreateElement('span', {innerHTML: lang_conf.name}, tabItem);
+        domCreateElement('span', {textContent: lang_conf.name}, tabItem);
         if (_activeLanguage === lang) {
             tabSwitch.classList.add(config.styles.lsb.activeClass);
             $(tabSwitch).find('.button').addClass('active');
@@ -1043,7 +1043,7 @@ export const createSetOfLSBwith = function (lsb_style_extra_wrap_classes) {
             title: config.l10n.CopyFromAlt,
             onclick: _toggleCopyFrom
         }, tab);
-        domCreateElement('span', {innerHTML: config.l10n.CopyFrom}, btn);
+        domCreateElement('span', {textContent: config.l10n.CopyFrom}, btn);
     }
     return langSwitchWrap;
 };

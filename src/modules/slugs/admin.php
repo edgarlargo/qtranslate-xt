@@ -274,9 +274,23 @@ function qtranxf_slugs_save_postdata( int $post_id, ?WP_Post $post = null ): voi
     }
     $post_type_object = get_post_type_object( $post->post_type );
 
+    $has_slug_input = false;
+    foreach ( $q_config['enabled_languages'] as $lang ) {
+        if ( isset( $_POST[ "qts_{$lang}_slug" ] ) ) {
+            $has_slug_input = true;
+            break;
+        }
+    }
+    if ( ! $has_slug_input ) {
+        return;
+    }
+
+    $nonce = isset( $_POST['qts_nonce'] ) && is_string( $_POST['qts_nonce'] )
+        ? sanitize_text_field( wp_unslash( $_POST['qts_nonce'] ) )
+        : '';
     if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
-         || ( ! isset( $_POST['post_ID'] ) || $post_id != $_POST['post_ID'] )
-         || ( isset( $_POST['qts_nonce'] ) && ! wp_verify_nonce( $_POST['qts_nonce'], 'qts_nonce' ) )
+         || ( ! isset( $_POST['post_ID'] ) || $post_id !== absint( $_POST['post_ID'] ) )
+         || ! wp_verify_nonce( $nonce, 'qts_nonce' )
          || ( ! current_user_can( $post_type_object->cap->edit_post, $post_id ) ) ) {
         return;
     }

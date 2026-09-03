@@ -13,7 +13,7 @@ function qtranxf_detect_language( array &$url_info ) {
             // path did not match neither 'site' nor 'home', but it came to this code, then redirect to home.
             // may happen for testing
             $target = get_option( 'home' );
-            wp_redirect( $target );
+            qtranxf_safe_language_redirect( $target, 302 );
             exit();
         }
         $url_info['doing_front_end'] = true;

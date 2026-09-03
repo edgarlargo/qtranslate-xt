@@ -51,7 +51,7 @@ class QTX_Module_Acf_Field_Image extends acf_field_image {
             if ( $language === $currentLanguage ) {
                 $class .= ' current-language';
             }
-            echo '<a class="' . $class . '" data-language="' . $language . '">' . $q_config['language_name'][ $language ] . '</a>';
+            echo '<a class="' . esc_attr( $class ) . '" data-language="' . esc_attr( $language ) . '">' . esc_html( $q_config['language_name'][ $language ] ) . '</a>';
         }
 
         foreach ( $languages as $language ):

@@ -14,11 +14,11 @@ concurrency:
 
 jobs:
   transactional-matrix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     services:
       mysql:
-        image: mysql:8.4
+        image: mysql:8.4@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
         env:
           MYSQL_DATABASE: wordpress
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -28,7 +28,7 @@ jobs:
           --health-cmd="mysqladmin ping -h localhost -uroot"
           --health-interval=5s --health-timeout=5s --health-retries=20
       redis:
-        image: redis:7.4-alpine
+        image: redis:7.4-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf
         ports:
           - 6379:6379
         options: >-
@@ -36,8 +36,10 @@ jobs:
           --health-timeout=5s --health-retries=20
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: '8.4'
           extensions: intl, json, mysqli, redis

@@ -56,3 +56,10 @@ test('parser source contains no dynamic execution or DOM sink', () => {
     const source = fs.readFileSync(path.join(root, 'js', 'core', 'multi-lang', 'parser.js'), 'utf8');
     assert.doesNotMatch(source, /\beval\s*\(|\bFunction\s*\(|innerHTML|document\.write|\.html\s*\(/);
 });
+
+test('language switch labels use text-only DOM sinks', () => {
+    const source = fs.readFileSync(path.join(root, 'js', 'core', 'hooks', 'handlers.js'), 'utf8');
+    assert.match(source, /textContent:\s*lang_conf\.name/);
+    assert.match(source, /textContent:\s*config\.l10n\.CopyFrom/);
+    assert.doesNotMatch(source, /innerHTML:\s*(?:lang_conf\.name|config\.l10n\.CopyFrom)/);
+});

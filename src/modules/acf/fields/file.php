@@ -52,7 +52,7 @@ class QTX_Module_Acf_Field_File extends acf_field_file {
             if ( $language === $currentLanguage ) {
                 $class .= ' current-language';
             }
-            echo '<a class="' . $class . '" data-language="' . $language . '">' . $q_config['language_name'][ $language ] . '</a>';
+            echo '<a class="' . esc_attr( $class ) . '" data-language="' . esc_attr( $language ) . '">' . esc_html( $q_config['language_name'][ $language ] ) . '</a>';
         }
 
         foreach ( $languages as $language ):
@@ -94,20 +94,20 @@ class QTX_Module_Acf_Field_File extends acf_field_file {
                 </div>
                 <div class="show-if-value file-wrap acf-soh">
                     <div class="file-icon">
-                        <img data-name="icon" src="<?php echo $atts['icon']; ?>" alt=""/>
+                        <img data-name="icon" src="<?php echo esc_url( $atts['icon'] ); ?>" alt=""/>
                     </div>
                     <div class="file-info">
                         <p>
-                            <strong data-name="title"><?php echo $atts['title']; ?></strong>
+                            <strong data-name="title"><?php echo esc_html( $atts['title'] ); ?></strong>
                         </p>
                         <p>
                             <strong><?php _e( 'File name', 'acf' ); ?>:</strong>
-                            <a data-name="filename" href="<?php echo $atts['url']; ?>"
-                               target="_blank"><?php echo $atts['filename']; ?></a>
+                            <a data-name="filename" href="<?php echo esc_url( $atts['url'] ); ?>"
+                               target="_blank" rel="noopener noreferrer"><?php echo esc_html( $atts['filename'] ); ?></a>
                         </p>
                         <p>
                             <strong><?php _e( 'File size', 'acf' ); ?>:</strong>
-                            <span data-name="filesize"><?php echo $atts['filesize']; ?></span>
+                            <span data-name="filesize"><?php echo esc_html( $atts['filesize'] ); ?></span>
                         </p>
 
                         <ul class="acf-hl acf-soh-target">
@@ -122,10 +122,10 @@ class QTX_Module_Acf_Field_File extends acf_field_file {
                     <?php if ( $uploader == 'basic' ): ?>
 
                         <?php if ( $field['value'] && ! is_numeric( $field['value'] ) ): ?>
-                            <div class="acf-error-message"><p><?php echo $field['value']; ?></p></div>
+                            <div class="acf-error-message"><p><?php echo esc_html( $field['value'] ); ?></p></div>
                         <?php endif; ?>
 
-                        <input type="file" name="<?php echo $field['name']; ?>" id="<?php echo $field['id']; ?>"/>
+                        <input type="file" name="<?php echo esc_attr( $field['name'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>"/>
 
                     <?php else: ?>
 

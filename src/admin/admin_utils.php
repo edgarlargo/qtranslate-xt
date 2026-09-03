@@ -413,6 +413,11 @@ function qtranxf_verify_nonce( string $nonce_name, string $nonce_field = '_wpnon
 
 function qtranxf_admin_debug_info() {
     $info = array();
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die( -1, 403 );
+    }
+    check_ajax_referer( 'qtx_admin_debug_info' );
+
     if ( current_user_can( 'manage_options' ) ) {
         global $q_config, $wp_version;
         // Most is configuration from settings, extract 'url_info' which is a special section.
@@ -489,8 +494,7 @@ function qtranxf_admin_debug_info() {
             'Plugins'     => $active_plugins
         );
     }
-    echo json_encode( $info, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
-    wp_die();
+    wp_send_json( $info );
 }
 
 /**

@@ -45,7 +45,7 @@
     "source": "https://github.com/qtranslate/qtranslate-xt"
   },
   "require": {
-    "composer/installers": ">=1.0",
+    "composer/installers": "^1.12 || ^2.0",
     "php": ">=7.4",
     "ext-intl": "*",
     "ext-json": "*"

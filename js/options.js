@@ -112,6 +112,7 @@ $(function () {
             dataType: 'json',
             data: {
                 action: 'admin_debug_info',
+                _ajax_nonce: qtxAdminOptions.debugNonce,
                 filter_default: $('#qtranxs_debug_filter_default').is(':checked') ? 1 : 0,
             },
             success: function (response) {
