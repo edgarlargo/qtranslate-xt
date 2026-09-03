@@ -101,6 +101,13 @@ jobs:
           wp plugin deactivate qtranslate-xt --path="$WP_PATH"
           wp plugin activate qtranslate-xt --path="$WP_PATH"
           QTX_RC_PHASE=verify wp eval-file "$GITHUB_WORKSPACE/tests/Integration/release-candidate-smoke.php" --path="$WP_PATH"
+      - name: Publish the validated release-candidate archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: qtranslate-xt-4.0.0-rc1
+          path: /tmp/qtranslate-xt-4.0.0-rc1.zip
+          if-no-files-found: error
+          compression-level: 0
       - name: Prove persistent cache backend remains connected
         if: always()
         env:
