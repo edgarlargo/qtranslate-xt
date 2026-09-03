@@ -37,5 +37,7 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( "add_filter( 'pre_wp_mail'", $runner );
         self::assertStringContainsString( "'payment_method' => 'cod'", $runner );
         self::assertStringContainsString( '@example.test', $runner );
+        self::assertStringContainsString( "unregister_taxonomy( 'product_type' )", $runner );
+        self::assertStringContainsString( 'Variation term fixtures failed:', $runner );
     }
 }

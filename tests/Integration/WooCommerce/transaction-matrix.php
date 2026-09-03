@@ -48,6 +48,9 @@ add_filter( 'pre_wp_mail', static function ( $return, array $attributes ) use ( 
 
 $category = wp_insert_term( $ml( 'Krūzes', 'Кружки', 'Mugs' ), 'product_cat' );
 $check( ! is_wp_error( $category ), 'Multilingual product category creation failed.' );
+if ( is_wp_error( $category ) ) {
+    WP_CLI::error( 'Product category fixture failed: ' . $category->get_error_message() );
+}
 
 $attribute_id = wc_create_attribute( array(
     'name' => $ml( 'Izmērs', 'Размер', 'Size' ),
@@ -55,14 +58,31 @@ $attribute_id = wc_create_attribute( array(
     'type' => 'select',
 ) );
 $check( ! is_wp_error( $attribute_id ) && $attribute_id > 0, 'Global attribute creation failed.' );
+if ( is_wp_error( $attribute_id ) || $attribute_id <= 0 ) {
+    $message = is_wp_error( $attribute_id ) ? $attribute_id->get_error_message() : 'No attribute ID was returned.';
+    WP_CLI::error( 'Global attribute fixture failed: ' . $message );
+}
 delete_transient( 'wc_attribute_taxonomies' );
 if ( class_exists( 'WC_Cache_Helper' ) ) {
     WC_Cache_Helper::invalidate_cache_group( 'woocommerce-attributes' );
 }
+// WooCommerce returns early when product_type already exists, so force its
+// documented taxonomy refresh path after adding the global test attribute.
+unregister_taxonomy( 'product_type' );
 WC_Post_Types::register_taxonomies();
 $small = wp_insert_term( $ml( 'Mazs', 'Малый', 'Small' ), 'pa_size', array( 'slug' => 'small' ) );
 $large = wp_insert_term( $ml( 'Liels', 'Большой', 'Large' ), 'pa_size', array( 'slug' => 'large' ) );
 $check( ! is_wp_error( $small ) && ! is_wp_error( $large ), 'Variation terms creation failed.' );
+if ( is_wp_error( $small ) || is_wp_error( $large ) ) {
+    $messages = array();
+    if ( is_wp_error( $small ) ) {
+        $messages[] = 'small: ' . $small->get_error_message();
+    }
+    if ( is_wp_error( $large ) ) {
+        $messages[] = 'large: ' . $large->get_error_message();
+    }
+    WP_CLI::error( 'Variation term fixtures failed: ' . implode( '; ', $messages ) );
+}
 
 $simple = new WC_Product_Simple();
 $simple->set_name( $ml( 'Vienkāršā krūze', 'Простая кружка', 'Simple mug' ) );
