@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
 Date: 2026-09-03
-Decision: **READY — FINAL RC VALIDATED AFTER WOO BLOCKS REMEDIATION**
+Decision: **NOT READY — POST-AUDIT EXACT-ZIP RERUN REQUIRED**
 
 ## Mandatory release gates
 
@@ -11,13 +11,13 @@ Decision: **READY — FINAL RC VALIDATED AFTER WOO BLOCKS REMEDIATION**
 | 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33783568249`, 176/176 assertions |
 | 3 | Final security re-audit | **PASS** — `FINAL-SECURITY-REAUDIT.md` |
 | 4 | Fix release-blocking re-audit findings | **PASS** — remediation commit `7a0ca65` |
-| 5 | Build and validate final RC ZIP | **PASS** — exact replacement ZIP built, installed and exercised in run `33783568249` |
+| 5 | Build and validate final RC ZIP | **PENDING** — rebuild after the Woo Blocks delta security re-audit |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
 Blocks report exposed a missing Store API path in the original Woo matrix, so
 that artifact was withdrawn. The Store API and dynamic block-label remediation
-now passes the expanded matrix and the replacement archive is the designated
-release candidate.
+now passes the expanded matrix and its delta security re-audit. The exact ZIP
+job must be rerun after that audit before the replacement is designated final.
 
 ## Current automated evidence
 
@@ -66,9 +66,10 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 - Woo product/cart/checkout/order/HPOS/email/REST/AJAX/cache matrix:
   **PASS** on the current remediation commit.
 
-## Final replacement ZIP result
+## Pre-audit replacement ZIP evidence
 
-The designated artifact is `build/qtranslate-xt-4.0.0-rc1.zip`.
+The following bytes passed exact installation checks but were built before the
+Woo Blocks delta audit. They are evidence only until the post-audit rerun.
 
 - Source commit: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
 - CI workflow: `33783568249`
@@ -81,7 +82,7 @@ The designated artifact is `build/qtranslate-xt-4.0.0-rc1.zip`.
 
 The exact published bytes:
 
-1. were built with `git archive` from the designated source commit;
+1. were built with `git archive` from source commit `1f6db22`;
 2. identify as `4.0.0-rc1` in the plugin header and `QTX_VERSION`;
 3. were installed and activated in disposable WordPress 7.1;
 4. preserved exact raw multilingual storage through deactivate/reactivate;
@@ -110,5 +111,6 @@ Follow `UPGRADE.md`: take complete database/files backups, validate on staging,
 do not run database conversion automatically, and retain the previous plugin
 directory plus database backup for rollback.
 
-Any earlier archive with the same name or `qtranslate-xt-modern-rc1.zip` is a
-staging artifact. Only the SHA-256 recorded above identifies the final RC.
+Any current archive with the same name or `qtranslate-xt-modern-rc1.zip` is a
+staging artifact until the post-audit exact-ZIP rerun completes and its new
+final identity is recorded here.

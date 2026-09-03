@@ -94,7 +94,8 @@ remediation on 2026-09-03 in GitHub Actions run
 commit `1f6db22`: **176/176 assertions**, WordPress 7.1, WooCommerce 11.0.1,
 PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0. HPOS was
 enabled and order language used WooCommerce CRUD. The job also built,
-inspected, installed, reactivated and published the exact final RC archive.
+inspected, installed, reactivated and published the exact candidate archive;
+after the later delta security audit, a final packaging rerun is required.
 
 Historical release-gate attempt on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
 `actionlint` 1.7.12 returned zero findings for the Woo workflow. The local
@@ -146,6 +147,6 @@ listed in `FINAL-SECURITY-REAUDIT.md`.
 
 A real Cart/Checkout Blocks report invalidated the previous broad cart claim
 and the associated archive. The Store API/frontend-filter and dynamic text
-adapter remediation now passes the expanded MySQL/Redis CI. The exact
-replacement ZIP was built, inspected, installed, reactivated and published by
-run `33783568249`; the Woo release gate is **PASS**.
+adapter remediation now passes the expanded MySQL/Redis CI, and its delta
+security re-audit is **PASS**. The first replacement ZIP passed exact install
+checks, but final distribution remains pending a post-audit packaging rerun.

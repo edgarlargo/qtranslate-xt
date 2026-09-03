@@ -91,8 +91,9 @@ inside Woo Cart/Checkout/Mini-Cart roots. It never writes HTML and does not
 change price, SKU, ID, quantity, tax, stock or order data. The expanded matrix
 now performs an actual `/wc/store/v1/cart` request and proves the Russian name
 is projected while product ID, quantity and price remain unchanged. Run
-`33783568249` also installed and exercised the exact replacement ZIP, so this
-regression is closed.
+`33783568249` also installed and exercised the exact replacement ZIP, so the
+compatibility regression is closed. Final distribution still requires the
+same packaging job to be rerun after the subsequent delta security audit.
 
 WooCommerce 11 HPOS order-language storage was corrected to use the
 `WC_Abstract_Order` metadata API. The legacy checkout metadata hook remains for

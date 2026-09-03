@@ -2,6 +2,7 @@
 
 Date: 2026-09-03
 Audited remediation commit: `7a0ca6553bddca329c5b871b589e75364551e59f`
+Post-Woo-Blocks delta audited source: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -16,11 +17,11 @@ Branch: `modernisation`
 - npm audit: **0 advisories**
 - Composer audit of the installed test graph: **0 advisories**
 
-The mandatory order was preserved: QTX4-SEC-001 was resolved first,
-WooCommerce MySQL/Redis CI passed, this final re-audit was performed, every
-release-blocking finding was remediated, and the remediation tree passed both
-CI workflows. The final ZIP may now be built from the next documented commit
-and must be validated as the exact archive that would be distributed.
+The mandatory order was preserved for the original release gate. After a real
+Cart/Checkout Blocks report required additional production code, the expanded
+WooCommerce MySQL/Redis matrix passed and the new code received the delta
+security re-audit below. The final ZIP must now be rebuilt and validated after
+this delta audit before it is distributed.
 
 ## Current CI evidence
 
@@ -38,6 +39,35 @@ and must be validated as the exact archive that would be distributed.
   MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0 with HPOS enabled.
 - Local module-loader security runner, `git diff --check`, Composer validation,
   npm audit and Composer audit: **PASS**.
+
+## Post-Woo-Blocks delta security re-audit
+
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the delta: **0**.
+
+The review covered `src/modules/woo-commerce/loader.php`,
+`src/modules/woo-commerce/front.php`, `js/woocommerce-blocks/`, the generated
+bundle, build entry and all associated PHP/JavaScript/integration regressions.
+
+- The REST adapter matches only the exact `/wc/store/` prefix, adds no route or
+  write operation, leaves native Woo permission/dispatch behavior intact and
+  deliberately excludes authenticated `/wc/v3/` technical APIs.
+- Server-side translation reuses the existing Woo presentation filters;
+  technical metadata remains behind `WooCommerceDataPolicy`.
+- Client configuration contains only configured language codes and the trusted
+  bounded `QTX_LANG_CODE_FORMAT` constant. No request data becomes executable
+  code or a regular-expression fragment.
+- Dynamic output is restricted to `node.nodeValue` below Woo Cart, Checkout and
+  Mini-Cart roots. Script/style/textarea/noscript/contenteditable nodes are
+  excluded; there is no `innerHTML`, `outerHTML`, `insertAdjacentHTML`, eval,
+  remote I/O, storage mutation or credential handling.
+- Run
+  [`33783568190`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568190)
+  passed 347 tests / 8041 assertions on PHP 8.1–8.5, four JavaScript tests,
+  lint, audits, production build and committed-bundle reproducibility. Run
+  [`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249)
+  passed the expanded 176-assertion WordPress 7.1/WooCommerce 11.0.1/MySQL
+  8.4.11/Redis 7.4.11 matrix.
 
 ## Historical findings revalidated
 
@@ -205,3 +235,9 @@ The authorized fifth gate subsequently passed in GitHub Actions run
 [`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929)
 from source commit `b6a7aa7`. The exact installed and published ZIP has SHA-256
 `c8bf5a59d6db98ad31cefc245a4edaf3a0f40a8ec45ff04ace5a24f09af02bc3`.
+
+That artifact was later withdrawn after the real Cart/Checkout Blocks report.
+The first replacement archive from run `33783568249` proved the corrected code
+and exact-ZIP path but was built before the delta audit recorded above. It is
+not the final distributable until the exact packaging job is rerun after this
+audit and its bytes are documented.
