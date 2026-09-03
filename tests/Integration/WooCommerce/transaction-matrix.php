@@ -362,11 +362,17 @@ foreach ( $store_data['items'] ?? array() as $store_item ) {
         break;
     }
 }
+$store_prices = is_array( $store_simple ) && isset( $store_simple['prices'] )
+    ? $store_simple['prices']
+    : null;
+$store_price = is_array( $store_prices )
+    ? ( $store_prices['price'] ?? null )
+    : ( is_object( $store_prices ) ? ( $store_prices->price ?? null ) : null );
 $check(
     is_array( $store_simple )
     && (int) $store_simple['id'] === $simple_id
     && (int) $store_simple['quantity'] === 2
-    && isset( $store_simple['prices']['price'] ),
+    && (string) $store_price === '1250',
     'Woo Store API block translation changed product ID, quantity or price data.'
 );
 
