@@ -6,8 +6,8 @@ Status: **RESOLVED**
 ## Resolution
 
 The required WooCommerce MySQL/Redis blocker is **RESOLVED**. GitHub Actions
-run [`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249)
-passed **176/176 assertions** on commit `1f6db22` using WordPress 7.1,
+run [`33784794846`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794846)
+passed **176/176 assertions** on commit `46280f8` using WordPress 7.1,
 WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
 2.8.0. HPOS was enabled. Credentials were disposable, COD was offline and mail
 was captured before transport.

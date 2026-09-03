@@ -10,11 +10,11 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1.29 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
-| PHPUnit PHP 8.2.29 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
-| PHPUnit PHP 8.3.29 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
-| PHPUnit PHP 8.4.16 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
-| PHPUnit PHP 8.5.9 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
+| PHPUnit PHP 8.1.29 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
+| PHPUnit PHP 8.2.29 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
+| PHPUnit PHP 8.3.29 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
+| PHPUnit PHP 8.4.16 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
+| PHPUnit PHP 8.5.9 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
 | JavaScript shared corpus/security | **PASS** | 27 corpus cases plus 4 Node tests; text-only DOM sink assertion PASS |
@@ -90,12 +90,12 @@ claims are limited to the installed 11.0.1 transactional matrix;
 
 The disposable workflow and fail-closed runner passed after final security
 remediation on 2026-09-03 in GitHub Actions run
-[`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249),
-commit `1f6db22`: **176/176 assertions**, WordPress 7.1, WooCommerce 11.0.1,
+[`33784794846`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794846),
+commit `46280f8`: **176/176 assertions**, WordPress 7.1, WooCommerce 11.0.1,
 PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0. HPOS was
-enabled and order language used WooCommerce CRUD. The job also built,
-inspected, installed, reactivated and published the exact candidate archive;
-after the later delta security audit, a final packaging rerun is required.
+enabled and order language used WooCommerce CRUD. After the delta security
+audit, the job built, inspected, installed, reactivated and published the exact
+final archive.
 
 Historical release-gate attempt on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
 `actionlint` 1.7.12 returned zero findings for the Woo workflow. The local
@@ -148,5 +148,5 @@ listed in `FINAL-SECURITY-REAUDIT.md`.
 A real Cart/Checkout Blocks report invalidated the previous broad cart claim
 and the associated archive. The Store API/frontend-filter and dynamic text
 adapter remediation now passes the expanded MySQL/Redis CI, and its delta
-security re-audit is **PASS**. The first replacement ZIP passed exact install
-checks, but final distribution remains pending a post-audit packaging rerun.
+security re-audit is **PASS**. Post-audit run `33784794846` built, installed and
+published the exact final ZIP; final distribution is **PASS**.

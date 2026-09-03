@@ -57,8 +57,8 @@ transaction, captured-email, REST and cache assertions.
 ## 2026-09-03 release-gate result
 
 GitHub Actions run
-[`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249)
-passed after the Cart/Checkout Blocks remediation on commit `1f6db22`. The disposable job used WordPress 7.1,
+[`33784794846`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794846)
+passed after the Cart/Checkout Blocks remediation and delta security audit on commit `46280f8`. The disposable job used WordPress 7.1,
 WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
 2.8.0. All **176 assertions passed**.
 
@@ -91,9 +91,8 @@ inside Woo Cart/Checkout/Mini-Cart roots. It never writes HTML and does not
 change price, SKU, ID, quantity, tax, stock or order data. The expanded matrix
 now performs an actual `/wc/store/v1/cart` request and proves the Russian name
 is projected while product ID, quantity and price remain unchanged. Run
-`33783568249` also installed and exercised the exact replacement ZIP, so the
-compatibility regression is closed. Final distribution still requires the
-same packaging job to be rerun after the subsequent delta security audit.
+`33784794846` also installed and exercised the exact post-audit replacement
+ZIP, so the compatibility regression and packaging gate are closed.
 
 WooCommerce 11 HPOS order-language storage was corrected to use the
 `WC_Abstract_Order` metadata API. The legacy checkout metadata hook remains for

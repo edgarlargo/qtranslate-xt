@@ -63,10 +63,10 @@ bundle, build entry and all associated PHP/JavaScript/integration regressions.
   excluded; there is no `innerHTML`, `outerHTML`, `insertAdjacentHTML`, eval,
   remote I/O, storage mutation or credential handling.
 - Run
-  [`33783568190`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568190)
-  passed 347 tests / 8041 assertions on PHP 8.1–8.5, four JavaScript tests,
+  [`33784794810`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794810)
+  passed 347 tests / 8042 assertions on PHP 8.1–8.5, four JavaScript tests,
   lint, audits, production build and committed-bundle reproducibility. Run
-  [`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249)
+  [`33784794846`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794846)
   passed the expanded 176-assertion WordPress 7.1/WooCommerce 11.0.1/MySQL
   8.4.11/Redis 7.4.11 matrix.
 
@@ -250,6 +250,12 @@ from source commit `b6a7aa7`. The exact installed and published ZIP has SHA-256
 
 That artifact was later withdrawn after the real Cart/Checkout Blocks report.
 The first replacement archive from run `33783568249` proved the corrected code
-and exact-ZIP path but was built before the delta audit recorded above. It is
-not the final distributable until the exact packaging job is rerun after this
-audit and its bytes are documented.
+and exact-ZIP path but was built before the delta audit recorded above and is
+superseded. Post-audit run
+[`33784794846`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794846)
+then passed 176/176 assertions on source commit `46280f8`, built and inspected
+the exact archive, installed and reactivated it in fresh WordPress 7.1, and
+published it with Redis still connected. The final ZIP has SHA-256
+`146209dd78de77fd14c32551d8048dc897f67a89f2c62dce548609ffb1263ab6`,
+size 1,466,760 bytes, 1,138 entries, exactly one `qtranslate-xt/` root, the
+Latvian MO file and Woo Blocks bundle present, and zero forbidden entries.

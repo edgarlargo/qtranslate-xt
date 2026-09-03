@@ -21,7 +21,7 @@ progress. O2 now allowlists database maintenance actions, requires explicit
 backup confirmation, and confines SQL splitting to trusted canonical roots.
 Optional built-in integrations have a source-validated, explicitly NOT TESTED
 real-plugin matrix in `BUILTIN-INTEGRATIONS-COMPATIBILITY.md`. Phase Q local
-and CI matrix is green at 347 tests / 8041 assertions on each PHP 8.1–8.5; production
+and CI matrix is green at 347 tests / 8042 assertions on each PHP 8.1–8.5; production
 sources also lint cleanly on PHP 7.4 and 8.0; required
 real testing now covers WordPress 7.1, ACF Free/theme-bundled 6.8.8,
 WooCommerce 11.0.1 smoke paths and Gutenberg save/autosave/409 conflicts. ACF
@@ -32,11 +32,11 @@ Pro and theme-bundled runtime/value tests are documented in
 
 The comprehensive Woo matrix passed after final security remediation in
 disposable GitHub Actions run
-[`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249).
+[`33784794846`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794846).
 Its source review and failed-run remediation fixed HPOS order-language storage,
 frontend lifecycle fidelity and canonical term fixtures. The final result is
 176/176 assertions on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11
-and Redis 7.4.11. The companion PHP/JavaScript run `33783568190` passed all
+and Redis 7.4.11. The companion PHP/JavaScript run `33784794810` passed all
 runtime, audit, build and bundle-reproducibility jobs.
 
 Historical 2026-09-02 attempt: the release-gate retry passed `actionlint`
@@ -69,7 +69,7 @@ tested. The final security re-audit then remediated ACF output sinks, the npm
 development graph, mutable CI inputs, diagnostic AJAX, slug-save authorization,
 DOM label sinks and the remaining direct redirect. It records zero confirmed
 open Critical, High, Medium or Low findings. The full PHP 8.1-8.5 matrix is
-green at 347 tests / 8041 assertions.
+green at 347 tests / 8042 assertions.
 
 ## Completed work
 
@@ -184,7 +184,7 @@ green at 347 tests / 8041 assertions.
 ## Current test status
 
 - PHP 7.4 and 8.0 production lint: zero syntax errors.
-- PHP 8.1–8.5: 347 tests, 8041 assertions per version, zero failures/errors.
+- PHP 8.1–8.5: 347 tests, 8042 assertions per version, zero failures/errors.
 - Shared JS/PHP corpus parity: 100% (27/27); generated parser parity 400/400.
 - Production PHP lint, Webpack build, JS tests and
   `git diff --check`: green.
@@ -196,9 +196,8 @@ green at 347 tests / 8041 assertions.
 
 ## Known blockers
 
-No security or compatibility blocker remains. The ACF Pro 5.7.7, final
-security and expanded WooCommerce Store API/MySQL/Redis gates are resolved.
-The final packaging gate is pending a post-delta-audit exact-ZIP rerun.
+No release blocker remains. The ACF Pro 5.7.7, final security, expanded
+WooCommerce Store API/MySQL/Redis and post-audit exact-ZIP gates are resolved.
 
 ## Security status
 
@@ -223,8 +222,7 @@ The final packaging gate is pending a post-delta-audit exact-ZIP rerun.
 
 ## Next planned phase
 
-Rerun the exact packaging/install workflow after the Woo Blocks delta security
-audit. Then deploy those exact bytes to staging, clear WordPress/WooCommerce/
-Redis/browser caches and visually recheck the reported RU Cart and Checkout
-pages. Do not distribute the previous artifact; its withdrawn SHA-256 remains
-recorded for traceability.
+Deploy the exact validated replacement `4.0.0-rc1` bytes to staging, clear
+WordPress/WooCommerce/Redis/browser caches and visually recheck the reported RU
+Cart and Checkout pages. Do not distribute previous artifacts; their withdrawn
+SHA-256 values remain recorded for traceability.
