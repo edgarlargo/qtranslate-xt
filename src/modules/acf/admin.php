@@ -79,7 +79,9 @@ class QTX_Module_Acf_Admin {
             'standard_fields'    => self::standard_fields_default(),
             'group_sub_fields'   => self::group_sub_fields_default(),
             'qtranslate_fields'  => self::qtranslate_fields_default(),
-            'show_language_tabs' => false,
+            // The native safe bridge exposes per-field tabs on ACF forms,
+            // including Options Pages. Explicit saved preferences still win.
+            'show_language_tabs' => true,
         ];
     }
 

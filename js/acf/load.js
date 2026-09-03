@@ -1,6 +1,7 @@
 'use strict';
 import {registerExtendedFields} from "./register";
 import {syncLanguageSwitch} from "./switch";
+import {attachSafeOptionsTabs} from "./options-bridge";
 
 const $ = jQuery;
 
@@ -55,11 +56,19 @@ wp.hooks.addAction('qtranx.load', 'qtranx/acf/load', function () {
             return;
         }
         const fieldElement = field.$el ? field.$el : $(field);
+        let hasTranslatableInput = false;
         fieldElement.find(selector).each(function () {
-            if (!qTranx.hooks.hasContentHook(this) && isTranslatableElementForPostType(this, postType)) {
+            if (!isTranslatableElementForPostType(this, postType)) {
+                return;
+            }
+            if (!qTranx.hooks.hasContentHook(this)) {
                 qTranx.hooks.addContentHook(this);
             }
+            hasTranslatableInput = hasTranslatableInput || qTranx.hooks.hasContentHook(this);
         });
+        if (hasTranslatableInput) {
+            attachSafeOptionsTabs(fieldElement);
+        }
     };
 
     // Add hooks for translatable standard fields, defined as field type -> selector.

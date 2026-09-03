@@ -73,14 +73,20 @@ All normal ACF Text/Textarea/WYSIWYG frontend reads returned only the selected
 language. The corresponding WordPress options remained byte-for-byte inline
 multilingual strings after LV/RU/EN reads.
 
-## External bridge
+## Built-in ACF Options Bridge Safe
 
-No production or test code references `qTranslate-XT ACF Options Bridge Safe`.
-The native value adapter now registers its type-specific format filters before
-the late ACF runtime bootstrap. Theme-embedded Options reads therefore do not
-depend on that external bridge or on mutation of `active_plugins`.
-The native runtime does not require it, a second ACF installation, fake plugin
-state, or theme field-definition changes.
+The behavior formerly described as `qTranslate-XT ACF Options Bridge Safe` is
+native. The value adapter registers its type-specific format filters before the
+late ACF runtime bootstrap, and the ACF admin bundle adds local language tabs
+to enabled Text/Textarea fields on ACF forms, including Options Pages. Initial
+fields and fields appended by Group/Repeater/Flexible Content use the same
+official qTranslate content hook and language-switch event.
+
+Tab labels are created with `textContent`; the bridge does not write HTML,
+register an endpoint, install another ACF copy or mutate `active_plugins`.
+Existing explicit ACF-module preferences are respected. On a new configuration
+the tabs are enabled by default and can be disabled in the ACF integration
+settings without disabling value translation.
 
 ## ACF Pro validation result
 

@@ -89,3 +89,13 @@ test('WooCommerce block strings select the active language without HTML sinks', 
     assert.match(domSource, /node\.nodeValue = translated/);
     assert.match(domSource, /i18n\.gettext/);
 });
+
+test('ACF Options bridge uses the native language hook and text-only tabs', () => {
+    const source = fs.readFileSync(path.join(root, 'js', 'acf', 'options-bridge.js'), 'utf8');
+
+    assert.match(source, /qTranslateModuleAcf\?\.show_language_tabs/);
+    assert.match(source, /qTranx\.hooks\.switchActiveLanguage\(language\)/);
+    assert.match(source, /tab\.textContent = language\.toUpperCase\(\)/);
+    assert.match(source, /qtranx\.languageSwitch/);
+    assert.doesNotMatch(source, /innerHTML|outerHTML|insertAdjacentHTML|document\.write|active_plugins/);
+});

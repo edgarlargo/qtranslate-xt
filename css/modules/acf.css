@@ -14,6 +14,38 @@
     margin: 0;
 }
 
+.qtx-acf-language-tabs {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    margin: 0 0 6px;
+}
+
+.qtx-acf-language-tab {
+    min-height: 28px;
+    padding: 2px 9px;
+    border: 1px solid #c3c4c7;
+    border-radius: 2px;
+    background: #f6f7f7;
+    color: #2c3338;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.8;
+}
+
+.qtx-acf-language-tab:hover,
+.qtx-acf-language-tab:focus {
+    border-color: #2271b1;
+    color: #0a4b78;
+}
+
+.qtx-acf-language-tab.is-active {
+    border-color: #2271b1;
+    background: #2271b1;
+    color: #fff;
+}
+
 .acf_wysiwyg .wp-editor-container,
 .acf-editor-wrap .wp-editor-container {
     border: 1px solid #e5e5e5 !important;

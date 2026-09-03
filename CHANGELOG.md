@@ -17,6 +17,9 @@ report.
   schema/editing foundations and dynamic admin field handling.
 * Register ACF Options value filters before a theme-embedded runtime starts, so
   standard Text/Textarea/WYSIWYG values no longer require an external bridge.
+* Integrated the safe ACF Options UI bridge: standard Text/Textarea fields on
+  Options Pages receive text-only language tabs without modifying
+  `active_plugins`.
 * Accept stable Unicode ACF field keys (for example Latvian and Cyrillic keys)
   while continuing to reject spaces, path separators and control characters.
 * Repair the packaged `i18n-config.json` option when upgrading from a plugin
