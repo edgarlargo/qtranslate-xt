@@ -39,5 +39,8 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( '@example.test', $runner );
         self::assertStringContainsString( "unregister_taxonomy( 'product_type' )", $runner );
         self::assertStringContainsString( 'Variation term fixtures failed:', $runner );
+        self::assertStringContainsString( "checkout did not persist its language through Woo order CRUD", $runner );
+        self::assertStringNotContainsString( "\$order->update_meta_data( '_user_language', \$language )", $runner );
+        self::assertStringContainsString( 'qtranxf_maybe_unserialize_safe( $serialized_raw )', $runner );
     }
 }

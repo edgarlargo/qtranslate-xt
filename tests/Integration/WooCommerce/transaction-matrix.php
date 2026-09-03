@@ -84,20 +84,34 @@ if ( is_wp_error( $small ) || is_wp_error( $large ) ) {
     WP_CLI::error( 'Variation term fixtures failed: ' . implode( '; ', $messages ) );
 }
 
+global $wpdb;
 $simple = new WC_Product_Simple();
-$simple->set_name( $ml( 'Vienkāršā krūze', 'Простая кружка', 'Simple mug' ) );
-$simple->set_description( $ml( 'Pilns apraksts', 'Полное описание', 'Full description' ) );
-$simple->set_short_description( $ml( 'Īss apraksts', 'Краткое описание', 'Short description' ) );
+$simple->set_name( 'Simple mug' );
+$simple->set_description( 'Full description' );
+$simple->set_short_description( 'Short description' );
 $simple->set_sku( 'QTX-SIMPLE-001' );
 $simple->set_regular_price( '12.50' );
 $simple->set_manage_stock( true );
 $simple->set_stock_quantity( 17 );
 $simple->set_category_ids( array( (int) $category['term_id'] ) );
 $simple_id = $simple->save();
+$wpdb->update(
+    $wpdb->posts,
+    array(
+        'post_title'   => $ml( 'Vienkāršā krūze', 'Простая кружка', 'Simple mug' ),
+        'post_content' => $ml( 'Pilns apraksts', 'Полное описание', 'Full description' ),
+        'post_excerpt' => $ml( 'Īss apraksts', 'Краткое описание', 'Short description' ),
+    ),
+    array( 'ID' => $simple_id ),
+    array( '%s', '%s', '%s' ),
+    array( '%d' )
+);
+clean_post_cache( $simple_id );
+wc_delete_product_transients( $simple_id );
 update_post_meta( $simple_id, '_qtx_matrix_serialized_fixture', array( 'technical' => array( 'key' => 'value', 'number' => 42 ) ) );
 
 $variable = new WC_Product_Variable();
-$variable->set_name( $ml( 'Maināmā krūze', 'Вариативная кружка', 'Variable mug' ) );
+$variable->set_name( 'Variable mug' );
 $variable->set_sku( 'QTX-VARIABLE-001' );
 $attribute = new WC_Product_Attribute();
 $attribute->set_id( (int) $attribute_id );
@@ -107,6 +121,15 @@ $attribute->set_visible( true );
 $attribute->set_variation( true );
 $variable->set_attributes( array( $attribute ) );
 $variable_id = $variable->save();
+$wpdb->update(
+    $wpdb->posts,
+    array( 'post_title' => $ml( 'Maināmā krūze', 'Вариативная кружка', 'Variable mug' ) ),
+    array( 'ID' => $variable_id ),
+    array( '%s' ),
+    array( '%d' )
+);
+clean_post_cache( $variable_id );
+wc_delete_product_transients( $variable_id );
 $variation = new WC_Product_Variation();
 $variation->set_parent_id( $variable_id );
 $variation->set_attributes( array( 'pa_size' => 'small' ) );
@@ -172,9 +195,8 @@ foreach ( $language_names as $language => $expected_name ) {
     $order->set_payment_method( 'cod' );
     $order->calculate_totals();
     $order->save();
-    $order->update_meta_data( '_user_language', $language );
-    $order->save_meta_data();
     $orders[ $language ] = $order_id;
+    $check( $order->get_meta( '_user_language', true ) === $language, strtoupper( $language ) . ' checkout did not persist its language through Woo order CRUD.' );
     $check( (float) $order->get_total() === 40.75 && $order->get_payment_method() === 'cod', strtoupper( $language ) . ' order total/payment identifier changed.' );
     $check( count( $order->get_items() ) === 2, strtoupper( $language ) . ' product/variation snapshot missing.' );
     $snapshots[ $language ] = array_map( static function ( WC_Order_Item_Product $item ): array {
@@ -227,7 +249,6 @@ $check( $variation_data['id'] === $variation_id && $variation_data['sku'] === 'Q
 $order_request = new WP_REST_Request( 'GET', '/wc/v3/orders/' . $orders['ru'] );
 $order_data = rest_do_request( $order_request )->get_data();
 $check( $order_data['id'] === $orders['ru'] && $order_data['payment_method'] === 'cod' && (float) $order_data['total'] === 40.75, 'Woo REST order technical fields changed.' );
-global $wpdb;
 $raw_name = $wpdb->get_var( $wpdb->prepare( "SELECT post_title FROM {$wpdb->posts} WHERE ID = %d", $simple_id ) );
 $check( str_contains( $raw_name, '[:lv]' ) && str_contains( $raw_name, '[:ru]' ) && str_contains( $raw_name, '[:en]' ), 'QTX RAW storage policy was not preserved.' );
 $check( $data['name'] === $language_names['ru'] && $data['name'] !== $raw_name, 'QTX TRANSLATED REST policy was not explicit.' );
@@ -241,19 +262,29 @@ foreach ( $language_names as $language => $name ) {
     $check( wp_cache_get( 'product-' . $simple_id, 'qtx-woo-' . $language ) === $name, strtoupper( $language ) . ' cache isolation failed.' );
 }
 $old_ru = wp_cache_get( 'product-' . $simple_id, 'qtx-woo-ru' );
-wp_update_post( array( 'ID' => $simple_id, 'post_title' => $ml( 'Jauna krūze', 'Новая кружка', 'New mug' ) ) );
+$wpdb->update(
+    $wpdb->posts,
+    array( 'post_title' => $ml( 'Jauna krūze', 'Новая кружка', 'New mug' ) ),
+    array( 'ID' => $simple_id ),
+    array( '%s' ),
+    array( '%d' )
+);
 clean_post_cache( $simple_id );
 wp_cache_delete( 'product-' . $simple_id, 'qtx-woo-ru' );
 $check( $old_ru === $language_names['ru'] && false === wp_cache_get( 'product-' . $simple_id, 'qtx-woo-ru' ), 'Targeted multilingual product cache invalidation failed.' );
 
 // Historical records and every protected identifier/value must survive language switches.
+$baseline['simple_stock'] = get_post_meta( $simple_id, '_stock', true );
+$baseline['variation_stock'] = get_post_meta( $variation_id, '_stock', true );
 foreach ( array( 'lv', 'ru', 'en' ) as $language ) {
     $set_language( $language );
     $check( get_post_meta( $simple_id, '_sku', true ) === $baseline['simple_sku'], 'Simple SKU mutated after language switch.' );
     $check( get_post_meta( $variation_id, '_sku', true ) === $baseline['variation_sku'], 'Variation SKU mutated after language switch.' );
     $check( get_post_meta( $simple_id, '_price', true ) === $baseline['simple_price'], 'Simple price mutated after language switch.' );
+    $check( get_post_meta( $simple_id, '_stock', true ) === $baseline['simple_stock'], 'Simple stock mutated after language switch.' );
     $check( get_post_meta( $variation_id, '_stock', true ) === $baseline['variation_stock'], 'Variation stock mutated after language switch.' );
-    $serialized_fixture = get_metadata_raw( 'post', $simple_id, '_qtx_matrix_serialized_fixture', true );
+    $serialized_raw = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s LIMIT 1", $simple_id, '_qtx_matrix_serialized_fixture' ) );
+    $serialized_fixture = qtranxf_maybe_unserialize_safe( $serialized_raw );
     $check( $serialized_fixture === array( 'technical' => array( 'key' => 'value', 'number' => 42 ) ), 'Serialized technical metadata mutated after language switch.' );
     foreach ( $orders as $order_language => $order_id ) {
         $historical_order = wc_get_order( $order_id );
