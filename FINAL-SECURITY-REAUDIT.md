@@ -3,6 +3,7 @@
 Date: 2026-09-03
 Audited remediation commit: `7a0ca6553bddca329c5b871b589e75364551e59f`
 Post-Woo-Blocks delta audited source: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
+CI reproducibility follow-up audited commit: `ef83e1effc3f60eb88c186ee0bb86371bbc30734`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -68,6 +69,17 @@ bundle, build entry and all associated PHP/JavaScript/integration regressions.
   [`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249)
   passed the expanded 176-assertion WordPress 7.1/WooCommerce 11.0.1/MySQL
   8.4.11/Redis 7.4.11 matrix.
+
+The first post-audit rerun exposed a nondeterministic Redis Object Cache test
+prefix: WordPress's generated salt could contain Redis glob characters such as
+`[` or `*`, preventing `flush_group()` from matching keys. Commit `ef83e1e`
+sets `WP_REDIS_PREFIX` to the quoted, run-isolated value
+`qtx-woo-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}:` and adds a workflow contract
+assertion. Both interpolated values are GitHub-provided numeric run identifiers;
+the prefix is not a credential, is confined to the disposable lab and contains
+no shell or Redis glob metacharacters. This workflow-only follow-up adds no
+runtime endpoint, package code, secret or production data path. Delta security
+verdict remains **PASS** with no new finding.
 
 ## Historical findings revalidated
 
