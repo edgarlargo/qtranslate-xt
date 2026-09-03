@@ -16,6 +16,7 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( 'core download --version=7.1', $workflow );
         self::assertStringContainsString( 'plugin install woocommerce --version=11.0.1', $workflow );
         self::assertStringContainsString( 'plugin install redis-cache --version=2.8.0', $workflow );
+        self::assertStringContainsString( 'wp config set WP_REDIS_PREFIX "qtx-woo-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}:"', $workflow );
     }
 
     public function test_wp_cli_download_is_official_and_fail_closed(): void {

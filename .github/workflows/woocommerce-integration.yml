@@ -60,6 +60,7 @@ jobs:
           wp config create --path="$WP_PATH" --dbname=wordpress --dbuser=root --dbpass='' --dbhost=127.0.0.1:3306 --skip-check
           wp config set WP_REDIS_HOST 127.0.0.1 --path="$WP_PATH"
           wp config set WP_REDIS_PORT 6379 --raw --path="$WP_PATH"
+          wp config set WP_REDIS_PREFIX "qtx-woo-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}:" --path="$WP_PATH"
           wp config set WP_ENVIRONMENT_TYPE local --path="$WP_PATH"
           QTX_ADMIN_PASSWORD="$(openssl rand -hex 24)"
           wp core install --path="$WP_PATH" --url=http://qtx.test --title='QTX Woo Lab' --admin_user=qtx-admin --admin_password="$QTX_ADMIN_PASSWORD" --admin_email=nobody@example.test --skip-email
