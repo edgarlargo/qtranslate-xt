@@ -227,10 +227,12 @@ foreach ( $language_names as $language => $expected_name ) {
     WC()->cart->calculate_totals();
     $cart_items = WC()->cart->get_cart();
     $simple_item_name = apply_filters( 'woocommerce_cart_item_name', $cart_items[ $simple_key ]['data']->get_name(), $cart_items[ $simple_key ], $simple_key );
-    $variation_item_data = wc_get_formatted_cart_item_data( $cart_items[ $variation_key ], true );
+    $cart_variation_slug = $cart_items[ $variation_key ]['variation']['attribute_pa_size'];
+    $cart_variation_term = get_term_by( 'slug', $cart_variation_slug, 'pa_size' );
+    $cart_variation_label = wc_attribute_label( 'pa_size', $cart_items[ $variation_key ]['data'] );
     $check( is_string( $simple_key ) && is_string( $variation_key ) && WC()->cart->get_cart_contents_count() === 3, strtoupper( $language ) . ' cart/AJAX add path failed.' );
     $check( $simple_item_name === $expected_name && $cart_items[ $simple_key ]['quantity'] === 2 && $cart_items[ $variation_key ]['quantity'] === 1, strtoupper( $language ) . ' cart titles or quantities changed.' );
-    $check( str_contains( $variation_item_data, $attribute_names[ $language ] ) && str_contains( $variation_item_data, $small_names[ $language ] ), strtoupper( $language ) . ' cart variation labels were not translated.' );
+    $check( $cart_variation_slug === 'small' && $cart_variation_label === $attribute_names[ $language ] && $cart_variation_term instanceof WP_Term && $cart_variation_term->name === $small_names[ $language ], strtoupper( $language ) . ' cart variation labels were not translated or its raw selection changed.' );
     $check( (float) WC()->cart->get_total( 'edit' ) === 40.75, strtoupper( $language ) . ' cart total changed.' );
     $fragments = apply_filters( 'woocommerce_add_to_cart_fragments', array( 'div.widget_shopping_cart_content' => '<div>' . WC()->cart->get_cart_contents_count() . '</div>' ) );
     $check( isset( $fragments['div.widget_shopping_cart_content'] ), strtoupper( $language ) . ' cart fragment path failed.' );
