@@ -1,6 +1,6 @@
 # ACF compatibility
 
-Date: 2026-08-24
+Date: 2026-09-03
 Branch: `modernisation`
 
 ## Native architecture
@@ -58,6 +58,7 @@ create `name_lv`/`name_ru`/`name_en` fields and requires no external bridge.
 | Group | **PASS, real ACF Pro runtime** | multilingual and technical child leaves |
 | Repeater/Flexible Content | **PASS, real ACF Pro runtime** | multilingual leaves projected; technical/layout values retained |
 | ACF Pro Options Page | **PASS runtime/storage/enqueue** | registration/lookup, raw storage, translated reads, required admin assets |
+| Built-in Options language tabs | **PASS local and CI; interactive browser click NOT EXECUTED** | initial/dynamic field contract, text-only DOM, production bundle reproducibility |
 | Technical fields unchanged | **PASS unit and storage-boundary tests** | field whitelist and stable reference boundary |
 
 Real fixture values included:
@@ -87,6 +88,13 @@ register an endpoint, install another ACF copy or mutate `active_plugins`.
 Existing explicit ACF-module preferences are respected. On a new configuration
 the tabs are enabled by default and can be disabled in the ACF integration
 settings without disabling value translation.
+
+Post-audit GitHub Actions run
+[`33786090026`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786090026)
+passed the bridge contract in the 349-test / 8054-assertion PHP 8.1–8.5 matrix,
+five JavaScript tests and the reproducible production build. Run
+[`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998)
+installed and retested the exact archive containing `dist/modules/acf.js`.
 
 ## ACF Pro validation result
 

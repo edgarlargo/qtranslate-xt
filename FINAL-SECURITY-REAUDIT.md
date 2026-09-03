@@ -22,22 +22,22 @@ Branch: `modernisation`
 The mandatory order was preserved for the original release gate. After a real
 Cart/Checkout Blocks report required additional production code, the expanded
 WooCommerce MySQL/Redis matrix passed and the new code received the delta
-security re-audit below. The final ZIP must now be rebuilt and validated after
-this delta audit before it is distributed.
+security re-audit below. The final ZIP was subsequently rebuilt and validated
+after this delta audit.
 
 ## Current CI evidence
 
 - PHP/JavaScript run
-  [`33756895200`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33756895200):
-  **PASS** on commit `7a0ca65`.
-- PHP 8.1, 8.2, 8.3, 8.4 and 8.5: **345 tests / 8029 assertions**
+  [`33786090026`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786090026):
+  **PASS** on commit `f793c024b0cf48d086d15552ccfca872db6536d8`.
+- PHP 8.1, 8.2, 8.3, 8.4 and 8.5: **349 tests / 8054 assertions**
   per runtime.
 - Production syntax on PHP 7.4 and 8.0: **PASS**.
-- Node 24.11.1: clean `npm ci --ignore-scripts`, npm audit, 3 JS tests,
+- Node 24.11.1: clean `npm ci --ignore-scripts`, npm audit, 5 JS tests,
   production build and committed-bundle reproducibility check: **PASS**.
 - WooCommerce run
-  [`33756895339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33756895339):
-  **PASS**, 173 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
+  [`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998):
+  **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0 with HPOS enabled.
 - Local module-loader security runner, `git diff --check`, Composer validation,
   npm audit and Composer audit: **PASS**.
@@ -107,8 +107,9 @@ configuration change, JavaScript security regression and PHP source contract.
   preference; an existing administrator choice remains authoritative.
 
 Local Node execution passed five JavaScript tests and the production Webpack
-bundle rebuilt successfully. Final PHP/JavaScript, ACF contract and exact-ZIP
-evidence must be generated after this audit before the new archive is released.
+bundle rebuilt successfully. Post-audit run `33786090026` then passed the ACF
+contract in the 349-test / 8054-assertion PHP 8.1–8.5 matrix, five JavaScript
+tests, audits and reproducible bundle build.
 
 ## Historical findings revalidated
 
@@ -288,5 +289,16 @@ published it with Redis still connected. The final ZIP has SHA-256
 `146209dd78de77fd14c32551d8048dc897f67a89f2c62dce548609ffb1263ab6`,
 size 1,466,760 bytes, 1,138 entries, exactly one `qtranslate-xt/` root, the
 Latvian MO file and Woo Blocks bundle present, and zero forbidden entries.
-Those bytes predate the ACF Options Bridge and are now withdrawn. A new exact
-archive must be built and validated after the ACF delta audit above.
+Those bytes predate the ACF Options Bridge and are now withdrawn.
+
+The final post-ACF-bridge archive was built from
+`f793c024b0cf48d086d15552ccfca872db6536d8` only after the delta audit. GitHub
+Actions run
+[`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998)
+passed 176/176 assertions, built and inspected the archive, installed and
+reactivated those exact bytes in fresh WordPress 7.1, reran the matrix and
+confirmed Redis remained connected. Independent download verification matched
+SHA-256 `53ca21bf862200a06f3ac69c014573ae94e1bd4645cbc6d2168a3958221d0868`,
+size 1,467,442 bytes and 1,138 entries. The archive has one `qtranslate-xt/`
+root, contains the Latvian MO, Woo Blocks and ACF bundles, and has zero
+forbidden development/private/database/mail entries. Packaging gate: **PASS**.

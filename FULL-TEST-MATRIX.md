@@ -10,14 +10,10 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1.29 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
-| PHPUnit PHP 8.2.29 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
-| PHPUnit PHP 8.3.29 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
-| PHPUnit PHP 8.4.16 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
-| PHPUnit PHP 8.5.9 | **PASS** | 347 tests, 8042 assertions, 0 failures/errors |
+| PHPUnit PHP 8.1–8.5 | **PASS CI** | 349 tests, 8054 assertions per runtime, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
-| JavaScript shared corpus/security | **PASS** | 27 corpus cases plus 4 Node tests; text-only DOM sink assertion PASS |
+| JavaScript shared corpus/security | **PASS** | 27 corpus cases plus 5 Node tests; ACF bridge text-only DOM assertion PASS |
 | Webpack production build | **PASS** | Node 24.11.1 CI rebuild matched all committed bundles exactly |
 | npm audit | **PASS** | 0 development/runtime advisories after lock-graph update |
 | Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
@@ -64,7 +60,7 @@ digests. The local Node 18.14 engine warning is therefore not release evidence.
 | Options API (`option`/`options`) | **PASS ACF Free 6.8.8 and Pro Options Page 5.7.7 runtime/storage** |
 | Text/Textarea/WYSIWYG frontend LV/RU/EN | **PASS — ACF Free 6.8.8 and Pro 5.7.7; interactive browser JS NOT EXECUTED** |
 | Group/Repeater/Flexible Content | **PASS native runtime — ACF Pro 5.7.7** |
-| Built-in ACF Options language tabs | **PASS local source/JS; CI PENDING** — text-only tabs, initial/dynamic fields, no `active_plugins` mutation |
+| Built-in ACF Options language tabs | **PASS local and CI** — text-only tabs, initial/dynamic fields, no `active_plugins` mutation; interactive browser click test NOT EXECUTED |
 
 Repository unit tests for runtime capability detection, field schema,
 projection/merge, stable field keys, nested leaves, dynamic ACF JS actions and
@@ -89,14 +85,17 @@ Data-policy and cache-boundary unit/source tests are **PASS**. WooCommerce
 claims are limited to the installed 11.0.1 transactional matrix;
 `WOOCOMMERCE-COMPATIBILITY.md` makes no broader version claim.
 
-The disposable workflow and fail-closed runner passed after final security
-remediation on 2026-09-03 in GitHub Actions run
-[`33784794846`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794846),
-commit `46280f8`: **176/176 assertions**, WordPress 7.1, WooCommerce 11.0.1,
+The final disposable workflow and fail-closed runner passed after the ACF bridge
+delta audit on 2026-09-03 in GitHub Actions run
+[`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998),
+commit `f793c024b0cf48d086d15552ccfca872db6536d8`: **176/176 assertions**, WordPress 7.1, WooCommerce 11.0.1,
 PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0. HPOS was
 enabled and order language used WooCommerce CRUD. After the delta security
 audit, the job built, inspected, installed, reactivated and published the exact
-final archive.
+final archive. Companion run
+[`33786090026`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786090026)
+passed 349 tests / 8054 assertions on PHP 8.1–8.5, five JavaScript tests,
+audits, build and committed-bundle reproducibility.
 
 Historical release-gate attempt on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
 `actionlint` 1.7.12 returned zero findings for the Woo workflow. The local
@@ -149,6 +148,6 @@ listed in `FINAL-SECURITY-REAUDIT.md`.
 A real Cart/Checkout Blocks report invalidated the previous broad cart claim
 and the associated archive. The Store API/frontend-filter and dynamic text
 adapter remediation passes the expanded MySQL/Redis CI, and its delta security
-re-audit is **PASS**. The later built-in ACF Options Bridge also passed delta
-security review, but final distribution is pending its post-audit PHP/JS,
-WooCommerce and exact-ZIP run.
+re-audit is **PASS**. The later built-in ACF Options Bridge passed delta
+security review, post-audit PHP/JS and WooCommerce CI, and exact-ZIP
+installation. Final distribution gate: **PASS**.

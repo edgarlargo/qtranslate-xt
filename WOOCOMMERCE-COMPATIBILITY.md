@@ -57,8 +57,10 @@ transaction, captured-email, REST and cache assertions.
 ## 2026-09-03 release-gate result
 
 GitHub Actions run
-[`33784794846`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33784794846)
-passed after the Cart/Checkout Blocks remediation and delta security audit on commit `46280f8`. The disposable job used WordPress 7.1,
+[`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998)
+passed after the Cart/Checkout Blocks and ACF Options Bridge delta security
+audits on commit `f793c024b0cf48d086d15552ccfca872db6536d8`.
+The disposable job used WordPress 7.1,
 WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
 2.8.0. All **176 assertions passed**.
 
@@ -72,7 +74,7 @@ language isolation; and persistent Redis isolation/invalidation without a
 global flush. No production secret, external payment or external email was
 used. The WooCommerce release blocker is resolved.
 
-The same job installed the exact release-candidate ZIP, verified LV/RU/EN raw
+The same job built and installed the exact release-candidate ZIP, verified LV/RU/EN raw
 data preservation across plugin deactivation/reactivation, confirmed the
 Latvian MO file, retained Redis connectivity and published the validated
 artifact.
@@ -91,7 +93,7 @@ inside Woo Cart/Checkout/Mini-Cart roots. It never writes HTML and does not
 change price, SKU, ID, quantity, tax, stock or order data. The expanded matrix
 now performs an actual `/wc/store/v1/cart` request and proves the Russian name
 is projected while product ID, quantity and price remain unchanged. Run
-`33784794846` also installed and exercised the exact post-audit replacement
+`33786089998` also installed and exercised the exact post-audit replacement
 ZIP, so the compatibility regression and packaging gate are closed.
 
 WooCommerce 11 HPOS order-language storage was corrected to use the
