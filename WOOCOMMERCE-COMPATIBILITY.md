@@ -1,7 +1,7 @@
 # WooCommerce compatibility status
 
 This document records evidence, not aspirational compatibility. WooCommerce
-11.0.1 passed the required 173-assertion transactional matrix on WordPress
+11.0.1 passed the required 176-assertion transactional matrix on WordPress
 7.1/PHP 8.4, MySQL 8.4.11 and Redis 7.4.11. One tested version is not a broad
 supported range; unrelated areas remain explicit.
 
@@ -14,7 +14,7 @@ supported range; unrelated areas remain explicit.
 | SKU/price/stock/tax/IDs | protected by L1 technical data policy | PASS |
 | Product/category/tag URLs | existing URL/slugs module | NOT TESTED |
 | Classic cart/mini-cart | language-aware hash; simple/variation labels, quantities, totals and fragments | PASS |
-| Cart/Checkout Blocks | Store API frontend presentation filters plus text-only dynamic label adapter | REMEDIATED; CI REVALIDATION REQUIRED |
+| Cart/Checkout Blocks | Store API frontend presentation filters plus text-only dynamic label adapter | PASS (11.0.1, LV/RU/EN) |
 | Classic checkout/order review | COD-only transaction and translated payment label | PASS |
 | Historical orders/HPOS | no rewrite; explicit `_user_language` through Woo CRUD | PASS |
 | Customer emails | captured processing/completed LV/RU/EN plus cancelled/refund contexts | PASS |
@@ -57,10 +57,10 @@ transaction, captured-email, REST and cache assertions.
 ## 2026-09-03 release-gate result
 
 GitHub Actions run
-[`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929)
-passed after final security remediation on commit `b6a7aa7`. The disposable job used WordPress 7.1,
+[`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249)
+passed after the Cart/Checkout Blocks remediation on commit `1f6db22`. The disposable job used WordPress 7.1,
 WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
-2.8.0. All **173 assertions passed**.
+2.8.0. All **176 assertions passed**.
 
 The matrix covers simple/variable products; title, long/short description,
 category, attribute and variation presentation; stable IDs, SKU, price, stock,
@@ -77,19 +77,22 @@ data preservation across plugin deactivation/reactivation, confirmed the
 Latvian MO file, retained Redis connectivity and published the validated
 artifact.
 
-## Cart/Checkout Blocks regression reported after the gate
+## Cart/Checkout Blocks regression and resolution
 
 A real WooCommerce block-cart and block-checkout page returned raw QTX markers
 in Store API product names and dynamically rendered labels. The prior matrix
 exercised classic PHP cart hooks and AJAX fragments, so its broad cart claim
-was incomplete and the corresponding ZIP is withdrawn.
+was incomplete and the corresponding ZIP was withdrawn.
 
 The remediation activates the existing Woo frontend presentation filters only
 for the exact `/wc/store/` REST namespace. It also adds a 1.9 KiB client bundle
 that uses WordPress JavaScript i18n filters and replaces only text-node values
 inside Woo Cart/Checkout/Mini-Cart roots. It never writes HTML and does not
-change price, SKU, ID, quantity, tax, stock or order data. Replacement release
-status remains pending the expanded MySQL/Redis and exact-ZIP CI run.
+change price, SKU, ID, quantity, tax, stock or order data. The expanded matrix
+now performs an actual `/wc/store/v1/cart` request and proves the Russian name
+is projected while product ID, quantity and price remain unchanged. Run
+`33783568249` also installed and exercised the exact replacement ZIP, so this
+regression is closed.
 
 WooCommerce 11 HPOS order-language storage was corrected to use the
 `WC_Abstract_Order` metadata API. The legacy checkout metadata hook remains for

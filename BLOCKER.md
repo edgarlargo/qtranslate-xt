@@ -6,17 +6,18 @@ Status: **RESOLVED**
 ## Resolution
 
 The required WooCommerce MySQL/Redis blocker is **RESOLVED**. GitHub Actions
-run [`33754558280`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33754558280)
-passed **173/173 assertions** on commit `111eb5a` using WordPress 7.1,
+run [`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249)
+passed **176/176 assertions** on commit `1f6db22` using WordPress 7.1,
 WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
 2.8.0. HPOS was enabled. Credentials were disposable, COD was offline and mail
 was captured before transport.
 
 The final security re-audit passed after all release-blocking findings were
 remediated. A later real-site report found that WooCommerce Cart/Checkout
-Blocks bypassed the classic hooks covered by run `33758229929`. Its ZIP is
-withdrawn. Expanded Store API/block-label CI and replacement exact-ZIP
-validation is now the active release blocker.
+Blocks bypassed the classic hooks covered by run `33758229929`; that ZIP was
+withdrawn. The Store API/block-label remediation, expanded MySQL/Redis matrix
+and replacement exact-ZIP installation have now passed. No Woo release blocker
+remains.
 
 ## Historical problem
 
@@ -105,7 +106,7 @@ Claiming these as PASS would be false.
 - No confirmed open Critical/High security issue is known, but integration data
   integrity is a release-blocking compatibility requirement.
 
-## Possible solutions
+## Historical possible solutions
 
 1. Review and push the integration workflow, then allow its GitHub Actions job
    to run. It creates only disposable credentials and captures mail before
@@ -115,10 +116,8 @@ Claiming these as PASS would be false.
    compatibility claims explicitly; this is a product decision, not a safe
    technical assumption.
 
-## Exact human input/resource required
+## Current human input/resource required
 
-Provide an authenticated path to push/dispatch the now-reproducible integration
-environment. Once the workflow result is available, resume at any failed
-assertion, then run exact-ZIP
-installation validation, select a non-upstream development RC identity and only
-then build the final RC ZIP.
+None for the release gate. GitHub authentication was provided, the reproducible
+workflow ran, every required assertion passed and the exact replacement ZIP was
+installed and validated in CI.

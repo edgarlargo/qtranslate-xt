@@ -10,14 +10,14 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1.29 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
-| PHPUnit PHP 8.2.29 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
-| PHPUnit PHP 8.3.29 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
-| PHPUnit PHP 8.4.16 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
-| PHPUnit PHP 8.5.9 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
+| PHPUnit PHP 8.1.29 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
+| PHPUnit PHP 8.2.29 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
+| PHPUnit PHP 8.3.29 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
+| PHPUnit PHP 8.4.16 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
+| PHPUnit PHP 8.5.9 | **PASS** | 347 tests, 8041 assertions, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
-| JavaScript shared corpus/security | **PASS** | 27 corpus cases plus 3 Node tests; text-only DOM sink assertion PASS |
+| JavaScript shared corpus/security | **PASS** | 27 corpus cases plus 4 Node tests; text-only DOM sink assertion PASS |
 | Webpack production build | **PASS** | Node 24.11.1 CI rebuild matched all committed bundles exactly |
 | npm audit | **PASS** | 0 development/runtime advisories after lock-graph update |
 | Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
@@ -78,7 +78,7 @@ versions are not covered by that result.
 | Products/categories/attributes/variations | **PASS — LV/RU/EN; tags outside required gate remain NOT TESTED** |
 | Permalinks/slugs/canonical URLs | **NOT TESTED; outside required transactional gate** |
 | Classic cart/AJAX/fragments/variation selection | **PASS** |
-| Cart/Checkout Blocks Store API and dynamic labels | **REMEDIATED; CI REVALIDATION REQUIRED** |
+| Cart/Checkout Blocks Store API and dynamic labels | **PASS — translated Store API product name; text-only dynamic adapter** |
 | Classic checkout/order review/offline COD | **PASS** |
 | Orders/customer language/HPOS/emails | **PASS** |
 | WooCommerce REST | **PASS — authenticated products/variations/orders** |
@@ -90,8 +90,8 @@ claims are limited to the installed 11.0.1 transactional matrix;
 
 The disposable workflow and fail-closed runner passed after final security
 remediation on 2026-09-03 in GitHub Actions run
-[`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929),
-commit `b6a7aa7`: **173/173 assertions**, WordPress 7.1, WooCommerce 11.0.1,
+[`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249),
+commit `1f6db22`: **176/176 assertions**, WordPress 7.1, WooCommerce 11.0.1,
 PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0. HPOS was
 enabled and order language used WooCommerce CRUD. The job also built,
 inspected, installed, reactivated and published the exact final RC archive.
@@ -146,5 +146,6 @@ listed in `FINAL-SECURITY-REAUDIT.md`.
 
 A real Cart/Checkout Blocks report invalidated the previous broad cart claim
 and the associated archive. The Store API/frontend-filter and dynamic text
-adapter remediation is locally green, but the replacement RC remains blocked
-until its expanded MySQL/Redis CI and exact ZIP run pass.
+adapter remediation now passes the expanded MySQL/Redis CI. The exact
+replacement ZIP was built, inspected, installed, reactivated and published by
+run `33783568249`; the Woo release gate is **PASS**.

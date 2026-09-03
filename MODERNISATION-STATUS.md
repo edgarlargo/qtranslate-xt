@@ -21,7 +21,7 @@ progress. O2 now allowlists database maintenance actions, requires explicit
 backup confirmation, and confines SQL splitting to trusted canonical roots.
 Optional built-in integrations have a source-validated, explicitly NOT TESTED
 real-plugin matrix in `BUILTIN-INTEGRATIONS-COMPATIBILITY.md`. Phase Q local
-and CI matrix is green at 345 tests / 8029 assertions on each PHP 8.1–8.5; production
+and CI matrix is green at 347 tests / 8041 assertions on each PHP 8.1–8.5; production
 sources also lint cleanly on PHP 7.4 and 8.0; required
 real testing now covers WordPress 7.1, ACF Free/theme-bundled 6.8.8,
 WooCommerce 11.0.1 smoke paths and Gutenberg save/autosave/409 conflicts. ACF
@@ -32,11 +32,11 @@ Pro and theme-bundled runtime/value tests are documented in
 
 The comprehensive Woo matrix passed after final security remediation in
 disposable GitHub Actions run
-[`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929).
+[`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249).
 Its source review and failed-run remediation fixed HPOS order-language storage,
 frontend lifecycle fidelity and canonical term fixtures. The final result is
-173/173 assertions on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11
-and Redis 7.4.11. The companion PHP/JavaScript run `33758229956` passed all
+176/176 assertions on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11
+and Redis 7.4.11. The companion PHP/JavaScript run `33783568190` passed all
 runtime, audit, build and bundle-reproducibility jobs.
 
 Historical 2026-09-02 attempt: the release-gate retry passed `actionlint`
@@ -56,11 +56,9 @@ official WP-CLI 2.12.0 build, validates its fixed SHA-256 and pins Redis Object
 Cache 2.8.0. Three workflow contract tests add 15 assertions; the resulting
 full PHP 8.1-8.5 matrix is green at 335 tests / 7963 assertions per runtime.
 
-The exact `4.0.0-rc1` development ZIP has additionally passed fresh WordPress
-7.1 installation, activation, LV/RU/EN frontend, ACF Pro 5.7.7 and
-deactivate/reactivate checks. Its local Woo transaction attempt confirmed the
-documented MySQL requirement when SQLite rejected WooCommerce stock-reservation
-locking SQL.
+The exact replacement `4.0.0-rc1` ZIP has additionally passed WordPress 7.1
+installation, activation, LV/RU/EN projection, Store API block-cart coverage,
+deactivate/reactivate checks and Redis connectivity in the MySQL CI lab.
 
 Security Batch QTX4-SEC-001 now applies late `esc_textarea()` output encoding
 to both configuration textareas and rejects non-scalar request shapes before
@@ -71,7 +69,7 @@ tested. The final security re-audit then remediated ACF output sinks, the npm
 development graph, mutable CI inputs, diagnostic AJAX, slug-save authorization,
 DOM label sinks and the remaining direct redirect. It records zero confirmed
 open Critical, High, Medium or Low findings. The full PHP 8.1-8.5 matrix is
-green at 345 tests / 8029 assertions.
+green at 347 tests / 8041 assertions.
 
 ## Completed work
 
@@ -186,7 +184,7 @@ green at 345 tests / 8029 assertions.
 ## Current test status
 
 - PHP 7.4 and 8.0 production lint: zero syntax errors.
-- PHP 8.1–8.5: 345 tests, 8029 assertions per version, zero failures/errors.
+- PHP 8.1–8.5: 347 tests, 8041 assertions per version, zero failures/errors.
 - Shared JS/PHP corpus parity: 100% (27/27); generated parser parity 400/400.
 - Production PHP lint, Webpack build, JS tests and
   `git diff --check`: green.
@@ -198,10 +196,8 @@ green at 345 tests / 8029 assertions.
 
 ## Known blockers
 
-The ACF Pro 5.7.7 and final security gates remain resolved. A real Cart/Checkout
-Blocks report invalidated the previous broad Woo cart claim and ZIP. Store API
-and dynamic text-node remediation is locally green; expanded MySQL/Redis CI and
-a replacement exact archive are the active release blockers.
+No release blocker remains. The ACF Pro 5.7.7, final security, expanded
+WooCommerce Store API/MySQL/Redis and exact replacement-ZIP gates are resolved.
 
 ## Security status
 
@@ -226,6 +222,7 @@ a replacement exact archive are the active release blockers.
 
 ## Next planned phase
 
-Run the expanded WooCommerce Store API/block matrix, then rebuild, install and
-publish a replacement exact `4.0.0-rc1` archive. Do not distribute the previous
-artifact whose withdrawn SHA-256 remains recorded for traceability.
+Deploy the exact validated replacement `4.0.0-rc1` archive to staging, clear
+WordPress/WooCommerce/Redis/browser caches and visually recheck the reported RU
+Cart and Checkout pages. Do not distribute the previous artifact; its withdrawn
+SHA-256 remains recorded for traceability.

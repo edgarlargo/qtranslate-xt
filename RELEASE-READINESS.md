@@ -1,29 +1,30 @@
 # QTX 4 release readiness
 
 Date: 2026-09-03
-Decision: **NOT READY — WOO BLOCKS REGRESSION REVALIDATION IN PROGRESS**
+Decision: **READY — FINAL RC VALIDATED AFTER WOO BLOCKS REMEDIATION**
 
 ## Mandatory release gates
 
 | Order | Gate | Result |
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
-| 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33758229929`, 173/173 assertions |
+| 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33783568249`, 176/176 assertions |
 | 3 | Final security re-audit | **PASS** — `FINAL-SECURITY-REAUDIT.md` |
 | 4 | Fix release-blocking re-audit findings | **PASS** — remediation commit `7a0ca65` |
-| 5 | Build and validate final RC ZIP | **WITHDRAWN** — real Cart/Checkout Blocks defect reported after validation |
+| 5 | Build and validate final RC ZIP | **PASS** — exact replacement ZIP built, installed and exercised in run `33783568249` |
 
-The gates were executed in the required order, but a real-site Cart/Checkout
-Blocks report exposed a missing Store API path in the Woo matrix. The artifact
-from source commit `b6a7aa7` is withdrawn. A replacement archive requires the
-new Store API and dynamic block-label regression to pass CI.
+The gates were executed in the required order. A later real-site Cart/Checkout
+Blocks report exposed a missing Store API path in the original Woo matrix, so
+that artifact was withdrawn. The Store API and dynamic block-label remediation
+now passes the expanded matrix and the replacement archive is the designated
+release candidate.
 
 ## Current automated evidence
 
 - GitHub PHP/JavaScript run
-  [`33758229956`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229956):
-  **PASS** on `b6a7aa7`.
-- PHP 8.1–8.5: **345 tests / 8029 assertions** on every runtime.
+  [`33783568190`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568190):
+  **PASS** on `1f6db22`.
+- PHP 8.1–8.5: **347 tests / 8041 assertions** on every runtime.
 - PHP 7.4/8.0 production lint: **PASS**.
 - Node 24.11.1: `npm ci --ignore-scripts`, audit, JS tests, production build
   and exact committed-bundle comparison: **PASS**, zero advisories.
@@ -31,8 +32,8 @@ new Store API and dynamic block-label regression to pass CI.
   advisories.
 - Module-loader security runner and `git diff --check`: **PASS**.
 - GitHub WooCommerce run
-  [`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929):
-  **PASS**, 173 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
+  [`33783568249`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33783568249):
+  **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11, Redis Object Cache 2.8.0 and HPOS. The same job
   built, installed, reactivated and published the exact final ZIP.
 
@@ -65,16 +66,15 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 - Woo product/cart/checkout/order/HPOS/email/REST/AJAX/cache matrix:
   **PASS** on the current remediation commit.
 
-## Withdrawn ZIP result
+## Final replacement ZIP result
 
-The artifact formerly stored as `build/qtranslate-xt-4.0.0-rc1.zip` must not be
-installed as the final RC.
+The designated artifact is `build/qtranslate-xt-4.0.0-rc1.zip`.
 
-- Source commit: `b6a7aa773da7c1566617fcdea814cb7f6c40a5e8`
-- CI workflow: `33758229929`
-- SHA-256: `c8bf5a59d6db98ad31cefc245a4edaf3a0f40a8ec45ff04ace5a24f09af02bc3`
-- Size: **1,464,765 bytes**
-- ZIP entries: **1,137**
+- Source commit: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
+- CI workflow: `33783568249`
+- SHA-256: `0a2b9c9b1bf118c9fd846fd4e5e97c7eaab107f07ae6bd07fcee0344aba8c367`
+- Size: **1,466,760 bytes**
+- ZIP entries: **1,138**
 - Top-level root: exactly `qtranslate-xt/`
 - `lang/qtranslate-lv.mo`: present
 - Forbidden development/private/database/mail content: **0 entries**
@@ -88,6 +88,10 @@ The exact published bytes:
 5. projected the expected Latvian, Russian and English title/content;
 6. retained a connected Redis object-cache backend;
 7. were downloaded from the successful workflow and matched its SHA-256.
+
+The earlier archive from `b6a7aa7` with SHA-256
+`c8bf5a59d6db98ad31cefc245a4edaf3a0f40a8ec45ff04ace5a24f09af02bc3`
+remains withdrawn and must not be distributed.
 
 ## Constrained compatibility claims
 
