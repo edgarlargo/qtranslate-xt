@@ -14,8 +14,8 @@ was captured before transport.
 
 The final security re-audit also passed after all release-blocking findings
 were remediated. Exact release-candidate ZIP construction and fresh-install
-validation is the active final gate. This file is retained as historical
-evidence and is not an active blocker.
+validation passed in run `33758229929`. This file is retained as historical
+evidence; no active release blocker is recorded here.
 
 ## Historical problem
 

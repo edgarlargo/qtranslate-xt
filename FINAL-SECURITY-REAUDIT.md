@@ -194,7 +194,14 @@ tests, development files, credentials and private packages.
 
 ## Final decision
 
-Final security gate: **PASS**.  
+Final security gate: **PASS**.
 Release-candidate ZIP permission: **GRANTED**, subject to exact-archive build,
 fresh WordPress installation/activation, integrity inspection and preservation
 tests against the exact ZIP bytes.
+
+## Post-audit packaging result
+
+The authorized fifth gate subsequently passed in GitHub Actions run
+[`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929)
+from source commit `b6a7aa7`. The exact installed and published ZIP has SHA-256
+`c8bf5a59d6db98ad31cefc245a4edaf3a0f40a8ec45ff04ace5a24f09af02bc3`.

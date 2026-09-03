@@ -32,11 +32,11 @@ Pro and theme-bundled runtime/value tests are documented in
 
 The comprehensive Woo matrix passed after final security remediation in
 disposable GitHub Actions run
-[`33756895339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33756895339).
+[`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929).
 Its source review and failed-run remediation fixed HPOS order-language storage,
 frontend lifecycle fidelity and canonical term fixtures. The final result is
 173/173 assertions on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11
-and Redis 7.4.11. The companion PHP/JavaScript run `33756895200` passed all
+and Redis 7.4.11. The companion PHP/JavaScript run `33758229956` passed all
 runtime, audit, build and bundle-reproducibility jobs.
 
 Historical 2026-09-02 attempt: the release-gate retry passed `actionlint`
@@ -198,10 +198,9 @@ green at 345 tests / 8029 assertions.
 
 ## Known blockers
 
-The ACF Pro 5.7.7, WooCommerce MySQL/Redis and final security gates are
-resolved. No confirmed security or required integration blocker remains.
-Exact final ZIP construction and installation validation is the active fifth
-gate; the archive is not releasable until that exact-byte check passes.
+The ACF Pro 5.7.7, WooCommerce MySQL/Redis, final security and exact ZIP gates
+are resolved. No confirmed security, required integration or packaging blocker
+remains for the `4.0.0-rc1` artifact identified in `RELEASE-READINESS.md`.
 
 ## Security status
 
@@ -226,6 +225,6 @@ gate; the archive is not releasable until that exact-byte check passes.
 
 ## Next planned phase
 
-Build the exact `4.0.0-rc1` archive from the documented final commit, inspect
-its contents, install it into disposable WordPress 7.1, verify activation and
-LV/RU/EN data preservation, then record its SHA-256, file count and byte size.
+Hand off the exact `4.0.0-rc1` artifact whose SHA-256 is recorded in
+`RELEASE-READINESS.md`. Do not substitute a locally rebuilt ZIP with different
+container metadata, even if its extracted file tree is equivalent.

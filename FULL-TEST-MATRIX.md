@@ -89,10 +89,11 @@ claims are limited to the installed 11.0.1 transactional matrix;
 
 The disposable workflow and fail-closed runner passed after final security
 remediation on 2026-09-03 in GitHub Actions run
-[`33756895339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33756895339),
-commit `7a0ca65`: **173/173 assertions**, WordPress 7.1, WooCommerce 11.0.1,
+[`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929),
+commit `b6a7aa7`: **173/173 assertions**, WordPress 7.1, WooCommerce 11.0.1,
 PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0. HPOS was
-enabled and order language used WooCommerce CRUD.
+enabled and order language used WooCommerce CRUD. The job also built,
+inspected, installed, reactivated and published the exact final RC archive.
 
 Historical release-gate attempt on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
 `actionlint` 1.7.12 returned zero findings for the Woo workflow. The local
@@ -142,6 +143,7 @@ listed in `FINAL-SECURITY-REAUDIT.md`.
 
 ## Q phase conclusion
 
-All local and CI quality gates, the required WooCommerce MySQL/Redis gate and
-the final security re-audit are green. Exact final RC ZIP construction and
-fresh-install validation are now authorized as the fifth mandatory gate.
+All local and CI quality gates, the required WooCommerce MySQL/Redis gate, the
+final security re-audit and exact final RC ZIP installation are green. Final
+artifact SHA-256 is
+`c8bf5a59d6db98ad31cefc245a4edaf3a0f40a8ec45ff04ace5a24f09af02bc3`.

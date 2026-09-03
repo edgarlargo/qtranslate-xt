@@ -56,8 +56,8 @@ transaction, captured-email, REST and cache assertions.
 ## 2026-09-03 release-gate result
 
 GitHub Actions run
-[`33756895339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33756895339)
-passed after final security remediation on commit `7a0ca65`. The disposable job used WordPress 7.1,
+[`33758229929`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33758229929)
+passed after final security remediation on commit `b6a7aa7`. The disposable job used WordPress 7.1,
 WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
 2.8.0. All **173 assertions passed**.
 
@@ -70,6 +70,11 @@ captured LV/RU/EN mail; authenticated product/variation/order REST reads; AJAX
 language isolation; and persistent Redis isolation/invalidation without a
 global flush. No production secret, external payment or external email was
 used. The WooCommerce release blocker is resolved.
+
+The same job installed the exact release-candidate ZIP, verified LV/RU/EN raw
+data preservation across plugin deactivation/reactivation, confirmed the
+Latvian MO file, retained Redis connectivity and published the validated
+artifact.
 
 WooCommerce 11 HPOS order-language storage was corrected to use the
 `WC_Abstract_Order` metadata API. The legacy checkout metadata hook remains for
