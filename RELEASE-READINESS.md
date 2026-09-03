@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
 Date: 2026-09-03
-Decision: **FINAL RELEASE CANDIDATE READY**
+Decision: **NOT READY — WOO BLOCKS REGRESSION REVALIDATION IN PROGRESS**
 
 ## Mandatory release gates
 
@@ -11,11 +11,12 @@ Decision: **FINAL RELEASE CANDIDATE READY**
 | 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33758229929`, 173/173 assertions |
 | 3 | Final security re-audit | **PASS** — `FINAL-SECURITY-REAUDIT.md` |
 | 4 | Fix release-blocking re-audit findings | **PASS** — remediation commit `7a0ca65` |
-| 5 | Build and validate final RC ZIP | **PASS** — exact CI artifact installed and verified |
+| 5 | Build and validate final RC ZIP | **WITHDRAWN** — real Cart/Checkout Blocks defect reported after validation |
 
-The gates were executed in the required order. No earlier staging archive is
-the final release candidate. The designated source commit is `b6a7aa7`; this
-post-validation report does not change the archive's source boundary.
+The gates were executed in the required order, but a real-site Cart/Checkout
+Blocks report exposed a missing Store API path in the Woo matrix. The artifact
+from source commit `b6a7aa7` is withdrawn. A replacement archive requires the
+new Store API and dynamic block-label regression to pass CI.
 
 ## Current automated evidence
 
@@ -64,9 +65,10 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 - Woo product/cart/checkout/order/HPOS/email/REST/AJAX/cache matrix:
   **PASS** on the current remediation commit.
 
-## Exact final ZIP result
+## Withdrawn ZIP result
 
-Artifact: `build/qtranslate-xt-4.0.0-rc1.zip`
+The artifact formerly stored as `build/qtranslate-xt-4.0.0-rc1.zip` must not be
+installed as the final RC.
 
 - Source commit: `b6a7aa773da7c1566617fcdea814cb7f6c40a5e8`
 - CI workflow: `33758229929`

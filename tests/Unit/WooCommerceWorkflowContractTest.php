@@ -48,6 +48,9 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( 'cart variation labels were not translated', $runner );
         self::assertStringContainsString( 'checkout payment label was not translated', $runner );
         self::assertStringContainsString( 'new WC_Gateway_COD()', $runner );
+        self::assertStringContainsString( "'/wc/store/v1/cart'", $runner );
+        self::assertStringContainsString( 'Store API cart product name was not translated for the block UI', $runner );
+        self::assertStringContainsString( 'Store API block translation changed product ID, quantity or price data', $runner );
         self::assertStringContainsString( 'Cancelled order email was not captured in its stored LV context', $runner );
         self::assertStringContainsString( 'Refund email was not captured in its stored EN context', $runner );
         self::assertStringContainsString( 'Redis direct cache-group flush control failed', $runner );

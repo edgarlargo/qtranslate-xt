@@ -341,6 +341,35 @@ $raw_name = $wpdb->get_var( $wpdb->prepare( "SELECT post_title FROM {$wpdb->post
 $check( str_contains( $raw_name, '[:lv]' ) && str_contains( $raw_name, '[:ru]' ) && str_contains( $raw_name, '[:en]' ), 'QTX RAW storage policy was not preserved.' );
 $check( $data['name'] === $language_names['ru'] && $data['name'] !== $raw_name, 'QTX TRANSLATED REST policy was not explicit.' );
 
+// WooCommerce Cart/Checkout blocks use the public Store API rather than the
+// classic cart template hooks. Remove the already active frontend hooks to
+// reproduce a REST-classified request and prove the route adapter restores
+// only the presentation boundary before the Store API schema is generated.
+qtranxf_remove_filters( qtranxf_wc_front_filter_config() );
+$set_language( 'ru' );
+$store_request = new WP_REST_Request( 'GET', '/wc/store/v1/cart' );
+$store_response = rest_do_request( $store_request );
+$store_data = $store_response->get_data();
+$store_names = is_array( $store_data ) && isset( $store_data['items'] )
+    ? array_column( $store_data['items'], 'name' )
+    : array();
+$check( $store_response->get_status() === 200, 'Woo Store API cart request failed.' );
+$check( in_array( $language_names['ru'], $store_names, true ), 'Woo Store API cart product name was not translated for the block UI.' );
+$store_simple = null;
+foreach ( $store_data['items'] ?? array() as $store_item ) {
+    if ( isset( $store_item['id'] ) && (int) $store_item['id'] === $simple_id ) {
+        $store_simple = $store_item;
+        break;
+    }
+}
+$check(
+    is_array( $store_simple )
+    && (int) $store_simple['id'] === $simple_id
+    && (int) $store_simple['quantity'] === 2
+    && isset( $store_simple['prices']['price'] ),
+    'Woo Store API block translation changed product ID, quantity or price data.'
+);
+
 // Persistent object cache isolation and targeted invalidation fixture.
 $check( wp_using_ext_object_cache(), 'Persistent Redis object cache is not active.' );
 foreach ( $language_names as $language => $name ) {

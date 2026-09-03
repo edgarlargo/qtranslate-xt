@@ -198,9 +198,10 @@ green at 345 tests / 8029 assertions.
 
 ## Known blockers
 
-The ACF Pro 5.7.7, WooCommerce MySQL/Redis, final security and exact ZIP gates
-are resolved. No confirmed security, required integration or packaging blocker
-remains for the `4.0.0-rc1` artifact identified in `RELEASE-READINESS.md`.
+The ACF Pro 5.7.7 and final security gates remain resolved. A real Cart/Checkout
+Blocks report invalidated the previous broad Woo cart claim and ZIP. Store API
+and dynamic text-node remediation is locally green; expanded MySQL/Redis CI and
+a replacement exact archive are the active release blockers.
 
 ## Security status
 
@@ -225,6 +226,6 @@ remains for the `4.0.0-rc1` artifact identified in `RELEASE-READINESS.md`.
 
 ## Next planned phase
 
-Hand off the exact `4.0.0-rc1` artifact whose SHA-256 is recorded in
-`RELEASE-READINESS.md`. Do not substitute a locally rebuilt ZIP with different
-container metadata, even if its extracted file tree is equivalent.
+Run the expanded WooCommerce Store API/block matrix, then rebuild, install and
+publish a replacement exact `4.0.0-rc1` archive. Do not distribute the previous
+artifact whose withdrawn SHA-256 remains recorded for traceability.

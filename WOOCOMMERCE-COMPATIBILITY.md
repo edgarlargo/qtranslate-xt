@@ -13,8 +13,9 @@ supported range; unrelated areas remain explicit.
 | Attribute and variation labels | existing module hooks and raw-slug preservation | PASS |
 | SKU/price/stock/tax/IDs | protected by L1 technical data policy | PASS |
 | Product/category/tag URLs | existing URL/slugs module | NOT TESTED |
-| Cart/mini-cart | language-aware hash; simple/variation labels, quantities, totals and fragments | PASS |
-| Checkout/order review | COD-only transaction and translated payment label | PASS |
+| Classic cart/mini-cart | language-aware hash; simple/variation labels, quantities, totals and fragments | PASS |
+| Cart/Checkout Blocks | Store API frontend presentation filters plus text-only dynamic label adapter | REMEDIATED; CI REVALIDATION REQUIRED |
+| Classic checkout/order review | COD-only transaction and translated payment label | PASS |
 | Historical orders/HPOS | no rewrite; explicit `_user_language` through Woo CRUD | PASS |
 | Customer emails | captured processing/completed LV/RU/EN plus cancelled/refund contexts | PASS |
 | REST | authenticated products, variations and orders | PASS |
@@ -75,6 +76,20 @@ The same job installed the exact release-candidate ZIP, verified LV/RU/EN raw
 data preservation across plugin deactivation/reactivation, confirmed the
 Latvian MO file, retained Redis connectivity and published the validated
 artifact.
+
+## Cart/Checkout Blocks regression reported after the gate
+
+A real WooCommerce block-cart and block-checkout page returned raw QTX markers
+in Store API product names and dynamically rendered labels. The prior matrix
+exercised classic PHP cart hooks and AJAX fragments, so its broad cart claim
+was incomplete and the corresponding ZIP is withdrawn.
+
+The remediation activates the existing Woo frontend presentation filters only
+for the exact `/wc/store/` REST namespace. It also adds a 1.9 KiB client bundle
+that uses WordPress JavaScript i18n filters and replaces only text-node values
+inside Woo Cart/Checkout/Mini-Cart roots. It never writes HTML and does not
+change price, SKU, ID, quantity, tax, stock or order data. Replacement release
+status remains pending the expanded MySQL/Redis and exact-ZIP CI run.
 
 WooCommerce 11 HPOS order-language storage was corrected to use the
 `WC_Abstract_Order` metadata API. The legacy checkout metadata hook remains for

@@ -63,3 +63,29 @@ test('language switch labels use text-only DOM sinks', () => {
     assert.match(source, /textContent:\s*config\.l10n\.CopyFrom/);
     assert.doesNotMatch(source, /innerHTML:\s*(?:lang_conf\.name|config\.l10n\.CopyFrom)/);
 });
+
+test('WooCommerce block strings select the active language without HTML sinks', () => {
+    let source = fs.readFileSync(path.join(root, 'js', 'woocommerce-blocks', 'translator.js'), 'utf8');
+    source = source
+        .replaceAll('export const ', 'const ')
+        .concat('\nmodule.exports = {selectTranslation};\n');
+    const module = {exports: {}};
+    vm.runInNewContext(source, {module, Object, Array, RegExp}, {filename: 'js/woocommerce-blocks/translator.js'});
+    const settings = {
+        language: 'ru',
+        defaultLanguage: 'en',
+        enabledLanguages: ['lv', 'ru', 'en'],
+        languageCodePattern: '[a-z]{2,3}',
+    };
+    const select = module.exports.selectTranslation;
+
+    assert.equal(select('[:en]Checkout[:lv]Pasūtījums[:ru]Оформление заказа[:]', settings), 'Оформление заказа');
+    assert.equal(select('<!--:lv-->Summa<!--:ru-->Итого<!--:en-->Subtotal<!--:-->', settings), 'Итого');
+    assert.equal(select('{:lv}Grozs{:en}Cart{:}', {...settings, language: 'de'}), 'Cart');
+    assert.equal(select('€20.00', settings), '€20.00');
+
+    const domSource = fs.readFileSync(path.join(root, 'js', 'woocommerce-blocks', 'index.js'), 'utf8');
+    assert.doesNotMatch(domSource, /innerHTML|outerHTML|insertAdjacentHTML|document\.write/);
+    assert.match(domSource, /node\.nodeValue = translated/);
+    assert.match(domSource, /i18n\.gettext/);
+});

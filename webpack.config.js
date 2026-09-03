@@ -13,6 +13,7 @@ module.exports = {
         'block-editor': './js/block-editor.js',
         'notices': './js/notices.js',
         'options': './js/options.js',
+        'woocommerce-blocks': './js/woocommerce-blocks',
         'modules/acf': './js/acf',
     },
     output: {

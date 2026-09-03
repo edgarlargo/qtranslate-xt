@@ -77,8 +77,9 @@ versions are not covered by that result.
 |---|---|
 | Products/categories/attributes/variations | **PASS — LV/RU/EN; tags outside required gate remain NOT TESTED** |
 | Permalinks/slugs/canonical URLs | **NOT TESTED; outside required transactional gate** |
-| Cart/AJAX/fragments/variation selection | **PASS** |
-| Checkout/order review/offline COD | **PASS** |
+| Classic cart/AJAX/fragments/variation selection | **PASS** |
+| Cart/Checkout Blocks Store API and dynamic labels | **REMEDIATED; CI REVALIDATION REQUIRED** |
+| Classic checkout/order review/offline COD | **PASS** |
 | Orders/customer language/HPOS/emails | **PASS** |
 | WooCommerce REST | **PASS — authenticated products/variations/orders** |
 | Cache behavior on Redis | **PASS — isolation, group invalidation, no global flush** |
@@ -143,7 +144,7 @@ listed in `FINAL-SECURITY-REAUDIT.md`.
 
 ## Q phase conclusion
 
-All local and CI quality gates, the required WooCommerce MySQL/Redis gate, the
-final security re-audit and exact final RC ZIP installation are green. Final
-artifact SHA-256 is
-`c8bf5a59d6db98ad31cefc245a4edaf3a0f40a8ec45ff04ace5a24f09af02bc3`.
+A real Cart/Checkout Blocks report invalidated the previous broad cart claim
+and the associated archive. The Store API/frontend-filter and dynamic text
+adapter remediation is locally green, but the replacement RC remains blocked
+until its expanded MySQL/Redis CI and exact ZIP run pass.

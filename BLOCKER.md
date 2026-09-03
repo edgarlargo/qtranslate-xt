@@ -12,10 +12,11 @@ WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
 2.8.0. HPOS was enabled. Credentials were disposable, COD was offline and mail
 was captured before transport.
 
-The final security re-audit also passed after all release-blocking findings
-were remediated. Exact release-candidate ZIP construction and fresh-install
-validation passed in run `33758229929`. This file is retained as historical
-evidence; no active release blocker is recorded here.
+The final security re-audit passed after all release-blocking findings were
+remediated. A later real-site report found that WooCommerce Cart/Checkout
+Blocks bypassed the classic hooks covered by run `33758229929`. Its ZIP is
+withdrawn. Expanded Store API/block-label CI and replacement exact-ZIP
+validation is now the active release blocker.
 
 ## Historical problem
 
