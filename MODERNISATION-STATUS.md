@@ -26,24 +26,27 @@ sources also lint cleanly on PHP 7.4 and 8.0; required
 real testing now covers WordPress 7.1, ACF Free/theme-bundled 6.8.8,
 WooCommerce 11.0.1 smoke paths and Gutenberg save/autosave/409 conflicts. ACF
 Pro 5.7.7 Options Page/Group/Repeater/Flexible runtime tests now pass;
-comprehensive Woo transactional paths remain blocked for RC. Native ACF Free,
+the comprehensive Woo transactional gate now passes. Native ACF Free,
 Pro and theme-bundled runtime/value tests are documented in
 `ACF-COMPATIBILITY.md`.
 
-The comprehensive Woo matrix is now executable through a disposable GitHub
-Actions MySQL/Redis lab. Its initial source review found and fixed an HPOS
-defect: order language metadata now uses WooCommerce order CRUD. Local PHP 8.4
-coverage is green at 319 tests / 7897 assertions. The CI matrix is NOT RUN in
-this checkout because no authenticated push/dispatch surface is available.
+The comprehensive Woo matrix passed in disposable GitHub Actions run
+[`33754558280`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33754558280).
+Its source review and failed-run remediation fixed HPOS order-language storage,
+frontend lifecycle fidelity and canonical term fixtures. The final result is
+173/173 assertions on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11
+and Redis 7.4.11. Local PHP 8.4 is green at 335 tests / 7979 assertions.
 
-The 2026-09-02 release-gate retry passed `actionlint` 1.7.12 and reconfirmed the
+Historical 2026-09-02 attempt: the release-gate retry passed `actionlint`
+1.7.12 and reconfirmed the
 workflow's pinned disposable WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL
 8.4 and Redis 7.4 environment. The local `modernisation` branch remains absent
 from `origin`; GitHub CLI, a signed-in browser session and stored push
 credentials are all unavailable. A Windows fallback started a separate MySQL
 8.0.31 datadir successfully, but could not extract the WordPress 7.1 archive
 because of a trailing-dot filename. That lab was shut down and removed. No
-MySQL/Redis Woo result is claimed and the gate remains NOT RUN.
+MySQL/Redis Woo result was available at that checkpoint and the gate was NOT
+RUN then.
 
 That review found and fixed a workflow provisioning defect before dispatch:
 the old WP-CLI `releases/latest` asset URL returned 404. The job now obtains the
@@ -189,10 +192,10 @@ tested. The full PHP 8.1-8.5 matrix is green at 332 tests / 7948 assertions.
 
 ## Known blockers
 
-The ACF Pro package blocker is resolved for the supplied 5.7.7 runtime. Release
-candidate work remains blocked by the unexecuted required comprehensive
-WooCommerce transactional/email/REST/cache matrix. Details are in `BLOCKER.md`
-and `RELEASE-READINESS.md`.
+The ACF Pro 5.7.7 and WooCommerce MySQL/Redis blockers are resolved. Release
+candidate work is now blocked by the mandatory final security re-audit and any
+release-blocking remediation it identifies. Details are in `BLOCKER.md` and
+`RELEASE-READINESS.md`.
 
 ## Security status
 
@@ -215,6 +218,5 @@ and `RELEASE-READINESS.md`.
 
 ## Next planned phase
 
-Resume the blocked Woo integration matrix when a suitable MySQL/MariaDB + Woo
-transaction/email test environment is supplied. Then rerun all gates against
-the exact package before choosing a development RC version.
+Perform the final security re-audit, fix every release-blocking finding, then
+build and validate the final release-candidate ZIP. Do not reorder these gates.

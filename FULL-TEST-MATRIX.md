@@ -1,6 +1,6 @@
 # QTX 4 full test matrix
 
-Date: 2026-08-24
+Date: 2026-09-03
 Branch: `modernisation`
 
 Status is limited to what was actually executed. `PASS` never means inferred
@@ -74,38 +74,41 @@ versions are not covered by that result.
 
 | Scenario | Status |
 |---|---|
-| Products/categories/tags/attributes/variations | **PASS product smoke; categories/attributes/variations BLOCKED for RC** |
-| Permalinks/slugs/canonical URLs | **BLOCKED for RC** |
-| Cart/AJAX/fragments/variation selection | **PASS cart/fragments smoke; variation selection BLOCKED for RC** |
-| Checkout/order review/gateways | **BLOCKED for RC** |
-| Orders/customer language/emails | **BLOCKED for RC** |
-| WooCommerce REST | **BLOCKED for RC** |
-| Cache behavior on real backends | **BLOCKED for RC** |
+| Products/categories/attributes/variations | **PASS — LV/RU/EN; tags outside required gate remain NOT TESTED** |
+| Permalinks/slugs/canonical URLs | **NOT TESTED; outside required transactional gate** |
+| Cart/AJAX/fragments/variation selection | **PASS** |
+| Checkout/order review/offline COD | **PASS** |
+| Orders/customer language/HPOS/emails | **PASS** |
+| WooCommerce REST | **PASS — authenticated products/variations/orders** |
+| Cache behavior on Redis | **PASS — isolation, group invalidation, no global flush** |
 
-Data-policy and cache-boundary unit/source tests are **PASS**. No WooCommerce
-broader behavior is limited to the installed WooCommerce 11.0.1 smoke matrix;
-`WOOCOMMERCE-COMPATIBILITY.md` makes no claim beyond it.
+Data-policy and cache-boundary unit/source tests are **PASS**. WooCommerce
+claims are limited to the installed 11.0.1 transactional matrix;
+`WOOCOMMERCE-COMPATIBILITY.md` makes no broader version claim.
 
-The full disposable workflow and fail-closed runner now exist, but have not
-been dispatched because this checkout has no authenticated GitHub CLI/control
-surface and the new workflow is not present on the remote. Its result is
-**NOT RUN**. HPOS order-language CRUD regression coverage is PASS locally.
+The disposable workflow and fail-closed runner passed on 2026-09-03 in GitHub
+Actions run
+[`33754558280`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33754558280),
+commit `111eb5a`: **173/173 assertions**, WordPress 7.1, WooCommerce 11.0.1,
+PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0. HPOS was
+enabled and order language used WooCommerce CRUD.
 
-Release-gate retry on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
+Historical release-gate attempt on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
 `actionlint` 1.7.12 returned zero findings for the Woo workflow. The local
 `modernisation` branch is still absent from `origin`, and both signed-out GitHub
 UI state and a non-interactive push check confirmed that no authenticated
 dispatch path is available. A disposable local MySQL 8.0.31 instance started
 successfully, but the WordPress 7.1 archive could not be represented on the
 Windows filesystem because of a trailing-dot filename; the lab was shut down
-and removed. The required Ubuntu MySQL 8.4/Redis 7.4 matrix remains **NOT RUN**.
+and removed. The required Ubuntu MySQL 8.4/Redis 7.4 matrix was **NOT RUN** at
+that checkpoint.
 
 The retry also found that the original WP-CLI release-asset URL returned 404.
 The workflow now downloads the official WP-CLI 2.12.0 build, verifies its
 recorded SHA-256 before execution, and pins Redis Object Cache 2.8.0. Three
 workflow contract tests (15 assertions) and the full PHP 8.1-8.5 suite at
-335 tests / 7963 assertions pass. This repairs provisioning but is not a
-substitute for the unexecuted Actions job.
+335 tests / 7963 assertions passed at that checkpoint. This repaired
+provisioning before the later successful Actions job.
 
 Exact-ZIP checkpoint: `4.0.0-rc1` installed and activated on a second fresh
 WordPress 7.1 lab; LV/RU/EN HTTP frontend, ACF Pro 5.7.7 native runner and
@@ -133,7 +136,7 @@ Gutenberg scope/output/third-party lifecycle issues remain release work.
 
 ## Q phase conclusion
 
-All locally executable quality gates are green. The ACF Pro package blocker is
-resolved for 5.7.7. The release quality gate remains **NOT GREEN** because the
-required comprehensive WooCommerce matrix is incomplete. Producing an RC ZIP
-would still misrepresent the stated release criteria.
+All locally executable quality gates and the required WooCommerce MySQL/Redis
+gate are green. The next mandatory gate is the final security re-audit and any
+release-blocking remediation it discovers. The final RC ZIP must not be built
+until that re-audit is green.

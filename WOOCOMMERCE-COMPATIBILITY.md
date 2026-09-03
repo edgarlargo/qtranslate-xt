@@ -1,24 +1,25 @@
 # WooCommerce compatibility status
 
 This document records evidence, not aspirational compatibility. WooCommerce
-11.0.1 was smoke-tested on WordPress 7.1/PHP 8.4 with the official SQLite
-integration. Untested areas remain explicit; one smoke version is not a broad
-supported range.
+11.0.1 passed the required 173-assertion transactional matrix on WordPress
+7.1/PHP 8.4, MySQL 8.4.11 and Redis 7.4.11. One tested version is not a broad
+supported range; unrelated areas remain explicit.
 
 | Area | Current implementation | Status |
 | --- | --- | --- |
-| Product title/description/short description | WordPress post adapters plus existing WooCommerce hooks | PASS smoke (11.0.1) |
-| Categories/tags/descriptions | term repository/frontend adapters | NOT TESTED |
-| Attribute and variation labels | existing module hooks and dropdown raw-ID preservation | NOT TESTED |
-| SKU/price/stock/IDs | protected by L1 technical data policy | PASS unit + product smoke |
+| Product title/description/short description | WordPress post adapters plus existing WooCommerce hooks | PASS (11.0.1, LV/RU/EN) |
+| Categories | term repository/frontend adapters | PASS (labels and stable IDs) |
+| Tags/category descriptions | term repository/frontend adapters | NOT TESTED; outside required Woo gate |
+| Attribute and variation labels | existing module hooks and raw-slug preservation | PASS |
+| SKU/price/stock/tax/IDs | protected by L1 technical data policy | PASS |
 | Product/category/tag URLs | existing URL/slugs module | NOT TESTED |
-| Cart/mini-cart | language-aware hash; names/hooks retained | PASS add/cart smoke; mini-cart NOT TESTED |
-| Checkout/order review | existing presentation hooks | PASS page load; transaction NOT TESTED |
-| Historical orders | no rewrite; explicit `_user_language` policy | PASS (unit only) |
-| Customer emails | stored order language used when valid | NOT TESTED |
-| REST | no dedicated WooCommerce REST matrix yet | NOT TESTED |
-| AJAX/cart fragments | existing `wc-ajax` language handling | PASS fragments smoke |
-| Cache | cart hash includes language; webhook invalidation is group-scoped | PARTIAL |
+| Cart/mini-cart | language-aware hash; simple/variation labels, quantities, totals and fragments | PASS |
+| Checkout/order review | COD-only transaction and translated payment label | PASS |
+| Historical orders/HPOS | no rewrite; explicit `_user_language` through Woo CRUD | PASS |
+| Customer emails | captured processing/completed LV/RU/EN plus cancelled/refund contexts | PASS |
+| REST | authenticated products, variations and orders | PASS |
+| AJAX/cart fragments | add-to-cart, variation selection, fragments and language routing | PASS |
+| Cache | Redis language isolation and group-scoped webhook invalidation | PASS |
 
 ## Technical data never translated
 
@@ -37,28 +38,45 @@ a currently configured language; older orders without it retain prior behavior.
 
 ## Versions and release gate
 
-Tested WooCommerce version: **11.0.1 smoke only**. No supported version range is
-claimed yet. The release gate still requires integration tests for
-products, taxonomies, attributes, variations, cart, checkout, orders, emails,
-REST, AJAX and caching against explicitly recorded WooCommerce versions.
+Tested WooCommerce version: **11.0.1**. No supported version range is claimed.
+The required products, categories, attributes, variations, cart, checkout,
+orders, HPOS, emails, REST, AJAX and Redis matrix is green for this exact stack.
 
 Webhook delivery uses group-scoped invalidation on supporting modern WordPress
-object caches. Behavior on backends without group flushing remains NOT TESTED.
+object caches. Redis Object Cache 2.8.0 passed; backends without group flushing
+remain NOT TESTED.
 
 ## Reproducible integration gate
 
 `.github/workflows/woocommerce-integration.yml` provisions an isolated MySQL
 8.4/Redis 7.4 WordPress 7.1 lab with WooCommerce 11.0.1. The WP-CLI runner at
 `tests/Integration/WooCommerce/transaction-matrix.php` contains the LV/RU/EN
-transaction, captured-email, REST and cache assertions. The workflow has not
-yet run from this checkout, so none of those pending rows are promoted to PASS.
+transaction, captured-email, REST and cache assertions.
+
+## 2026-09-03 release-gate result
+
+GitHub Actions run
+[`33754558280`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33754558280)
+passed on commit `111eb5a`. The disposable job used WordPress 7.1,
+WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
+2.8.0. All **173 assertions passed**.
+
+The matrix covers simple/variable products; title, long/short description,
+category, attribute and variation presentation; stable IDs, SKU, price, stock,
+tax and serialized technical metadata; simple/variation cart rows, quantities,
+totals and fragments; offline COD checkout; create/processing/completed/
+cancelled/refund order paths; HPOS order language and historical snapshots;
+captured LV/RU/EN mail; authenticated product/variation/order REST reads; AJAX
+language isolation; and persistent Redis isolation/invalidation without a
+global flush. No production secret, external payment or external email was
+used. The WooCommerce release blocker is resolved.
 
 WooCommerce 11 HPOS order-language storage was corrected to use the
 `WC_Abstract_Order` metadata API. The legacy checkout metadata hook remains for
 compatibility, while `woocommerce_checkout_order_created` covers modern order
 storage.
 
-## 2026-09-02 release-gate attempt
+## Historical: 2026-09-02 release-gate attempt
 
 The QTX4-SEC-001 prerequisite is resolved and its PHP 8.1-8.5 regression matrix
 is green. `actionlint` 1.7.12 accepts

@@ -1,9 +1,21 @@
-# Release-candidate blocker
+# Resolved WooCommerce release-candidate blocker
 
-Date: 2026-08-24
-Blocked phase: L/Q/R/U final required integration gate
+Date: 2026-09-03
+Status: **RESOLVED**
 
-## Exact problem
+## Resolution
+
+The required WooCommerce MySQL/Redis blocker is **RESOLVED**. GitHub Actions
+run [`33754558280`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33754558280)
+passed **173/173 assertions** on commit `111eb5a` using WordPress 7.1,
+WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
+2.8.0. HPOS was enabled. Credentials were disposable, COD was offline and mail
+was captured before transport.
+
+The next mandatory gate is the final security re-audit. This file is retained
+as historical evidence and is not an active Woo blocker.
+
+## Historical problem
 
 The supplied ACF Pro 5.7.7 package has passed the native Options Page, Group,
 Repeater and Flexible Content runtime/storage matrix. The remaining QTX 4
