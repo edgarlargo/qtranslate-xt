@@ -77,6 +77,30 @@ jobs:
         env:
           WP_PATH: /tmp/qtx-woo-wordpress
         run: wp eval-file "$GITHUB_WORKSPACE/tests/Integration/WooCommerce/transaction-matrix.php" --path="$WP_PATH"
+      - name: Build and inspect exact release-candidate archive
+        run: |
+          git archive --format=zip --prefix=qtranslate-xt/ --output=/tmp/qtranslate-xt-4.0.0-rc1.zip "$GITHUB_SHA" -- qtranslate.php readme.txt license.txt changelog-qtranslate-x.md CHANGELOG.md UPGRADE.md css dist flags i18n-config.json i18n-config img lang src
+          test "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | cut -d/ -f1 | sort -u)" = 'qtranslate-xt'
+          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/lang/qtranslate-lv.mo$')"
+          if unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep -E '(^|/)(\.git|\.github|tests|dev|js|node_modules|vendor|build)(/|$)|\.(po|pot|sql|sqlite|db)$'; then
+            echo 'Forbidden development or private content is present in the release archive.' >&2
+            exit 1
+          fi
+          unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | wc -l
+          sha256sum /tmp/qtranslate-xt-4.0.0-rc1.zip
+      - name: Install and exercise the exact release-candidate archive
+        env:
+          WP_PATH: /tmp/qtx-woo-wordpress
+        run: |
+          wp plugin deactivate qtranslate-xt --path="$WP_PATH"
+          test -L "$WP_PATH/wp-content/plugins/qtranslate-xt"
+          unlink "$WP_PATH/wp-content/plugins/qtranslate-xt"
+          wp plugin install /tmp/qtranslate-xt-4.0.0-rc1.zip --activate --path="$WP_PATH"
+          test ! -L "$WP_PATH/wp-content/plugins/qtranslate-xt"
+          QTX_RC_PHASE=prepare wp eval-file "$GITHUB_WORKSPACE/tests/Integration/release-candidate-smoke.php" --path="$WP_PATH"
+          wp plugin deactivate qtranslate-xt --path="$WP_PATH"
+          wp plugin activate qtranslate-xt --path="$WP_PATH"
+          QTX_RC_PHASE=verify wp eval-file "$GITHUB_WORKSPACE/tests/Integration/release-candidate-smoke.php" --path="$WP_PATH"
       - name: Prove persistent cache backend remains connected
         if: always()
         env:

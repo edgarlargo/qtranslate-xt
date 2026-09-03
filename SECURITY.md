@@ -17,18 +17,24 @@ concepts in a public issue.
 - i18n JSON and SQL maintenance inputs use approved canonical roots.
 - qTranslate-owned unserialization disables PHP class hydration.
 - State-changing admin actions require explicit capabilities and nonces.
+- Diagnostic and notice AJAX endpoints require both capability and endpoint nonce.
 - Administrator textarea values are escaped at the final HTML sink; input
   sanitization is not treated as output escaping.
+- Legacy ACF field renderers contextually escape attachment metadata,
+  attributes and language labels, and protect editor textarea boundaries.
 - Privileged REST editor data remains behind native route/object permissions;
   stale language saves use revision conflicts.
+- Language redirects use the scoped WordPress safe-host policy at every sink.
+- Release CI uses immutable action/image revisions and verifies the committed
+  JavaScript bundles from an audited lock graph.
 
 Historical findings and exploitability validation are in
-`SECURITY-AUDIT.md`, `SECURITY-VALIDATION.md`, and the current-tree result in
-`SECURITY-REAUDIT.md`. The full QTX 4 re-audit at commit `0d83d0b` found
-QTX4-SEC-001 in the settings renderer. The finding was remediated and
-regression-tested on 2026-09-02; the current runtime has no confirmed open
-Critical, High or Medium issue. Required third-party integration and build/CI
-supply-chain work remains incomplete, so this does not authorize a release.
+`SECURITY-AUDIT.md`, `SECURITY-VALIDATION.md`, and `SECURITY-REAUDIT.md`. The
+post-Woo result is `FINAL-SECURITY-REAUDIT.md`. QTX4-SEC-001 and every
+release-blocking finding discovered by the final audit are remediated and
+regression-tested. The current runtime has no confirmed open Critical, High,
+Medium or Low issue; the final security gate authorizes exact release-candidate
+ZIP construction and validation, not publication without that package check.
 
 ## Reporting information
 

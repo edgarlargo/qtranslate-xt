@@ -56,8 +56,8 @@ transaction, captured-email, REST and cache assertions.
 ## 2026-09-03 release-gate result
 
 GitHub Actions run
-[`33754558280`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33754558280)
-passed on commit `111eb5a`. The disposable job used WordPress 7.1,
+[`33756895339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33756895339)
+passed after final security remediation on commit `7a0ca65`. The disposable job used WordPress 7.1,
 WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
 2.8.0. All **173 assertions passed**.
 

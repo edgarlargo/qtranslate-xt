@@ -21,7 +21,7 @@ progress. O2 now allowlists database maintenance actions, requires explicit
 backup confirmation, and confines SQL splitting to trusted canonical roots.
 Optional built-in integrations have a source-validated, explicitly NOT TESTED
 real-plugin matrix in `BUILTIN-INTEGRATIONS-COMPATIBILITY.md`. Phase Q local
-matrix is green at 317 tests / 7890 assertions on each PHP 8.1–8.5; production
+and CI matrix is green at 345 tests / 8029 assertions on each PHP 8.1–8.5; production
 sources also lint cleanly on PHP 7.4 and 8.0; required
 real testing now covers WordPress 7.1, ACF Free/theme-bundled 6.8.8,
 WooCommerce 11.0.1 smoke paths and Gutenberg save/autosave/409 conflicts. ACF
@@ -30,12 +30,14 @@ the comprehensive Woo transactional gate now passes. Native ACF Free,
 Pro and theme-bundled runtime/value tests are documented in
 `ACF-COMPATIBILITY.md`.
 
-The comprehensive Woo matrix passed in disposable GitHub Actions run
-[`33754558280`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33754558280).
+The comprehensive Woo matrix passed after final security remediation in
+disposable GitHub Actions run
+[`33756895339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33756895339).
 Its source review and failed-run remediation fixed HPOS order-language storage,
 frontend lifecycle fidelity and canonical term fixtures. The final result is
 173/173 assertions on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11
-and Redis 7.4.11. Local PHP 8.4 is green at 335 tests / 7979 assertions.
+and Redis 7.4.11. The companion PHP/JavaScript run `33756895200` passed all
+runtime, audit, build and bundle-reproducibility jobs.
 
 Historical 2026-09-02 attempt: the release-gate retry passed `actionlint`
 1.7.12 and reconfirmed the
@@ -65,7 +67,11 @@ to both configuration textareas and rejects non-scalar request shapes before
 string processing. Exact validation corrected the earlier nonce-free reflection
 claim: WordPress terminates an invalid settings nonce and the current update
 path strips tags, but the raw output sinks were still fixed and regression
-tested. The full PHP 8.1-8.5 matrix is green at 332 tests / 7948 assertions.
+tested. The final security re-audit then remediated ACF output sinks, the npm
+development graph, mutable CI inputs, diagnostic AJAX, slug-save authorization,
+DOM label sinks and the remaining direct redirect. It records zero confirmed
+open Critical, High, Medium or Low findings. The full PHP 8.1-8.5 matrix is
+green at 345 tests / 8029 assertions.
 
 ## Completed work
 
@@ -83,7 +89,7 @@ tested. The full PHP 8.1-8.5 matrix is green at 332 tests / 7948 assertions.
 - Phase L2 optional integrations: loader/trust boundaries and per-plugin limits
   documented without unsupported version claims.
 - Phase Q: explicit PASS/NOT TESTED/BLOCKED matrix in `FULL-TEST-MATRIX.md`;
-  all executable local gates pass, but the RC quality gate is not green.
+  all required local, CI, WooCommerce and security gates pass.
 - Phase H3/R: route-scoped editor revisions and real WordPress 7.1 validation
   documented in `PHASE-H3-GUTENBERG-REVISION-PROTOCOL.md` and
   `REAL-WORDPRESS-TEST.md`.
@@ -180,9 +186,9 @@ tested. The full PHP 8.1-8.5 matrix is green at 332 tests / 7948 assertions.
 ## Current test status
 
 - PHP 7.4 and 8.0 production lint: zero syntax errors.
-- PHP 8.1–8.5: 335 tests, 7963 assertions per version, zero failures/errors.
+- PHP 8.1–8.5: 345 tests, 8029 assertions per version, zero failures/errors.
 - Shared JS/PHP corpus parity: 100% (27/27); generated parser parity 400/400.
-- PHP lint (180 files), Webpack build, JS tests and
+- Production PHP lint, Webpack build, JS tests and
   `git diff --check`: green.
 - Real WordPress 7.1/PHP 8.4: activation/deactivation, EN/DE frontend, public
   REST, ACF Free 6.8.8 Text/Textarea/WYSIWYG option reads and theme-bundled
@@ -192,15 +198,17 @@ tested. The full PHP 8.1-8.5 matrix is green at 332 tests / 7948 assertions.
 
 ## Known blockers
 
-The ACF Pro 5.7.7 and WooCommerce MySQL/Redis blockers are resolved. Release
-candidate work is now blocked by the mandatory final security re-audit and any
-release-blocking remediation it identifies. Details are in `BLOCKER.md` and
-`RELEASE-READINESS.md`.
+The ACF Pro 5.7.7, WooCommerce MySQL/Redis and final security gates are
+resolved. No confirmed security or required integration blocker remains.
+Exact final ZIP construction and installation validation is the active fifth
+gate; the archive is not releasable until that exact-byte check passes.
 
 ## Security status
 
 - QTX4-SEC-001 is resolved: both configuration textareas escape at the output
   sink and reject array-shaped values; focused and full-matrix tests pass.
+- Final security re-audit: **PASS**, with zero confirmed open Critical, High,
+  Medium or Low findings after remediation. See `FINAL-SECURITY-REAUDIT.md`.
 - QTX-SEC-001 and QTX-SEC-005 remediated in focused batches.
 - QTX-SEC-007 has been remediated with safe redirect/host allowlisting.
 - QTX-SEC-003 is remediated with the K1 file policy.
@@ -218,5 +226,6 @@ release-blocking remediation it identifies. Details are in `BLOCKER.md` and
 
 ## Next planned phase
 
-Perform the final security re-audit, fix every release-blocking finding, then
-build and validate the final release-candidate ZIP. Do not reorder these gates.
+Build the exact `4.0.0-rc1` archive from the documented final commit, inspect
+its contents, install it into disposable WordPress 7.1, verify activation and
+LV/RU/EN data preservation, then record its SHA-256, file count and byte size.

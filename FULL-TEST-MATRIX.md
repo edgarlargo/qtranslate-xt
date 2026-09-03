@@ -10,23 +10,24 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1.29 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
-| PHPUnit PHP 8.2.29 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
-| PHPUnit PHP 8.3.29 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
-| PHPUnit PHP 8.4.16 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
-| PHPUnit PHP 8.5.9 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
+| PHPUnit PHP 8.1.29 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
+| PHPUnit PHP 8.2.29 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
+| PHPUnit PHP 8.3.29 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
+| PHPUnit PHP 8.4.16 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
+| PHPUnit PHP 8.5.9 | **PASS** | 345 tests, 8029 assertions, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
-| PHP syntax | **PASS** | 180 plugin/test PHP files, 0 lint failures |
-| JavaScript shared corpus | **PASS** | 27/27 cases; parser security assertion PASS |
-| Webpack production build | **PASS** | `core`, ACF, options, block-editor and notices bundles emitted |
+| PHP syntax | **PASS** | all production PHP files, 0 lint failures |
+| JavaScript shared corpus/security | **PASS** | 27 corpus cases plus 3 Node tests; text-only DOM sink assertion PASS |
+| Webpack production build | **PASS** | Node 24.11.1 CI rebuild matched all committed bundles exactly |
+| npm audit | **PASS** | 0 development/runtime advisories after lock-graph update |
+| Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
 | `git diff --check` | **PASS** | no whitespace errors |
 | Module loader traversal regression | **PASS** | registry, traversal, wrapper, absolute/unknown/corrupt-state cases covered |
 
-Build environment note: Node 18.14.1 is below `babel-loader@10`'s declared
-recommended engine floor (18.20). Build and tests passed, but release CI should
-use Node 20 LTS or newer. `npm ci` reported 10 vulnerabilities in development
-dependencies (2 low, 2 moderate, 6 high); they are not bundled PHP runtime
-dependencies and were not auto-upgraded in this compatibility batch.
+Release CI uses exact Node 24.11.1, installs the lock graph with lifecycle
+scripts disabled, audits it, rebuilds production assets and fails on any bundle
+drift. Third-party Actions and MySQL/Redis service images are immutable SHAs or
+digests. The local Node 18.14 engine warning is therefore not release evidence.
 
 ## Parser and core
 
@@ -86,10 +87,10 @@ Data-policy and cache-boundary unit/source tests are **PASS**. WooCommerce
 claims are limited to the installed 11.0.1 transactional matrix;
 `WOOCOMMERCE-COMPATIBILITY.md` makes no broader version claim.
 
-The disposable workflow and fail-closed runner passed on 2026-09-03 in GitHub
-Actions run
-[`33754558280`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33754558280),
-commit `111eb5a`: **173/173 assertions**, WordPress 7.1, WooCommerce 11.0.1,
+The disposable workflow and fail-closed runner passed after final security
+remediation on 2026-09-03 in GitHub Actions run
+[`33756895339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33756895339),
+commit `7a0ca65`: **173/173 assertions**, WordPress 7.1, WooCommerce 11.0.1,
 PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0. HPOS was
 enabled and order language used WooCommerce CRUD.
 
@@ -127,16 +128,20 @@ MySQL locking/interval SQL; this does not promote the transaction row to PASS.
 | QTX-SEC-006 class-disabled unserialization | **PASS** |
 | QTX-SEC-007 allowed-host redirect policy | **PASS** unit/source; proxy **NOT TESTED** |
 | QTX4-SEC-001 configuration textarea escaping | **PASS** — 9 focused tests / 37 assertions; full PHP 8.1-8.5 suite green |
-| REST object permissions/raw exposure | **PASS** unit; real routes **NOT TESTED** |
-| ACF AJAX upstream nonce/visibility | **BLOCKED for RC** |
-| WooCommerce AJAX/REST upstream permissions | **BLOCKED for RC** |
+| ACF legacy attachment/WYSIWYG output escaping | **PASS** — contextual sink and closing-textarea contracts |
+| Admin debug AJAX capability/nonce | **PASS** — fail-closed source/client contract |
+| Slug post-save capability/nonce | **PASS** — missing/invalid QTX nonce cannot mutate |
+| CI/build supply-chain immutability | **PASS** — exact actions/images, zero audits, reproducible bundle build |
+| REST object permissions/raw exposure | **PASS** unit and historical authenticated WordPress controller test |
+| ACF AJAX upstream nonce/visibility | **PASS delegated boundary** — official ACF nopriv registration and nonce/field verification retained |
+| WooCommerce AJAX/REST upstream permissions | **PASS required matrix** — authenticated REST and upstream AJAX lifecycle |
 
-Current re-audit has zero confirmed open Critical/High findings. Potential
-Gutenberg scope/output/third-party lifecycle issues remain release work.
+The final re-audit has zero confirmed open Critical, High, Medium or Low
+findings. Conditional/hardening observations are non-blocking and explicitly
+listed in `FINAL-SECURITY-REAUDIT.md`.
 
 ## Q phase conclusion
 
-All locally executable quality gates and the required WooCommerce MySQL/Redis
-gate are green. The next mandatory gate is the final security re-audit and any
-release-blocking remediation it discovers. The final RC ZIP must not be built
-until that re-audit is green.
+All local and CI quality gates, the required WooCommerce MySQL/Redis gate and
+the final security re-audit are green. Exact final RC ZIP construction and
+fresh-install validation are now authorized as the fifth mandatory gate.

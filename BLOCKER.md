@@ -12,8 +12,10 @@ WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache
 2.8.0. HPOS was enabled. Credentials were disposable, COD was offline and mail
 was captured before transport.
 
-The next mandatory gate is the final security re-audit. This file is retained
-as historical evidence and is not an active Woo blocker.
+The final security re-audit also passed after all release-blocking findings
+were remediated. Exact release-candidate ZIP construction and fresh-install
+validation is the active final gate. This file is retained as historical
+evidence and is not an active blocker.
 
 ## Historical problem
 
