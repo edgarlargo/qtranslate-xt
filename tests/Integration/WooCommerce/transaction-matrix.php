@@ -396,17 +396,26 @@ foreach ( array( 'lv', 'ru', 'en' ) as $language ) {
 
 // Exercise the production webhook invalidation path: multilingual presentation
 // groups are cleared while an unrelated Redis group survives (no global flush).
+$check( function_exists( 'wp_cache_supports' ) && wp_cache_supports( 'flush_group' ), 'Redis backend does not advertise cache-group flushing.' );
+wp_cache_set( 'qtx-direct-control', 'stale', 'qtx-direct-control', 300 );
+$direct_flush = wp_cache_flush_group( 'qtx-direct-control' );
+$check( $direct_flush && false === wp_cache_get( 'qtx-direct-control', 'qtx-direct-control', true ), 'Redis direct cache-group flush control failed.' );
 $cache_policy = new \QTX\Integration\WooCommerce\WooCommerceDataPolicy();
 $webhook_groups = $cache_policy->webhookCacheGroups( array( 'lv', 'ru', 'en' ) );
 foreach ( $webhook_groups as $cache_group ) {
     wp_cache_set( 'qtx-webhook-sentinel', 'stale', $cache_group, 300 );
 }
 wp_cache_set( 'qtx-unrelated-sentinel', 'keep', 'qtx-unrelated', 300 );
+$webhook_flush_calls = 0;
+add_action( 'redis_object_cache_flush_group', static function () use ( &$webhook_flush_calls ): void {
+    ++$webhook_flush_calls;
+} );
 qtranxf_wc_deliver_webhook_async( 1, null );
+$check( $webhook_flush_calls === count( $webhook_groups ), 'Webhook did not invoke every required cache-group flush.' );
 foreach ( $webhook_groups as $cache_group ) {
-    $check( false === wp_cache_get( 'qtx-webhook-sentinel', $cache_group ), 'Webhook did not invalidate multilingual cache group ' . $cache_group . '.' );
+    $check( false === wp_cache_get( 'qtx-webhook-sentinel', $cache_group, true ), 'Webhook did not invalidate multilingual cache group ' . $cache_group . '.' );
 }
-$check( wp_cache_get( 'qtx-unrelated-sentinel', 'qtx-unrelated' ) === 'keep', 'Webhook performed an unnecessary global cache flush.' );
+$check( wp_cache_get( 'qtx-unrelated-sentinel', 'qtx-unrelated', true ) === 'keep', 'Webhook performed an unnecessary global cache flush.' );
 
 if ( $failures ) {
     WP_CLI::error( sprintf( 'WooCommerce matrix failed: %d/%d assertions failed.', count( $failures ), $checks ) );

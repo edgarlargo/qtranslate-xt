@@ -50,6 +50,8 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( 'new WC_Gateway_COD()', $runner );
         self::assertStringContainsString( 'Cancelled order email was not captured in its stored LV context', $runner );
         self::assertStringContainsString( 'Refund email was not captured in its stored EN context', $runner );
+        self::assertStringContainsString( 'Redis direct cache-group flush control failed', $runner );
+        self::assertStringContainsString( 'Webhook did not invoke every required cache-group flush', $runner );
         self::assertStringContainsString( 'Webhook performed an unnecessary global cache flush', $runner );
     }
 }
