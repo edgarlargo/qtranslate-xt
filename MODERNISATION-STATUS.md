@@ -196,8 +196,9 @@ green at 347 tests / 8042 assertions.
 
 ## Known blockers
 
-No release blocker remains. The ACF Pro 5.7.7, final security, expanded
-WooCommerce Store API/MySQL/Redis and post-audit exact-ZIP gates are resolved.
+The ACF Pro 5.7.7, final security and expanded WooCommerce Store API/MySQL/Redis
+gates remain resolved. The built-in ACF Options Bridge passed local and delta
+security review; a new post-audit exact-ZIP run is the active packaging gate.
 
 ## Security status
 
@@ -222,7 +223,7 @@ WooCommerce Store API/MySQL/Redis and post-audit exact-ZIP gates are resolved.
 
 ## Next planned phase
 
-Deploy the exact validated replacement `4.0.0-rc1` bytes to staging, clear
-WordPress/WooCommerce/Redis/browser caches and visually recheck the reported RU
-Cart and Checkout pages. Do not distribute previous artifacts; their withdrawn
-SHA-256 values remain recorded for traceability.
+Run the PHP/JS, WooCommerce and exact-ZIP gates after the ACF Options Bridge
+delta audit. Then deploy those exact bytes to staging and verify an ACF Options
+Page plus the reported RU Cart/Checkout pages. Do not distribute previous
+artifacts; their withdrawn SHA-256 values remain recorded for traceability.

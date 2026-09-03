@@ -64,6 +64,7 @@ digests. The local Node 18.14 engine warning is therefore not release evidence.
 | Options API (`option`/`options`) | **PASS ACF Free 6.8.8 and Pro Options Page 5.7.7 runtime/storage** |
 | Text/Textarea/WYSIWYG frontend LV/RU/EN | **PASS — ACF Free 6.8.8 and Pro 5.7.7; interactive browser JS NOT EXECUTED** |
 | Group/Repeater/Flexible Content | **PASS native runtime — ACF Pro 5.7.7** |
+| Built-in ACF Options language tabs | **PASS local source/JS; CI PENDING** — text-only tabs, initial/dynamic fields, no `active_plugins` mutation |
 
 Repository unit tests for runtime capability detection, field schema,
 projection/merge, stable field keys, nested leaves, dynamic ACF JS actions and
@@ -147,6 +148,7 @@ listed in `FINAL-SECURITY-REAUDIT.md`.
 
 A real Cart/Checkout Blocks report invalidated the previous broad cart claim
 and the associated archive. The Store API/frontend-filter and dynamic text
-adapter remediation now passes the expanded MySQL/Redis CI, and its delta
-security re-audit is **PASS**. Post-audit run `33784794846` built, installed and
-published the exact final ZIP; final distribution is **PASS**.
+adapter remediation passes the expanded MySQL/Redis CI, and its delta security
+re-audit is **PASS**. The later built-in ACF Options Bridge also passed delta
+security review, but final distribution is pending its post-audit PHP/JS,
+WooCommerce and exact-ZIP run.

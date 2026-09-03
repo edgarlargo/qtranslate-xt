@@ -4,6 +4,7 @@ Date: 2026-09-03
 Audited remediation commit: `7a0ca6553bddca329c5b871b589e75364551e59f`
 Post-Woo-Blocks delta audited source: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
 CI reproducibility follow-up audited commit: `ef83e1effc3f60eb88c186ee0bb86371bbc30734`
+Post-ACF-Options-Bridge delta audited source: `8782c8804217b17b49d3e6441b690f095a0b5858`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -80,6 +81,34 @@ the prefix is not a credential, is confined to the disposable lab and contains
 no shell or Redis glob metacharacters. This workflow-only follow-up adds no
 runtime endpoint, package code, secret or production data path. Delta security
 verdict remains **PASS** with no new finding.
+
+## Post-ACF-Options-Bridge delta security re-audit
+
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the delta: **0**.
+
+The review covered the new `js/acf/options-bridge.js`, its integration with
+the existing ACF field lifecycle, CSS, generated production bundle, default
+configuration change, JavaScript security regression and PHP source contract.
+
+- The bridge runs only in the existing authenticated ACF admin asset context
+  and registers no PHP/AJAX/REST route, remote request or storage operation.
+- Language entries come from qTranslate-XT's server-produced configuration.
+  Tabs use `document.createElement()`, `textContent`, DOM properties and event
+  listeners; no string-built HTML sink is present.
+- A tab is attached only when the standard ACF input has a real qTranslate
+  content hook. Disabled field types do not receive a misleading UI.
+- Initial fields and official ACF `new_field/type=*` lifecycle additions use
+  the same idempotent bridge. Existing multilingual storage is unchanged.
+- No `active_plugins` read/write, fake plugin basename, filesystem path,
+  deserialization, SQL, command execution, credential or external resource was
+  introduced.
+- Enabling tabs by default affects only configurations without a saved explicit
+  preference; an existing administrator choice remains authoritative.
+
+Local Node execution passed five JavaScript tests and the production Webpack
+bundle rebuilt successfully. Final PHP/JavaScript, ACF contract and exact-ZIP
+evidence must be generated after this audit before the new archive is released.
 
 ## Historical findings revalidated
 
@@ -259,3 +288,5 @@ published it with Redis still connected. The final ZIP has SHA-256
 `146209dd78de77fd14c32551d8048dc897f67a89f2c62dce548609ffb1263ab6`,
 size 1,466,760 bytes, 1,138 entries, exactly one `qtranslate-xt/` root, the
 Latvian MO file and Woo Blocks bundle present, and zero forbidden entries.
+Those bytes predate the ACF Options Bridge and are now withdrawn. A new exact
+archive must be built and validated after the ACF delta audit above.

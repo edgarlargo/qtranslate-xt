@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
 Date: 2026-09-03
-Decision: **READY — FINAL POST-AUDIT RC VALIDATED**
+Decision: **NOT READY — POST-ACF-BRIDGE EXACT-ZIP VALIDATION PENDING**
 
 ## Mandatory release gates
 
@@ -9,15 +9,16 @@ Decision: **READY — FINAL POST-AUDIT RC VALIDATED**
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
 | 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33784794846`, 176/176 assertions |
-| 3 | Final security re-audit | **PASS** — `FINAL-SECURITY-REAUDIT.md` |
+| 3 | Final security re-audit | **PASS** — includes ACF Options Bridge delta audit |
 | 4 | Fix release-blocking re-audit findings | **PASS** — remediation commit `7a0ca65` |
-| 5 | Build and validate final RC ZIP | **PASS** — post-audit run `33784794846` built, installed and exercised the exact ZIP |
+| 5 | Build and validate final RC ZIP | **PENDING** — rebuild after ACF Options Bridge delta audit |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
 Blocks report exposed a missing Store API path in the original Woo matrix, so
 that artifact was withdrawn. The Store API and dynamic block-label remediation
 now passes the expanded matrix and its delta security re-audit. The exact ZIP
-job was rerun after that audit and the resulting bytes are designated final.
+job was rerun after that audit. The later ACF Options Bridge integration passed
+its own delta security review and now requires a new exact-ZIP validation.
 
 ## Current automated evidence
 
@@ -66,10 +67,10 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 - Woo product/cart/checkout/order/HPOS/email/REST/AJAX/cache matrix:
   **PASS** on the current remediation commit.
 
-## Final post-audit replacement ZIP
+## Withdrawn pre-ACF-bridge ZIP
 
-The designated final bytes were built and validated after the Woo Blocks delta
-security audit and Redis CI reproducibility hardening.
+These bytes were built and validated after the Woo Blocks delta security audit
+but predate the built-in ACF Options Bridge. They are withdrawn.
 
 - Source commit: `46280f86a0a03241070f4dada69b04dc1a43ff14`
 - CI workflow: `33784794846`
@@ -114,7 +115,6 @@ Follow `UPGRADE.md`: take complete database/files backups, validate on staging,
 do not run database conversion automatically, and retain the previous plugin
 directory plus database backup for rollback.
 
-Any other archive with the same name or `qtranslate-xt-modern-rc1.zip` is a
-staging artifact. Only SHA-256
-`146209dd78de77fd14c32551d8048dc897f67a89f2c62dce548609ffb1263ab6`
-identifies the final RC.
+Every existing archive with this name or `qtranslate-xt-modern-rc1.zip` is now
+a staging or withdrawn artifact. No final RC is designated until the
+post-ACF-bridge exact-ZIP run completes.
