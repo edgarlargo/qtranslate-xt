@@ -44,6 +44,7 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( 'qtranxf_maybe_unserialize_safe( $serialized_raw )', $runner );
         self::assertStringContainsString( 'long description was not translated', $runner );
         self::assertStringContainsString( 'qtranxf_get_front_page_config()', $runner );
+        self::assertStringContainsString( 'qtx_get_term_translation_repository()->store(', $runner );
         self::assertStringContainsString( 'cart variation labels were not translated', $runner );
         self::assertStringContainsString( 'checkout payment label was not translated', $runner );
         self::assertStringContainsString( 'new WC_Gateway_COD()', $runner );
