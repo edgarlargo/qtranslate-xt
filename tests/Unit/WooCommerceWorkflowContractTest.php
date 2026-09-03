@@ -42,5 +42,11 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( "checkout did not persist its language through Woo order CRUD", $runner );
         self::assertStringNotContainsString( "\$order->update_meta_data( '_user_language', \$language )", $runner );
         self::assertStringContainsString( 'qtranxf_maybe_unserialize_safe( $serialized_raw )', $runner );
+        self::assertStringContainsString( 'long description was not translated', $runner );
+        self::assertStringContainsString( 'cart variation labels were not translated', $runner );
+        self::assertStringContainsString( 'checkout payment label was not translated', $runner );
+        self::assertStringContainsString( 'Cancelled order email was not captured in its stored LV context', $runner );
+        self::assertStringContainsString( 'Refund email was not captured in its stored EN context', $runner );
+        self::assertStringContainsString( 'Webhook performed an unnecessary global cache flush', $runner );
     }
 }
