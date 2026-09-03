@@ -36,14 +36,38 @@ defect: order language metadata now uses WooCommerce order CRUD. Local PHP 8.4
 coverage is green at 319 tests / 7897 assertions. The CI matrix is NOT RUN in
 this checkout because no authenticated push/dispatch surface is available.
 
+The 2026-09-02 release-gate retry passed `actionlint` 1.7.12 and reconfirmed the
+workflow's pinned disposable WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL
+8.4 and Redis 7.4 environment. The local `modernisation` branch remains absent
+from `origin`; GitHub CLI, a signed-in browser session and stored push
+credentials are all unavailable. A Windows fallback started a separate MySQL
+8.0.31 datadir successfully, but could not extract the WordPress 7.1 archive
+because of a trailing-dot filename. That lab was shut down and removed. No
+MySQL/Redis Woo result is claimed and the gate remains NOT RUN.
+
+That review found and fixed a workflow provisioning defect before dispatch:
+the old WP-CLI `releases/latest` asset URL returned 404. The job now obtains the
+official WP-CLI 2.12.0 build, validates its fixed SHA-256 and pins Redis Object
+Cache 2.8.0. Three workflow contract tests add 15 assertions; the resulting
+full PHP 8.1-8.5 matrix is green at 335 tests / 7963 assertions per runtime.
+
 The exact `4.0.0-rc1` development ZIP has additionally passed fresh WordPress
 7.1 installation, activation, LV/RU/EN frontend, ACF Pro 5.7.7 and
 deactivate/reactivate checks. Its local Woo transaction attempt confirmed the
 documented MySQL requirement when SQLite rejected WooCommerce stock-reservation
 locking SQL.
 
+Security Batch QTX4-SEC-001 now applies late `esc_textarea()` output encoding
+to both configuration textareas and rejects non-scalar request shapes before
+string processing. Exact validation corrected the earlier nonce-free reflection
+claim: WordPress terminates an invalid settings nonce and the current update
+path strips tags, but the raw output sinks were still fixed and regression
+tested. The full PHP 8.1-8.5 matrix is green at 332 tests / 7948 assertions.
+
 ## Completed work
 
+- Security Batch QTX4-SEC-001: configuration textarea sinks remediated with
+  contextual escaping, scalar guards and adversarial regression coverage.
 - Architecture and security audits completed.
 - Phase N2: current-tree security re-audit in `SECURITY-REAUDIT.md`;
   QTX-SEC-002 is capability/nonce protected and no confirmed open
@@ -153,9 +177,9 @@ locking SQL.
 ## Current test status
 
 - PHP 7.4 and 8.0 production lint: zero syntax errors.
-- PHP 8.1–8.5: 317 tests, 7890 assertions per version, zero failures/errors.
+- PHP 8.1–8.5: 335 tests, 7963 assertions per version, zero failures/errors.
 - Shared JS/PHP corpus parity: 100% (27/27); generated parser parity 400/400.
-- PHP lint (173 files), Webpack build, JS tests and
+- PHP lint (180 files), Webpack build, JS tests and
   `git diff --check`: green.
 - Real WordPress 7.1/PHP 8.4: activation/deactivation, EN/DE frontend, public
   REST, ACF Free 6.8.8 Text/Textarea/WYSIWYG option reads and theme-bundled
@@ -172,6 +196,8 @@ and `RELEASE-READINESS.md`.
 
 ## Security status
 
+- QTX4-SEC-001 is resolved: both configuration textareas escape at the output
+  sink and reject array-shaped values; focused and full-matrix tests pass.
 - QTX-SEC-001 and QTX-SEC-005 remediated in focused batches.
 - QTX-SEC-007 has been remediated with safe redirect/host allowlisting.
 - QTX-SEC-003 is remediated with the K1 file policy.

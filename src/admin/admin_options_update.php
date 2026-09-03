@@ -883,6 +883,9 @@ function qtranxf_update_settings(): void {
     // update admin settings
 
     // special cases handling for admin options
+    if ( isset( $_POST['json_config_files'] ) && ! is_string( $_POST['json_config_files'] ) ) {
+        unset( $_POST['json_config_files'] );
+    }
     if ( isset( $_POST['json_config_files'] ) ) {
         // verify that files are loadable
         $json_config_files_post = sanitize_text_field( stripslashes( $_POST['json_config_files'] ) );
@@ -909,6 +912,9 @@ function qtranxf_update_settings(): void {
         }
     }
 
+    if ( isset( $_POST['json_custom_i18n_config'] ) && ! is_string( $_POST['json_custom_i18n_config'] ) ) {
+        unset( $_POST['json_custom_i18n_config'] );
+    }
     if ( isset( $_POST['json_custom_i18n_config'] ) ) {
         // verify that JSON string can be parsed
         $cfg_json = sanitize_text_field( stripslashes( $_POST['json_custom_i18n_config'] ) );

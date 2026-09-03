@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qTranslate-XT 3.16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-05 17:31+0200\n"
+"POT-Creation-Date: 2026-09-02 00:00+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: qTranslate Team Translators\n"
@@ -2173,4 +2173,264 @@ msgstr ""
 msgid ""
 "Other common CSS block for flag classes \"%s\" is loaded in the head of "
 "HTML and can be controlled with option \"%s\"."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Documentation"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Working with Gutenberg"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "qTranslate-XT Modern supports Gutenberg in single-language edit mode. One WordPress post still contains every translation, but the block editor receives and edits only the currently selected language."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Important:"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The edit language is the language selected in the qTranslate-XT menu in the top WordPress admin bar. Changing it reloads the editor; Gutenberg does not display the classic language switching buttons."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Recommended workflow"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Enable the required languages and choose the default language in the General settings tab."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Create or open one post for all translations. Do not create a separate post for each language."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Select the language in the top admin bar and wait for the editor page to reload."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Edit the title, blocks and excerpt, then save or publish the post."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Select the next language, let the editor reload, add its translation and save again."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Preview every language on the front end and verify links, dynamic blocks and custom fields."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "What happens when a post is opened and saved"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "WordPress requests the post through the REST API in edit context."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The server keeps the complete multilingual values and sends Gutenberg only the selected translation of the title, content and excerpt. The content is a complete Gutenberg block document, so each language may have its own text and block layout."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The response also contains the edit language and a revision fingerprint for each multilingual field."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "On save or autosave, the editor returns those fingerprints. The server validates the language and the exact WordPress post route before changing multilingual data."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "If the stored value has not changed, only the selected translation is replaced and all other languages are preserved."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Database example:"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Concurrent editing and error 409"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "If another editor, browser tab or integration changes a multilingual field after the editor was loaded, qTranslate-XT Modern rejects the stale save with HTTP 409. This prevents a save in one language from silently overwriting newer changes in another language."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Copy any unsaved text to a safe place, reload the editor to obtain the latest revisions, review the current content and apply the change again. After upgrading the plugin, reload already open editor tabs before saving."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Gutenberg limitations"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Only single-language editing is supported; changing the language requires a page reload."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The built-in merge covers the standard post title, content and excerpt. Custom REST fields and post metadata need an explicit compatible integration."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Blocks serialized inside post content are translated with that content. Synced patterns, Site Editor templates, navigation entities, media, taxonomies and data loaded from external sources are separate entities and are not automatically made multilingual by this editor bridge."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "A custom post type must be enabled for the WordPress REST API and must not be excluded in qTranslate-XT settings."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The block-based Widgets editor is disabled for compatibility. Use the classic Widgets screen for multilingual widgets."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Differences between the legacy and modern versions"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "qTranslate-XT Modern 4.x is an evolutionary update of qTranslate-XT 3.x. It keeps the existing database format, public compatibility functions and the one-post model while replacing high-risk internal paths with explicit, testable services."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Area"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Legacy qTranslate-XT 3.x"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "qTranslate-XT Modern 4.x"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Storage model"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "All translations are stored inline in one WordPress field using language markers."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The same inline format is preserved; no duplicate posts or mandatory database migration are introduced."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Internal architecture"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Procedural functions, shared global state and broad WordPress filters perform parsing, language selection and presentation together."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Typed multilingual values, a parser, language resolver, translation service and WordPress adapters separate those responsibilities. Legacy functions remain as compatibility facades."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Parsing"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Parsing behavior is distributed across legacy PHP functions and a separate JavaScript implementation."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The lossless core preserves the original value and diagnostics, uses a bounded request cache, and checks PHP and JavaScript behavior against a shared compatibility corpus."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Gutenberg saves"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Single-language content is read and joined with database values during REST saves without a revision token, so concurrent edits may overwrite each other."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Exact post routes, enabled languages and field revisions are validated. Stale changes fail with HTTP 409 instead of overwriting newer multilingual content."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Integrations"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Integrations mostly depend on global hooks, configuration files and plugin-specific assumptions."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Trusted registries and context-aware adapters define explicit boundaries for REST, ACF, WooCommerce and built-in modules."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Security and validation"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Legacy request, redirect and configuration paths rely more heavily on implicit WordPress and plugin state."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Routes, capabilities, nonces, languages, redirect hosts, module identifiers and configuration paths are validated at their boundaries."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Compatibility"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Provides the established qTranslate-XT behavior and APIs but retains older implementation constraints and PHP-era assumptions."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Reads bracket, legacy comment and curly marker formats, preserves public hooks and options, and modernizes the implementation without silently normalizing existing content."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "How the legacy version works"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The legacy version loads configuration into a global language state. Administrative JavaScript splits multilingual strings into editable values and joins them again, while broad WordPress filters select the current language when titles, content, options, terms and URLs are read. Gutenberg is adapted through REST request filters that rebuild standard post fields from the current database value."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "How qTranslate-XT Modern works"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The modern version first treats the stored string as a lossless multilingual value. A dedicated language context and fallback policy choose a translation, and a consumer-specific adapter presents it to WordPress, REST, Gutenberg or an integration. On writes, the adapter validates the request and merges only the authorized language back into the unchanged multilingual value."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "The parser does not sanitize HTML and does not decide access rights. Validation, sanitization and escaping stay at the WordPress or integration boundary appropriate for each field, preventing destructive transformations and double escaping."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Upgrading from qTranslate-XT 3.x"
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Create a complete database and files backup and test the upgrade on a staging copy first."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Do not activate the legacy and modern plugins at the same time. Replace the plugin code while keeping the existing qTranslate-XT options and content."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "No routine content conversion is required: existing inline translations remain readable."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "After upgrading, clear relevant caches, reload open Gutenberg tabs and test saving each enabled language."
+msgstr ""
+
+#: admin/admin_settings.php
+msgid "Verify custom post types, ACF fields, WooCommerce flows, SEO metadata and other third-party integrations separately because their data may live outside the standard post fields."
 msgstr ""

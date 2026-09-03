@@ -7,8 +7,8 @@ Decision: **NOT READY FOR RELEASE CANDIDATE**
 
 - PHP 7.4.33 and 8.0.30 production lint: **PASS**.
 - PHP 8.1.29, 8.2.29, 8.3.29, 8.4.16 and 8.5.9: **PASS**,
-  317 tests / 7890 assertions each.
-- PHP lint: **PASS**, 173 plugin/test PHP files at the final checkpoint.
+  335 tests / 7963 assertions each.
+- PHP lint: **PASS**, 180 plugin/test PHP files at the current checkpoint.
 - JavaScript shared parser corpus and production build: **PASS**.
 - `git diff --check`: **PASS** at checkpoints.
 - Parser/storage compatibility: **PASS** for bracket/comment/curly,
@@ -24,6 +24,9 @@ Decision: **NOT READY FOR RELEASE CANDIDATE**
 - WooCommerce 11.0.1 product/cart/checkout-load/fragments smoke: **PASS**.
 - WooCommerce HPOS order-language CRUD regression: **PASS** locally; the
   reproducible MySQL/Redis transactional workflow is implemented but NOT RUN.
+- QTX4-SEC-001 configuration textarea escaping: **RESOLVED**; focused regression
+  is 9 tests / 37 assertions and the full PHP 8.1-8.5 matrix is green at
+  332 tests / 7948 assertions per runtime.
 - Exact `qtranslate-xt-modern-rc1.zip` installation on fresh WordPress 7.1:
   **PASS** for activation, LV/RU/EN HTTP frontend, ACF Pro 5.7.7 regression and
   deactivate/reactivate raw-data preservation.
@@ -88,3 +91,19 @@ The local attempt to extend exact-ZIP validation into Woo checkout stopped at
 WooCommerce's MySQL-only stock reservation SQL (`INTERVAL`, `FOR UPDATE`,
 `LOCK IN SHARE MODE`), unsupported by the official SQLite integration. The ZIP
 is a prepared staging artifact, not a fully green release.
+
+On 2026-09-02 the Woo gate was retried after QTX4-SEC-001 became green.
+`actionlint` 1.7.12 passed the workflow, but `modernisation` is not present on
+`origin` and no GitHub CLI, signed-in browser session or stored non-interactive
+Git credentials are available. Consequently no workflow run exists. A local
+disposable MySQL 8.0.31 fallback was started and stopped cleanly, but WordPress
+7.1 could not be extracted on Windows because the archive contains a filename
+ending in a dot. The temporary lab was removed. Neither attempt supplies the
+required MySQL 8.4/Redis 7.4 Actions evidence, so the Woo gate remains FAIL / NOT
+RUN and the final security re-audit has not started.
+
+The pre-CI review also corrected a real provisioning defect: the former
+GitHub release-asset URL for WP-CLI returned 404. The workflow now uses the
+official WP-CLI build with a fail-closed SHA-256 check and pins Redis Object
+Cache 2.8.0. Its three new contract tests pass with 15 assertions; the complete
+PHP 8.1-8.5 suite passes at 335 tests / 7963 assertions per runtime.

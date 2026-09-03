@@ -10,13 +10,13 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1.29 | **PASS** | 317 tests, 7890 assertions, 0 failures/errors |
-| PHPUnit PHP 8.2.29 | **PASS** | 317 tests, 7890 assertions, 0 failures/errors |
-| PHPUnit PHP 8.3.29 | **PASS** | 317 tests, 7890 assertions, 0 failures/errors |
-| PHPUnit PHP 8.4.16 | **PASS** | 319 tests, 7897 assertions, 0 failures/errors |
-| PHPUnit PHP 8.5.9 | **PASS** | 317 tests, 7890 assertions, 0 failures/errors |
+| PHPUnit PHP 8.1.29 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
+| PHPUnit PHP 8.2.29 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
+| PHPUnit PHP 8.3.29 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
+| PHPUnit PHP 8.4.16 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
+| PHPUnit PHP 8.5.9 | **PASS** | 335 tests, 7963 assertions, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
-| PHP syntax | **PASS** | 173 plugin/test PHP files, 0 lint failures |
+| PHP syntax | **PASS** | 180 plugin/test PHP files, 0 lint failures |
 | JavaScript shared corpus | **PASS** | 27/27 cases; parser security assertion PASS |
 | Webpack production build | **PASS** | `core`, ACF, options, block-editor and notices bundles emitted |
 | `git diff --check` | **PASS** | no whitespace errors |
@@ -91,6 +91,22 @@ been dispatched because this checkout has no authenticated GitHub CLI/control
 surface and the new workflow is not present on the remote. Its result is
 **NOT RUN**. HPOS order-language CRUD regression coverage is PASS locally.
 
+Release-gate retry on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
+`actionlint` 1.7.12 returned zero findings for the Woo workflow. The local
+`modernisation` branch is still absent from `origin`, and both signed-out GitHub
+UI state and a non-interactive push check confirmed that no authenticated
+dispatch path is available. A disposable local MySQL 8.0.31 instance started
+successfully, but the WordPress 7.1 archive could not be represented on the
+Windows filesystem because of a trailing-dot filename; the lab was shut down
+and removed. The required Ubuntu MySQL 8.4/Redis 7.4 matrix remains **NOT RUN**.
+
+The retry also found that the original WP-CLI release-asset URL returned 404.
+The workflow now downloads the official WP-CLI 2.12.0 build, verifies its
+recorded SHA-256 before execution, and pins Redis Object Cache 2.8.0. Three
+workflow contract tests (15 assertions) and the full PHP 8.1-8.5 suite at
+335 tests / 7963 assertions pass. This repairs provisioning but is not a
+substitute for the unexecuted Actions job.
+
 Exact-ZIP checkpoint: `4.0.0-rc1` installed and activated on a second fresh
 WordPress 7.1 lab; LV/RU/EN HTTP frontend, ACF Pro 5.7.7 native runner and
 deactivate/reactivate raw-data preservation passed. Woo checkout reached stock
@@ -107,6 +123,7 @@ MySQL locking/interval SQL; this does not promote the transaction row to PASS.
 | QTX-SEC-005 module traversal | **PASS** |
 | QTX-SEC-006 class-disabled unserialization | **PASS** |
 | QTX-SEC-007 allowed-host redirect policy | **PASS** unit/source; proxy **NOT TESTED** |
+| QTX4-SEC-001 configuration textarea escaping | **PASS** — 9 focused tests / 37 assertions; full PHP 8.1-8.5 suite green |
 | REST object permissions/raw exposure | **PASS** unit; real routes **NOT TESTED** |
 | ACF AJAX upstream nonce/visibility | **BLOCKED for RC** |
 | WooCommerce AJAX/REST upstream permissions | **BLOCKED for RC** |

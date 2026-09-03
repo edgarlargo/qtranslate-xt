@@ -44,9 +44,11 @@ jobs:
           coverage: none
       - name: Install WP-CLI
         run: |
-          curl --fail --location --retry 3 -o /tmp/wp-cli.phar https://github.com/wp-cli/wp-cli/releases/latest/download/wp-cli.phar
+          curl --fail --location --retry 3 -o /tmp/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          echo 'ce34ddd838f7351d6759068d09793f26755463b4a4610a5a5c0a97b68220d85c  /tmp/wp-cli.phar' | sha256sum --check --strict
           chmod +x /tmp/wp-cli.phar
           sudo mv /tmp/wp-cli.phar /usr/local/bin/wp
+          wp --version
       - name: Provision isolated WordPress 7.1 and WooCommerce 11.0.1
         env:
           WP_PATH: /tmp/qtx-woo-wordpress
@@ -63,7 +65,7 @@ jobs:
           wp plugin install woocommerce --version=11.0.1 --activate --path="$WP_PATH"
           wp option update woocommerce_custom_orders_table_enabled yes --path="$WP_PATH"
           wp option update woocommerce_custom_orders_table_data_sync_enabled yes --path="$WP_PATH"
-          wp plugin install redis-cache --activate --path="$WP_PATH"
+          wp plugin install redis-cache --version=2.8.0 --activate --path="$WP_PATH"
           wp redis enable --path="$WP_PATH"
           ln -s "$GITHUB_WORKSPACE" "$WP_PATH/wp-content/plugins/qtranslate-xt"
           wp plugin activate qtranslate-xt --path="$WP_PATH"

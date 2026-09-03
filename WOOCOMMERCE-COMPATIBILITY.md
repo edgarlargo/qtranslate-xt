@@ -57,3 +57,32 @@ WooCommerce 11 HPOS order-language storage was corrected to use the
 `WC_Abstract_Order` metadata API. The legacy checkout metadata hook remains for
 compatibility, while `woocommerce_checkout_order_created` covers modern order
 storage.
+
+## 2026-09-02 release-gate attempt
+
+The QTX4-SEC-001 prerequisite is resolved and its PHP 8.1-8.5 regression matrix
+is green. `actionlint` 1.7.12 accepts
+`.github/workflows/woocommerce-integration.yml` with no findings. The reviewed
+job pins WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4 and Redis 7.4;
+uses a generated one-run administrator password; uses only the offline COD
+gateway; and captures mail through `pre_wp_mail` before transport.
+
+The workflow is committed only on the local `modernisation` branch. That branch
+does not exist on `origin`, GitHub CLI is unavailable, the browser session is
+signed out, and a non-interactive `git push --dry-run` confirmed that no saved
+GitHub credentials are available. No Actions run was therefore created.
+
+A separate Windows fallback proved that an isolated MySQL 8.0.31 datadir can be
+started without touching WAMP data, but WordPress 7.1 cannot be extracted on
+this Windows filesystem because its archive contains a trailing-dot filename.
+The temporary server shut down normally and the complete lab was removed. This
+is not equivalent to the Ubuntu MySQL 8.4/Redis 7.4 workflow and does not change
+any Woo row from NOT TESTED/BLOCKED to PASS.
+
+Pre-CI review found that the original `releases/latest` WP-CLI asset URL
+returned 404. The workflow now uses the official WP-CLI build with a fixed
+SHA-256 verification and pins Redis Object Cache 2.8.0. Three source-contract
+tests cover the pinned stack, fail-closed download, generated credential,
+offline COD payment, local mail capture and `.example.test` recipients. They
+pass with 15 assertions; the full PHP 8.1-8.5 suite passes at 335 tests / 7963
+assertions per runtime. The transactional result remains NOT RUN.

@@ -56,7 +56,11 @@ class QTX_Admin_Settings {
         echo '<div id="tab-' . $name . '" class="hidden">' . PHP_EOL;
     }
 
-    public static function close_section( string $name, ?string $button_name = null ): void {
+    /**
+     * @param string            $name Section slug.
+     * @param string|false|null $button_name Submit button label, or false for a read-only section.
+     */
+    public static function close_section( string $name, $button_name = null ): void {
         if ( $button_name !== false ) {
             if ( is_null( $button_name ) ) {
                 $button_name = __( 'Save Changes', 'qtranslate' );
@@ -289,6 +293,7 @@ class QTX_Admin_Settings {
         $admin_sections['import']          = __( 'Import', 'qtranslate' ) . '/' . __( 'Export', 'qtranslate' );
         $admin_sections['languages']       = __( 'Languages', 'qtranslate' );
         $admin_sections['troubleshooting'] = __( 'Troubleshooting', 'qtranslate' );
+        $admin_sections['documentation']   = __( 'Documentation', 'qtranslate' );
         ?>
         <h2 class="nav-tab-wrapper">
             <?php foreach ( $admin_sections as $slug => $name ) : ?>
@@ -304,6 +309,7 @@ class QTX_Admin_Settings {
                 $this->add_advanced_section();
                 $this->add_integration_section( $settings_modules );
                 $this->add_troubleshooting_section();
+                $this->add_documentation_section();
                 // Allow to load additional services
                 do_action( 'qtranslate_configuration', $this->options_uri );
                 ?>
@@ -809,8 +815,13 @@ class QTX_Admin_Settings {
                 <th scope="row"><?php _e( 'Configuration Files', 'qtranslate' ) ?></th>
                 <td><label for="qtranxs_config_files"
                            class="qtranxs_explanation"><?php printf( __( 'List of configuration files. Unless prefixed with "%s", paths are relative to %s variable: %s. Absolute paths are also acceptable.', 'qtranslate' ), './', 'WP_CONTENT_DIR', trailingslashit( WP_CONTENT_DIR ) ) ?></label>
+                    <?php
+                    $config_files_value = isset( $_POST['json_config_files'] ) && is_string( $_POST['json_config_files'] )
+                        ? $_POST['json_config_files']
+                        : implode( PHP_EOL, $q_config['config_files'] );
+                    ?>
                     <br/><textarea name="json_config_files" id="qtranxs_config_files" rows="4"
-                                   style="width:100%"><?php echo $_POST['json_config_files'] ?? implode( PHP_EOL, $q_config['config_files'] ) ?></textarea>
+                                   style="width:100%"><?php echo esc_textarea( $config_files_value ); ?></textarea>
                     <p class="qtranxs-notes"><?php printf( __( 'The list gets auto-updated on a 3rd-party integrated plugin activation/deactivation. You may also add your own custom files for your theme or plugins. File "%s" is the default configuration loaded from this plugin folder. It is not recommended to modify any configuration file from other authors, but you may alter any configuration item through your own custom file appended to the end of this list.', 'qtranslate' ), './i18n-config.json' );
                         echo ' ';
                         printf( __( 'Use "%s" to review the resulting combined configuration from all "%s" and this option.', 'qtranslate' ), '<a href="' . $this->options_uri . '&config_inspector=show' . '">' . __( 'Configuration Inspector', 'qtranslate' ) . '</a>', __( 'Custom Configuration', 'qtranslate' ) );
@@ -826,12 +837,17 @@ class QTX_Admin_Settings {
                         _e( 'Deprecated.', 'qtranslate' );
                         echo( '<br/>' );
                         printf( __( 'Additional custom JSON-encoded configuration of %s for all admin pages. It is processed after all files from option "%s" are loaded, providing opportunity to add or to override configuration tokens as necessary.', 'qtranslate' ), 'qTranslate&#8209;XT', __( 'Configuration Files', 'qtranslate' ) ); ?></label>
+                    <?php
+                    $custom_i18n_config_value = '';
+                    if ( isset( $_POST['json_custom_i18n_config'] ) && is_string( $_POST['json_custom_i18n_config'] ) ) {
+                        $custom_i18n_config_value = sanitize_text_field( stripslashes( $_POST['json_custom_i18n_config'] ) );
+                    } elseif ( ! empty( $q_config['custom_i18n_config'] ) ) {
+                        $custom_i18n_config_value = (string) json_encode( $q_config['custom_i18n_config'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+                    }
+                    ?>
                     <br/><textarea name="json_custom_i18n_config" id="qtranxs_json_custom_i18n_config"
                                    rows="4"
-                                   style="width:100%"><?php if ( isset( $_POST['json_custom_i18n_config'] ) ) {
-                            echo sanitize_text_field( stripslashes( $_POST['json_custom_i18n_config'] ) );
-                        } else if ( ! empty( $q_config['custom_i18n_config'] ) )
-                            echo json_encode( $q_config['custom_i18n_config'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) ?></textarea>
+                                   style="width:100%"><?php echo esc_textarea( $custom_i18n_config_value ); ?></textarea>
                     <p class="qtranxs-notes <?php echo( $this->deprecated_class( 'custom_i18n_config' ) ) ?>"><?php printf( __( 'It would make no difference, if the content of this field is stored in a file, which name is listed last in option "%s". Therefore, this field only provides flexibility for the sake of convenience.', 'qtranslate' ), __( 'Configuration Files', 'qtranslate' ) );
                         echo ' ';
                         printf( __( 'Please, read %sIntegration Guide%s for more information.', 'qtranslate' ), '<a href="https://github.com/qtranslate/qtranslate-xt/wiki/Integration-Guide" target="_blank">', '</a>' );
@@ -938,6 +954,147 @@ class QTX_Admin_Settings {
         </table>
         <?php
         $this->close_section( 'troubleshooting' );
+    }
+
+    /**
+     * Display the built-in user documentation.
+     */
+    private function add_documentation_section(): void {
+        $this->open_section( 'documentation' ); ?>
+        <div class="qtranxs-documentation">
+            <h2><?php esc_html_e( 'Working with Gutenberg', 'qtranslate' ); ?></h2>
+            <p class="qtranxs-documentation-lead">
+                <?php esc_html_e( 'qTranslate-XT Modern supports Gutenberg in single-language edit mode. One WordPress post still contains every translation, but the block editor receives and edits only the currently selected language.', 'qtranslate' ); ?>
+            </p>
+
+            <div class="notice notice-info inline">
+                <p>
+                    <strong><?php esc_html_e( 'Important:', 'qtranslate' ); ?></strong>
+                    <?php esc_html_e( 'The edit language is the language selected in the qTranslate-XT menu in the top WordPress admin bar. Changing it reloads the editor; Gutenberg does not display the classic language switching buttons.', 'qtranslate' ); ?>
+                </p>
+            </div>
+
+            <h3><?php esc_html_e( 'Recommended workflow', 'qtranslate' ); ?></h3>
+            <ol>
+                <li><?php esc_html_e( 'Enable the required languages and choose the default language in the General settings tab.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Create or open one post for all translations. Do not create a separate post for each language.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Select the language in the top admin bar and wait for the editor page to reload.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Edit the title, blocks and excerpt, then save or publish the post.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Select the next language, let the editor reload, add its translation and save again.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Preview every language on the front end and verify links, dynamic blocks and custom fields.', 'qtranslate' ); ?></li>
+            </ol>
+
+            <h3><?php esc_html_e( 'What happens when a post is opened and saved', 'qtranslate' ); ?></h3>
+            <ol>
+                <li><?php esc_html_e( 'WordPress requests the post through the REST API in edit context.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'The server keeps the complete multilingual values and sends Gutenberg only the selected translation of the title, content and excerpt. The content is a complete Gutenberg block document, so each language may have its own text and block layout.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'The response also contains the edit language and a revision fingerprint for each multilingual field.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'On save or autosave, the editor returns those fingerprints. The server validates the language and the exact WordPress post route before changing multilingual data.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'If the stored value has not changed, only the selected translation is replaced and all other languages are preserved.', 'qtranslate' ); ?></li>
+            </ol>
+
+            <p class="qtranxs-documentation-example">
+                <strong><?php esc_html_e( 'Database example:', 'qtranslate' ); ?></strong>
+                <code>[:lv]Sveiki[:ru]Привет[:en]Hello[:]</code>
+            </p>
+
+            <h3><?php esc_html_e( 'Concurrent editing and error 409', 'qtranslate' ); ?></h3>
+            <p>
+                <?php esc_html_e( 'If another editor, browser tab or integration changes a multilingual field after the editor was loaded, qTranslate-XT Modern rejects the stale save with HTTP 409. This prevents a save in one language from silently overwriting newer changes in another language.', 'qtranslate' ); ?>
+            </p>
+            <p>
+                <?php esc_html_e( 'Copy any unsaved text to a safe place, reload the editor to obtain the latest revisions, review the current content and apply the change again. After upgrading the plugin, reload already open editor tabs before saving.', 'qtranslate' ); ?>
+            </p>
+
+            <h3><?php esc_html_e( 'Gutenberg limitations', 'qtranslate' ); ?></h3>
+            <ul>
+                <li><?php esc_html_e( 'Only single-language editing is supported; changing the language requires a page reload.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'The built-in merge covers the standard post title, content and excerpt. Custom REST fields and post metadata need an explicit compatible integration.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Blocks serialized inside post content are translated with that content. Synced patterns, Site Editor templates, navigation entities, media, taxonomies and data loaded from external sources are separate entities and are not automatically made multilingual by this editor bridge.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'A custom post type must be enabled for the WordPress REST API and must not be excluded in qTranslate-XT settings.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'The block-based Widgets editor is disabled for compatibility. Use the classic Widgets screen for multilingual widgets.', 'qtranslate' ); ?></li>
+            </ul>
+
+            <hr/>
+
+            <h2><?php esc_html_e( 'Differences between the legacy and modern versions', 'qtranslate' ); ?></h2>
+            <p class="qtranxs-documentation-lead">
+                <?php esc_html_e( 'qTranslate-XT Modern 4.x is an evolutionary update of qTranslate-XT 3.x. It keeps the existing database format, public compatibility functions and the one-post model while replacing high-risk internal paths with explicit, testable services.', 'qtranslate' ); ?>
+            </p>
+
+            <div class="qtranxs-documentation-table-wrap">
+                <table class="widefat striped">
+                    <thead>
+                    <tr>
+                        <th><?php esc_html_e( 'Area', 'qtranslate' ); ?></th>
+                        <th><?php esc_html_e( 'Legacy qTranslate-XT 3.x', 'qtranslate' ); ?></th>
+                        <th><?php esc_html_e( 'qTranslate-XT Modern 4.x', 'qtranslate' ); ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Storage model', 'qtranslate' ); ?></th>
+                        <td><?php esc_html_e( 'All translations are stored inline in one WordPress field using language markers.', 'qtranslate' ); ?></td>
+                        <td><?php esc_html_e( 'The same inline format is preserved; no duplicate posts or mandatory database migration are introduced.', 'qtranslate' ); ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Internal architecture', 'qtranslate' ); ?></th>
+                        <td><?php esc_html_e( 'Procedural functions, shared global state and broad WordPress filters perform parsing, language selection and presentation together.', 'qtranslate' ); ?></td>
+                        <td><?php esc_html_e( 'Typed multilingual values, a parser, language resolver, translation service and WordPress adapters separate those responsibilities. Legacy functions remain as compatibility facades.', 'qtranslate' ); ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Parsing', 'qtranslate' ); ?></th>
+                        <td><?php esc_html_e( 'Parsing behavior is distributed across legacy PHP functions and a separate JavaScript implementation.', 'qtranslate' ); ?></td>
+                        <td><?php esc_html_e( 'The lossless core preserves the original value and diagnostics, uses a bounded request cache, and checks PHP and JavaScript behavior against a shared compatibility corpus.', 'qtranslate' ); ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Gutenberg saves', 'qtranslate' ); ?></th>
+                        <td><?php esc_html_e( 'Single-language content is read and joined with database values during REST saves without a revision token, so concurrent edits may overwrite each other.', 'qtranslate' ); ?></td>
+                        <td><?php esc_html_e( 'Exact post routes, enabled languages and field revisions are validated. Stale changes fail with HTTP 409 instead of overwriting newer multilingual content.', 'qtranslate' ); ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Integrations', 'qtranslate' ); ?></th>
+                        <td><?php esc_html_e( 'Integrations mostly depend on global hooks, configuration files and plugin-specific assumptions.', 'qtranslate' ); ?></td>
+                        <td><?php esc_html_e( 'Trusted registries and context-aware adapters define explicit boundaries for REST, ACF, WooCommerce and built-in modules.', 'qtranslate' ); ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Security and validation', 'qtranslate' ); ?></th>
+                        <td><?php esc_html_e( 'Legacy request, redirect and configuration paths rely more heavily on implicit WordPress and plugin state.', 'qtranslate' ); ?></td>
+                        <td><?php esc_html_e( 'Routes, capabilities, nonces, languages, redirect hosts, module identifiers and configuration paths are validated at their boundaries.', 'qtranslate' ); ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Compatibility', 'qtranslate' ); ?></th>
+                        <td><?php esc_html_e( 'Provides the established qTranslate-XT behavior and APIs but retains older implementation constraints and PHP-era assumptions.', 'qtranslate' ); ?></td>
+                        <td><?php esc_html_e( 'Reads bracket, legacy comment and curly marker formats, preserves public hooks and options, and modernizes the implementation without silently normalizing existing content.', 'qtranslate' ); ?></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3><?php esc_html_e( 'How the legacy version works', 'qtranslate' ); ?></h3>
+            <p>
+                <?php esc_html_e( 'The legacy version loads configuration into a global language state. Administrative JavaScript splits multilingual strings into editable values and joins them again, while broad WordPress filters select the current language when titles, content, options, terms and URLs are read. Gutenberg is adapted through REST request filters that rebuild standard post fields from the current database value.', 'qtranslate' ); ?>
+            </p>
+
+            <h3><?php esc_html_e( 'How qTranslate-XT Modern works', 'qtranslate' ); ?></h3>
+            <p>
+                <?php esc_html_e( 'The modern version first treats the stored string as a lossless multilingual value. A dedicated language context and fallback policy choose a translation, and a consumer-specific adapter presents it to WordPress, REST, Gutenberg or an integration. On writes, the adapter validates the request and merges only the authorized language back into the unchanged multilingual value.', 'qtranslate' ); ?>
+            </p>
+            <p>
+                <?php esc_html_e( 'The parser does not sanitize HTML and does not decide access rights. Validation, sanitization and escaping stay at the WordPress or integration boundary appropriate for each field, preventing destructive transformations and double escaping.', 'qtranslate' ); ?>
+            </p>
+
+            <h3><?php esc_html_e( 'Upgrading from qTranslate-XT 3.x', 'qtranslate' ); ?></h3>
+            <ul>
+                <li><?php esc_html_e( 'Create a complete database and files backup and test the upgrade on a staging copy first.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Do not activate the legacy and modern plugins at the same time. Replace the plugin code while keeping the existing qTranslate-XT options and content.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'No routine content conversion is required: existing inline translations remain readable.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'After upgrading, clear relevant caches, reload open Gutenberg tabs and test saving each enabled language.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Verify custom post types, ACF fields, WooCommerce flows, SEO metadata and other third-party integrations separately because their data may live outside the standard post fields.', 'qtranslate' ); ?></li>
+            </ul>
+        </div>
+        <?php
+        $this->close_section( 'documentation', false );
     }
 
     private function add_languages_section( $nonce_action ): void {

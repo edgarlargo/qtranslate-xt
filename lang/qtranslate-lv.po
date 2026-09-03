@@ -1,0 +1,277 @@
+# qTranslate-XT Latvian translation.
+# This file is distributed under the same license as the qTranslate-XT package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: qTranslate-XT 4.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-02 00:00+0300\n"
+"PO-Revision-Date: 2026-09-02 00:00+0300\n"
+"Last-Translator: qTranslate-XT Modern contributors\n"
+"Language-Team: Latvian\n"
+"Language: lv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);\n"
+"X-Generator: Codex\n"
+
+#: admin/admin_settings.php
+msgid "Documentation"
+msgstr "Dokumentācija"
+
+#: admin/admin_settings.php
+msgid "Working with Gutenberg"
+msgstr "Darbs ar Gutenberg"
+
+#: admin/admin_settings.php
+msgid "qTranslate-XT Modern supports Gutenberg in single-language edit mode. One WordPress post still contains every translation, but the block editor receives and edits only the currently selected language."
+msgstr "qTranslate-XT Modern atbalsta Gutenberg vienas valodas rediģēšanas režīmā. Vienā WordPress ierakstā joprojām ir visi tulkojumi, bet bloku redaktors saņem un rediģē tikai pašlaik atlasīto valodu."
+
+#: admin/admin_settings.php
+msgid "Important:"
+msgstr "Svarīgi:"
+
+#: admin/admin_settings.php
+msgid "The edit language is the language selected in the qTranslate-XT menu in the top WordPress admin bar. Changing it reloads the editor; Gutenberg does not display the classic language switching buttons."
+msgstr "Rediģēšanas valoda ir qTranslate-XT izvēlnē WordPress augšējā administratora joslā atlasītā valoda. Mainot valodu, redaktors tiek pārlādēts; Gutenberg nerāda klasiskās valodu pārslēgšanas pogas."
+
+#: admin/admin_settings.php
+msgid "Recommended workflow"
+msgstr "Ieteicamā darbplūsma"
+
+#: admin/admin_settings.php
+msgid "Enable the required languages and choose the default language in the General settings tab."
+msgstr "Iespējojiet vajadzīgās valodas un cilnē “Vispārīgie” izvēlieties noklusējuma valodu."
+
+#: admin/admin_settings.php
+msgid "Create or open one post for all translations. Do not create a separate post for each language."
+msgstr "Izveidojiet vai atveriet vienu ierakstu visiem tulkojumiem. Neveidojiet atsevišķu ierakstu katrai valodai."
+
+#: admin/admin_settings.php
+msgid "Select the language in the top admin bar and wait for the editor page to reload."
+msgstr "Augšējā administratora joslā atlasiet valodu un uzgaidiet, līdz redaktora lapa tiek pārlādēta."
+
+#: admin/admin_settings.php
+msgid "Edit the title, blocks and excerpt, then save or publish the post."
+msgstr "Rediģējiet virsrakstu, blokus un izrakstu, pēc tam saglabājiet vai publicējiet ierakstu."
+
+#: admin/admin_settings.php
+msgid "Select the next language, let the editor reload, add its translation and save again."
+msgstr "Atlasiet nākamo valodu, uzgaidiet, līdz redaktors tiek pārlādēts, pievienojiet tulkojumu un saglabājiet vēlreiz."
+
+#: admin/admin_settings.php
+msgid "Preview every language on the front end and verify links, dynamic blocks and custom fields."
+msgstr "Priekšskatiet katru valodu vietnes publiskajā daļā un pārbaudiet saites, dinamiskos blokus un pielāgotos laukus."
+
+#: admin/admin_settings.php
+msgid "What happens when a post is opened and saved"
+msgstr "Kas notiek, atverot un saglabājot ierakstu"
+
+#: admin/admin_settings.php
+msgid "WordPress requests the post through the REST API in edit context."
+msgstr "WordPress pieprasa ierakstu, izmantojot REST API rediģēšanas kontekstā."
+
+#: admin/admin_settings.php
+msgid "The server keeps the complete multilingual values and sends Gutenberg only the selected translation of the title, content and excerpt. The content is a complete Gutenberg block document, so each language may have its own text and block layout."
+msgstr "Serveris saglabā pilnās daudzvalodu vērtības un nosūta Gutenberg tikai atlasīto virsraksta, satura un izraksta tulkojumu. Saturs ir pilns Gutenberg bloku dokuments, tādēļ katrai valodai var būt savs teksts un bloku izkārtojums."
+
+#: admin/admin_settings.php
+msgid "The response also contains the edit language and a revision fingerprint for each multilingual field."
+msgstr "Atbildē ir arī rediģēšanas valoda un versijas kontrolsumma katram daudzvalodu laukam."
+
+#: admin/admin_settings.php
+msgid "On save or autosave, the editor returns those fingerprints. The server validates the language and the exact WordPress post route before changing multilingual data."
+msgstr "Saglabājot vai automātiski saglabājot, redaktors nosūta šīs kontrolsummas atpakaļ. Pirms daudzvalodu datu mainīšanas serveris pārbauda valodu un precīzo WordPress ieraksta maršrutu."
+
+#: admin/admin_settings.php
+msgid "If the stored value has not changed, only the selected translation is replaced and all other languages are preserved."
+msgstr "Ja saglabātā vērtība nav mainījusies, tiek aizstāts tikai atlasītais tulkojums, bet visas pārējās valodas tiek saglabātas."
+
+#: admin/admin_settings.php
+msgid "Database example:"
+msgstr "Datubāzes piemērs:"
+
+#: admin/admin_settings.php
+msgid "Concurrent editing and error 409"
+msgstr "Vienlaicīga rediģēšana un kļūda 409"
+
+#: admin/admin_settings.php
+msgid "If another editor, browser tab or integration changes a multilingual field after the editor was loaded, qTranslate-XT Modern rejects the stale save with HTTP 409. This prevents a save in one language from silently overwriting newer changes in another language."
+msgstr "Ja pēc redaktora ielādes daudzvalodu lauku maina cits redaktors, pārlūka cilne vai integrācija, qTranslate-XT Modern noraida novecojušo saglabāšanu ar HTTP 409. Tas neļauj vienas valodas saglabāšanai nemanāmi pārrakstīt jaunākas izmaiņas citā valodā."
+
+#: admin/admin_settings.php
+msgid "Copy any unsaved text to a safe place, reload the editor to obtain the latest revisions, review the current content and apply the change again. After upgrading the plugin, reload already open editor tabs before saving."
+msgstr "Nokopējiet visu nesaglabāto tekstu drošā vietā, pārlādējiet redaktoru, lai iegūtu jaunākās versijas, pārskatiet pašreizējo saturu un veiciet izmaiņas vēlreiz. Pēc spraudņa jaunināšanas pirms saglabāšanas pārlādējiet jau atvērtās redaktora cilnes."
+
+#: admin/admin_settings.php
+msgid "Gutenberg limitations"
+msgstr "Gutenberg ierobežojumi"
+
+#: admin/admin_settings.php
+msgid "Only single-language editing is supported; changing the language requires a page reload."
+msgstr "Tiek atbalstīta tikai vienas valodas rediģēšana; valodas maiņai ir jāpārlādē lapa."
+
+#: admin/admin_settings.php
+msgid "The built-in merge covers the standard post title, content and excerpt. Custom REST fields and post metadata need an explicit compatible integration."
+msgstr "Iebūvētā apvienošana aptver standarta ieraksta virsrakstu, saturu un izrakstu. Pielāgotajiem REST laukiem un ieraksta metadatiem ir nepieciešama īpaša saderīga integrācija."
+
+#: admin/admin_settings.php
+msgid "Blocks serialized inside post content are translated with that content. Synced patterns, Site Editor templates, navigation entities, media, taxonomies and data loaded from external sources are separate entities and are not automatically made multilingual by this editor bridge."
+msgstr "Ieraksta saturā serializētie bloki tiek tulkoti kopā ar šo saturu. Sinhronizētie modeļi, vietnes redaktora veidnes, navigācijas vienības, multivide, taksonomijas un no ārējiem avotiem ielādēti dati ir atsevišķas vienības, un šis redaktora savienojums tos automātiski nepadara daudzvalodīgus."
+
+#: admin/admin_settings.php
+msgid "A custom post type must be enabled for the WordPress REST API and must not be excluded in qTranslate-XT settings."
+msgstr "Pielāgotajam ieraksta tipam ir jābūt iespējotam WordPress REST API, un tas nedrīkst būt izslēgts qTranslate-XT iestatījumos."
+
+#: admin/admin_settings.php
+msgid "The block-based Widgets editor is disabled for compatibility. Use the classic Widgets screen for multilingual widgets."
+msgstr "Saderības dēļ bloku logrīku redaktors ir atspējots. Daudzvalodu logrīkiem izmantojiet klasisko logrīku ekrānu."
+
+#: admin/admin_settings.php
+msgid "Differences between the legacy and modern versions"
+msgstr "Atšķirības starp veco un jauno versiju"
+
+#: admin/admin_settings.php
+msgid "qTranslate-XT Modern 4.x is an evolutionary update of qTranslate-XT 3.x. It keeps the existing database format, public compatibility functions and the one-post model while replacing high-risk internal paths with explicit, testable services."
+msgstr "qTranslate-XT Modern 4.x ir evolucionārs qTranslate-XT 3.x atjauninājums. Tas saglabā esošo datubāzes formātu, publiskās saderības funkcijas un viena ieraksta modeli, vienlaikus aizstājot riskantākos iekšējos mehānismus ar skaidriem un testējamiem servisiem."
+
+#: admin/admin_settings.php
+msgid "Area"
+msgstr "Joma"
+
+#: admin/admin_settings.php
+msgid "Legacy qTranslate-XT 3.x"
+msgstr "Vecā qTranslate-XT 3.x"
+
+#: admin/admin_settings.php
+msgid "qTranslate-XT Modern 4.x"
+msgstr "qTranslate-XT Modern 4.x"
+
+#: admin/admin_settings.php
+msgid "Storage model"
+msgstr "Glabāšanas modelis"
+
+#: admin/admin_settings.php
+msgid "All translations are stored inline in one WordPress field using language markers."
+msgstr "Visi tulkojumi tiek glabāti vienā WordPress laukā, izmantojot valodu marķierus."
+
+#: admin/admin_settings.php
+msgid "The same inline format is preserved; no duplicate posts or mandatory database migration are introduced."
+msgstr "Tiek saglabāts tas pats iekļautais formāts; netiek veidoti dublēti ieraksti un nav nepieciešama obligāta datubāzes migrācija."
+
+#: admin/admin_settings.php
+msgid "Internal architecture"
+msgstr "Iekšējā arhitektūra"
+
+#: admin/admin_settings.php
+msgid "Procedural functions, shared global state and broad WordPress filters perform parsing, language selection and presentation together."
+msgstr "Procedurālās funkcijas, koplietots globālais stāvoklis un plaši WordPress filtri kopā veic parsēšanu, valodas izvēli un rezultāta attēlošanu."
+
+#: admin/admin_settings.php
+msgid "Typed multilingual values, a parser, language resolver, translation service and WordPress adapters separate those responsibilities. Legacy functions remain as compatibility facades."
+msgstr "Tipizētas daudzvalodu vērtības, parsētājs, valodas noteicējs, tulkošanas serviss un WordPress adapteri nodala šos pienākumus. Vecās funkcijas tiek saglabātas kā saderības fasādes."
+
+#: admin/admin_settings.php
+msgid "Parsing"
+msgstr "Vērtību parsēšana"
+
+#: admin/admin_settings.php
+msgid "Parsing behavior is distributed across legacy PHP functions and a separate JavaScript implementation."
+msgstr "Parsēšanas darbība ir sadalīta starp vecajām PHP funkcijām un atsevišķu JavaScript implementāciju."
+
+#: admin/admin_settings.php
+msgid "The lossless core preserves the original value and diagnostics, uses a bounded request cache, and checks PHP and JavaScript behavior against a shared compatibility corpus."
+msgstr "Bezzudumu kodols saglabā sākotnējo vērtību un diagnostiku, izmanto ierobežotu pieprasījuma kešatmiņu un pārbauda PHP un JavaScript darbību ar kopīgu saderības testu kopu."
+
+#: admin/admin_settings.php
+msgid "Gutenberg saves"
+msgstr "Saglabāšana Gutenberg"
+
+#: admin/admin_settings.php
+msgid "Single-language content is read and joined with database values during REST saves without a revision token, so concurrent edits may overwrite each other."
+msgstr "REST saglabāšanas laikā vienas valodas saturs tiek nolasīts un apvienots ar datubāzes vērtībām bez versijas marķiera, tādēļ vienlaicīgi labojumi var pārrakstīt cits citu."
+
+#: admin/admin_settings.php
+msgid "Exact post routes, enabled languages and field revisions are validated. Stale changes fail with HTTP 409 instead of overwriting newer multilingual content."
+msgstr "Tiek pārbaudīti precīzie ierakstu maršruti, iespējotās valodas un lauku versijas. Novecojušas izmaiņas beidzas ar HTTP 409, nevis pārraksta jaunāku daudzvalodu saturu."
+
+#: admin/admin_settings.php
+msgid "Integrations"
+msgstr "Integrācijas"
+
+#: admin/admin_settings.php
+msgid "Integrations mostly depend on global hooks, configuration files and plugin-specific assumptions."
+msgstr "Integrācijas galvenokārt ir atkarīgas no globālajiem āķiem, konfigurācijas failiem un konkrētiem spraudņiem raksturīgiem pieņēmumiem."
+
+#: admin/admin_settings.php
+msgid "Trusted registries and context-aware adapters define explicit boundaries for REST, ACF, WooCommerce and built-in modules."
+msgstr "Uzticami reģistri un kontekstu apzinoši adapteri nosaka skaidras robežas REST, ACF, WooCommerce un iebūvētajiem moduļiem."
+
+#: admin/admin_settings.php
+msgid "Security and validation"
+msgstr "Drošība un validācija"
+
+#: admin/admin_settings.php
+msgid "Legacy request, redirect and configuration paths rely more heavily on implicit WordPress and plugin state."
+msgstr "Vecie pieprasījumu, pāradresācijas un konfigurācijas mehānismi vairāk paļaujas uz netiešu WordPress un spraudņa stāvokli."
+
+#: admin/admin_settings.php
+msgid "Routes, capabilities, nonces, languages, redirect hosts, module identifiers and configuration paths are validated at their boundaries."
+msgstr "Maršruti, piekļuves tiesības, vienreizējie marķieri, valodas, pāradresācijas resursdatori, moduļu identifikatori un konfigurācijas ceļi tiek validēti uz to robežām."
+
+#: admin/admin_settings.php
+msgid "Compatibility"
+msgstr "Saderība"
+
+#: admin/admin_settings.php
+msgid "Provides the established qTranslate-XT behavior and APIs but retains older implementation constraints and PHP-era assumptions."
+msgstr "Nodrošina ierasto qTranslate-XT darbību un API, bet saglabā vecākus implementācijas ierobežojumus un iepriekšējo PHP versiju pieņēmumus."
+
+#: admin/admin_settings.php
+msgid "Reads bracket, legacy comment and curly marker formats, preserves public hooks and options, and modernizes the implementation without silently normalizing existing content."
+msgstr "Nolasa kvadrātiekavu, veco komentāru un figūriekavu marķieru formātus, saglabā publiskos āķus un iestatījumus un modernizē implementāciju, klusām nenormalizējot esošo saturu."
+
+#: admin/admin_settings.php
+msgid "How the legacy version works"
+msgstr "Kā darbojas vecā versija"
+
+#: admin/admin_settings.php
+msgid "The legacy version loads configuration into a global language state. Administrative JavaScript splits multilingual strings into editable values and joins them again, while broad WordPress filters select the current language when titles, content, options, terms and URLs are read. Gutenberg is adapted through REST request filters that rebuild standard post fields from the current database value."
+msgstr "Vecā versija ielādē konfigurāciju globālajā valodas stāvoklī. Administratora JavaScript sadala daudzvalodu virknes rediģējamās vērtībās un atkal tās apvieno, savukārt plaši WordPress filtri atlasa pašreizējo valodu, kad tiek nolasīti virsraksti, saturs, iestatījumi, termini un URL. Gutenberg tiek pielāgots ar REST pieprasījumu filtriem, kas no pašreizējās datubāzes vērtības no jauna izveido standarta ieraksta laukus."
+
+#: admin/admin_settings.php
+msgid "How qTranslate-XT Modern works"
+msgstr "Kā darbojas qTranslate-XT Modern"
+
+#: admin/admin_settings.php
+msgid "The modern version first treats the stored string as a lossless multilingual value. A dedicated language context and fallback policy choose a translation, and a consumer-specific adapter presents it to WordPress, REST, Gutenberg or an integration. On writes, the adapter validates the request and merges only the authorized language back into the unchanged multilingual value."
+msgstr "Modernā versija vispirms apstrādā saglabāto virkni kā bezzudumu daudzvalodu vērtību. Atsevišķs valodas konteksts un rezerves izvēles politika izvēlas tulkojumu, bet konkrētajam patērētājam paredzēts adapteris to nodod WordPress, REST, Gutenberg vai integrācijai. Rakstīšanas laikā adapteris validē pieprasījumu un apvieno tikai atļauto valodu ar nemainīto daudzvalodu vērtību."
+
+#: admin/admin_settings.php
+msgid "The parser does not sanitize HTML and does not decide access rights. Validation, sanitization and escaping stay at the WordPress or integration boundary appropriate for each field, preventing destructive transformations and double escaping."
+msgstr "Parsētājs neveic HTML attīrīšanu un nenosaka piekļuves tiesības. Validācija, attīrīšana un ekranēšana paliek katram laukam atbilstošajā WordPress vai integrācijas robežā, novēršot destruktīvas pārveides un dubultu ekranēšanu."
+
+#: admin/admin_settings.php
+msgid "Upgrading from qTranslate-XT 3.x"
+msgstr "Jaunināšana no qTranslate-XT 3.x"
+
+#: admin/admin_settings.php
+msgid "Create a complete database and files backup and test the upgrade on a staging copy first."
+msgstr "Izveidojiet pilnu datubāzes un failu dublējumu un vispirms pārbaudiet jaunināšanu testa vides kopijā."
+
+#: admin/admin_settings.php
+msgid "Do not activate the legacy and modern plugins at the same time. Replace the plugin code while keeping the existing qTranslate-XT options and content."
+msgstr "Neaktivizējiet veco un moderno spraudni vienlaikus. Aizstājiet spraudņa kodu, saglabājot esošos qTranslate-XT iestatījumus un saturu."
+
+#: admin/admin_settings.php
+msgid "No routine content conversion is required: existing inline translations remain readable."
+msgstr "Parasta satura konvertēšana nav nepieciešama: esošie iekļautie tulkojumi joprojām ir nolasāmi."
+
+#: admin/admin_settings.php
+msgid "After upgrading, clear relevant caches, reload open Gutenberg tabs and test saving each enabled language."
+msgstr "Pēc jaunināšanas notīriet attiecīgās kešatmiņas, pārlādējiet atvērtās Gutenberg cilnes un pārbaudiet katras iespējotās valodas saglabāšanu."
+
+#: admin/admin_settings.php
+msgid "Verify custom post types, ACF fields, WooCommerce flows, SEO metadata and other third-party integrations separately because their data may live outside the standard post fields."
+msgstr "Atsevišķi pārbaudiet pielāgotos ierakstu tipus, ACF laukus, WooCommerce procesus, SEO metadatus un citas trešo pušu integrācijas, jo to dati var atrasties ārpus standarta ieraksta laukiem."
