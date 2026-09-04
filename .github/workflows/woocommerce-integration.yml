@@ -114,12 +114,17 @@ jobs:
           page_id="$(wp post create --post_type=page --post_status=publish --post_title='[:lv]QTX_HTTP_LV[:ru]QTX_HTTP_RU[:en]QTX_HTTP_EN[:]' --post_content='[:lv]QTX_HTTP_BODY_LV[:ru]QTX_HTTP_BODY_RU[:en]QTX_HTTP_BODY_EN[:]' --porcelain --path="$WP_PATH")"
           wp option update show_on_front page --path="$WP_PATH"
           wp option update page_on_front "$page_id" --path="$WP_PATH"
+          wp option update home 'http://qtx.test:8097' --path="$WP_PATH"
+          wp option update siteurl 'http://qtx.test:8097' --path="$WP_PATH"
+
+          http_origin='http://qtx.test:8097'
+          curl_resolve='qtx.test:8097:127.0.0.1'
 
           php -S 127.0.0.1:8097 -t "$WP_PATH" "$GITHUB_WORKSPACE/tests/Integration/http-router.php" >/tmp/qtx-http-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 20); do
-            if curl --fail --silent --output /dev/null http://127.0.0.1:8097/; then
+            if curl --fail --silent --resolve "$curl_resolve" --output /dev/null "$http_origin/"; then
               break
             fi
             if ! kill -0 "$server_pid" 2>/dev/null; then
@@ -133,7 +138,7 @@ jobs:
             route="$1"
             expected="$2"
             output="/tmp/qtx-http-${expected}.html"
-            curl --fail --silent --show-error --location --max-redirs 5 "http://127.0.0.1:8097${route}" --output "$output" || { cat /tmp/qtx-http-server.log; exit 1; }
+            curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" "${http_origin}${route}" --output "$output" || { cat /tmp/qtx-http-server.log; exit 1; }
             grep --fixed-strings "$expected" "$output"
             if grep --fixed-strings '[:lv]' "$output"; then
               echo "Raw multilingual markers leaked from ${route}." >&2
@@ -144,9 +149,9 @@ jobs:
           check_language_route '/lv/' 'QTX_HTTP_LV'
           check_language_route '/ru/' 'QTX_HTTP_RU'
           check_language_route '/en/' 'QTX_HTTP_EN'
-          curl --fail --silent --show-error --location --max-redirs 5 http://127.0.0.1:8097/wp-json/ --output /tmp/qtx-http-rest.json
+          curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" "$http_origin/wp-json/" --output /tmp/qtx-http-rest.json
           grep --fixed-strings '"namespaces"' /tmp/qtx-http-rest.json
-          curl --fail --silent --show-error --location --max-redirs 5 http://127.0.0.1:8097/wp-json/wc/store/v1/cart --output /tmp/qtx-http-store-cart.json
+          curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" "$http_origin/wp-json/wc/store/v1/cart" --output /tmp/qtx-http-store-cart.json
           grep --fixed-strings '"items"' /tmp/qtx-http-store-cart.json
       - name: Publish the validated release-candidate archive
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

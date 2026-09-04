@@ -74,6 +74,10 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( "check_language_route '/lv/' 'QTX_HTTP_LV'", $workflow );
         self::assertStringContainsString( "check_language_route '/ru/' 'QTX_HTTP_RU'", $workflow );
         self::assertStringContainsString( "check_language_route '/en/' 'QTX_HTTP_EN'", $workflow );
+        self::assertStringContainsString( "wp option update home 'http://qtx.test:8097'", $workflow );
+        self::assertStringContainsString( "wp option update siteurl 'http://qtx.test:8097'", $workflow );
+        self::assertStringContainsString( "curl_resolve='qtx.test:8097:127.0.0.1'", $workflow );
+        self::assertStringContainsString( '--resolve "$curl_resolve"', $workflow );
         self::assertStringContainsString( '/wp-json/wc/store/v1/cart', $workflow );
         self::assertStringContainsString( "grep --fixed-strings '[:lv]'", $workflow );
         self::assertStringContainsString( "require rtrim( \$document_root, '/\\\\' ) . '/index.php';", $router );
