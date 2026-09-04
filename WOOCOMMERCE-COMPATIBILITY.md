@@ -12,7 +12,8 @@ registers both paths from the core bootstrap and adds an integration run with
 `woo-commerce` explicitly inactive. PHP/JavaScript run `33873804508`, Woo run
 `33873804477` and the delta security audit passed. Post-audit runs `33874105427`
 and `33874105335` then passed the same gates and exact-ZIP installation. The
-replacement archive is designated; all earlier hashes remain withdrawn.
+compatibility fix remains green; its archive was later withdrawn by the
+separate production activation incident.
 
 The latest ACF frontend fallback is outside WooCommerce behavior but changes
 production bytes. Required rerun
@@ -20,7 +21,15 @@ production bytes. Required rerun
 passed 176/176 assertions on commit `8fa5f236`. Post-security-audit run
 [`33872439685`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33872439685)
 repeated 176/176, installed the exact replacement ZIP and retained Redis
-connectivity; the replacement archive is designated.
+connectivity; that archive is also withdrawn by the later production
+activation incident.
+
+Current incident-cycle run
+[`33879843211`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843211)
+again passed 176/176 on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
+MySQL 8.4.11, Redis 7.4.11 and HPOS. It also installed/reactivated the exact
+ZIP and passed LV/RU/EN HTTP, WordPress REST and Store API routes. This closes
+the current Woo gate but does not resolve the separate production HTTP 500.
 
 | Area | Current implementation | Status |
 | --- | --- | --- |

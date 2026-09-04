@@ -19,18 +19,20 @@ reproduced by the available source/theme fixture and currently depends on
 production configuration, stored data or the Apache/PHP runtime boundary.
 
 Release work added an exact-ZIP HTTP route gate covering LV/RU/EN projection,
-raw-marker leakage, REST and Woo Store API. Local PHP 8.1–8.5 tests pass at
-355 tests / 8098 assertions per runtime, PHP 7.4/8.0 production lint passes,
-JavaScript/build/audit checks pass and actionlint 1.7.12 accepts the workflow.
-These checks narrow the incident but do not resolve it.
+raw-marker leakage, REST and Woo Store API. GitHub PHP/JavaScript run
+`33879843135` passes at 355 tests / 8102 assertions on every PHP 8.1–8.5
+runtime, plus PHP 7.4/8.0 lint, six JavaScript tests, build and audit checks.
+WooCommerce run `33879843211` passes the complete 176-assertion MySQL/Redis
+matrix, exact-ZIP install/reactivation, all new HTTP routes and Redis
+connectivity. The post-run delta security audit records zero confirmed
+findings. These checks narrow the incident but do not reproduce or resolve the
+production-only failure.
 
 Required evidence before a code fix can be selected safely: the fresh
 production `PHP Fatal error` / `Uncaught` entry and stack trace produced by one
-request with qTranslate-XT active. After remediation, the required order is a
-new WooCommerce MySQL/Redis run, final delta security re-audit, remediation of
-any finding, and only then an exact-ZIP build/installation gate. GitHub CLI
-authentication is currently invalid, so no new workflow can be pushed or
-dispatched until it is renewed.
+request with qTranslate-XT active. GitHub authorization is working. Gates 2–4
+have been rerun successfully for the HTTP-test delta; gate 5 must run from the
+post-audit documentation commit before any new archive can be designated.
 
 ## Historical resolved WooCommerce blocker
 

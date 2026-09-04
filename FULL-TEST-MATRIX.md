@@ -15,7 +15,7 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1–8.5 | **PASS CI** | 354 tests, 8090 assertions per runtime, 0 failures/errors |
+| PHPUnit PHP 8.1–8.5 | **PASS CI** | run `33879843135`: 355 tests, 8102 assertions per runtime, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
 | JavaScript shared corpus/security | **PASS local and CI** | 27 corpus cases plus 6 Node tests; ACF bridge value round-trip and text-only DOM assertions PASS |
@@ -24,7 +24,7 @@ compatibility with an absent WordPress or third-party runtime.
 | Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
 | `git diff --check` | **PASS** | no whitespace errors |
 | Module loader traversal regression | **PASS** | registry, traversal, wrapper, absolute/unknown/corrupt-state cases covered |
-| Exact-ZIP HTTP language/REST routes | **PASS local; CI PENDING** | WordPress 7.1, PHP 8.4.16, WooCommerce 11.0.1 and the real `edgarlargo` theme/embedded ACF Pro 6.3.3: `/`, LV/RU/EN, REST and Store API passed; new CI gate not yet pushed |
+| Exact-ZIP HTTP language/REST routes | **PASS local and CI** | local actual-theme lab passed; run `33879843211` passed LV/RU/EN, raw-marker rejection, REST and Store API against the exact installed ZIP |
 | Real production activation | **FAIL / BLOCKER** | production HTTP 500 only while qTranslate-XT Modern is active; exact PHP fatal/stack trace not yet available |
 
 Release CI uses exact Node 24.11.1, installs the lock graph with lifecycle
@@ -103,6 +103,16 @@ final archive. Companion run
 [`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763)
 passed 349 tests / 8064 assertions on PHP 8.1–8.5, six JavaScript tests,
 audits, build and committed-bundle reproducibility.
+
+The current incident-cycle rerun is
+[`33879843211`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843211)
+on `4c7f928`: **176/176 assertions** with the same pinned stack, plus exact-ZIP
+install/reactivation, LV/RU/EN HTTP projection, raw-marker rejection,
+WordPress REST, Store API and connected Redis. Companion run
+[`33879843135`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843135)
+passes 355 tests / 8102 assertions on PHP 8.1–8.5 and all JavaScript, lint,
+audit and bundle checks. The following delta security audit passes; the
+production-only HTTP 500 remains a separate blocker pending its fatal trace.
 
 Historical release-gate attempt on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
 `actionlint` 1.7.12 returned zero findings for the Woo workflow. The local

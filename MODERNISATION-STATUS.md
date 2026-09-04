@@ -203,8 +203,11 @@ deactivation. The previously designated `19fa840e…bcc55` ZIP is withdrawn.
 The exact archive passes a new disposable HTTP route lab with WordPress 7.1,
 PHP 8.4.16, WooCommerce 11.0.1, the actual `edgarlargo` theme and its embedded
 ACF Pro 6.3.3, so a production fatal-error stack trace is required to isolate
-the configuration/data/runtime-specific path. GitHub authentication must also
-be renewed before the expanded HTTP gate and ordered release workflow can run.
+the configuration/data/runtime-specific path. GitHub authentication is now
+working: run `33879843135` passes the 355-test PHP 8.1–8.5 matrix and run
+`33879843211` passes the 176-assertion Woo MySQL/Redis matrix, exact-ZIP
+installation plus LV/RU/EN HTTP/REST/Store API checks. The delta security audit
+also passes with zero confirmed findings; a post-audit gate-5 run remains.
 
 Historically, the earlier designated ZIP was withdrawn after a real Gutenberg Cart path
 exposed raw product-title markers when the legacy Woo module state was inactive.
@@ -245,7 +248,7 @@ The previous `449209…b0047` archive is withdrawn.
 
 ## Next planned phase
 
-Do not deploy a current ZIP. Capture the production fatal-error stack, fix the
-confirmed cause, then repeat WooCommerce CI, the final delta security audit and
-the exact-ZIP gate in the mandatory order. Previous artifacts remain withdrawn
-for traceability.
+Run the post-audit exact-ZIP gate for local/CI evidence, but do not deploy its
+artifact to production. Capture the production fatal-error stack and fix the
+confirmed cause before production designation. Previous artifacts remain
+withdrawn for traceability.

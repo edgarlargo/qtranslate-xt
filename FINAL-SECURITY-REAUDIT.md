@@ -8,6 +8,7 @@ Post-ACF-Options-Bridge delta audited source: `8782c8804217b17b49d3e6441b690f095
 Expanded-Safe-Bridge-0.4 delta audited source: `eef319b985614aad7a37eb69de99f6b15294c247`
 Post-ACF-frontend-fallback delta audited source: `8fa5f23621b22dbc0a2782326796b461b53bd713`
 Post-Woo-core-block-bootstrap delta audited source: `26b49eef7b56418d74af3f90531a239c157d5172`
+Post-exact-ZIP-HTTP-gate delta audited source: `4c7f928f49a1997f67895730099beecd095ffbd0`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -29,6 +30,18 @@ security re-audit below. The final ZIP was subsequently rebuilt and validated
 after this delta audit.
 
 ## Current CI evidence
+
+- Current PHP/JavaScript run
+  [`33879843135`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843135):
+  **PASS** on audited source `4c7f928f49a1997f67895730099beecd095ffbd0`.
+- PHP 8.1, 8.2, 8.3, 8.4 and 8.5: **355 tests / 8102 assertions**
+  per runtime; PHP 7.4/8.0 production syntax, six Node tests, npm audit,
+  production build and committed-bundle comparison: **PASS**.
+- Current WooCommerce/exact-ZIP run
+  [`33879843211`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843211):
+  **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
+  MySQL 8.4.11, Redis 7.4.11, HPOS, exact-ZIP install/reactivation,
+  LV/RU/EN HTTP routes, REST and Store API. Redis remained connected.
 
 - PHP/JavaScript run
   [`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763):
@@ -455,3 +468,44 @@ matched SHA-256
 `19fa840eb4c7467d0d04df212122d253e383a8907882aa4fedc3e17d5d3bcc55`,
 size 1,471,467 bytes and 1,140 entries, with one `qtranslate-xt/` root, all
 required Latvian/Woo/ACF adapters and zero forbidden entries. Gate 5: **PASS**.
+
+## 2026-09-04 exact-ZIP HTTP gate delta security re-audit
+
+Audited source: `4c7f928f49a1997f67895730099beecd095ffbd0`.
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the delta: **0/0/0/0**. Confirmed exploitable findings: **0**.
+
+No production PHP or JavaScript changed after the already audited Woo core
+block bootstrap. The delta contains release documentation, a workflow-only
+HTTP exercise, its localhost router and a source-contract test.
+
+- The test server binds only to `127.0.0.1` in a disposable GitHub runner.
+  `qtx.test` is resolved explicitly to that address and is never derived from
+  request, repository or secret data.
+- `home` and `siteurl` are changed only inside the disposable WordPress lab so
+  canonical default-language redirects retain the test port. No production
+  option, database or credential is accessed.
+- The router is excluded from the release ZIP, has no persistence or remote
+  client, and enters only the fixed WordPress `index.php` under the supplied
+  document root. Its decoded request path is used solely to allow the built-in
+  server to serve an existing static file; PHP execution remains WordPress'
+  fixed front controller.
+- Curl follows at most five redirects, fails closed, checks expected LV/RU/EN
+  output and rejects raw `[:lv]` marker leakage. REST and the Woo Store API are
+  read-only smoke requests in the isolated lab.
+- Existing immutable action/image pins, checksum-verified WP-CLI, disposable
+  administrator password, offline COD payment and captured-mail boundaries
+  remain unchanged. The release archive still excludes workflow, tests,
+  router, development dependencies and private data.
+
+Historical findings remain: QTX-SEC-001 **RESOLVED**, QTX-SEC-003
+**RESOLVED**, QTX-SEC-005 **RESOLVED**, QTX-SEC-006 **RESOLVED**,
+QTX-SEC-007 **RESOLVED plugin-side**, and QTX4-SEC-001 **RESOLVED**.
+ACF, Gutenberg and WooCommerce security/data-integrity verdicts remain
+**PASS**. The production-only HTTP 500 report is a compatibility/release
+incident pending its fatal stack trace; this audit found no security cause and
+does not misclassify the unresolved deployment incident as fixed.
+
+Security gates 3 and 4 are complete. Exact release-candidate construction and
+installation may now run as gate 5; production designation remains subject to
+the separately documented activation blocker.

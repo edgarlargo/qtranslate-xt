@@ -19,15 +19,23 @@ guessed from the generic Apache 500 page.
 
 A new exact-ZIP HTTP gate has been added for LV/RU/EN output, raw-marker
 leakage, WordPress REST and Woo Store API. It passes in the local disposable
-lab, but GitHub CLI authentication is currently invalid and the updated gate
-has not run in CI. After the production defect is fixed, gates 2 through 5 must
-be rerun in order. No current ZIP is approved for release.
+lab and GitHub run `33879843211`, together with the 176-assertion MySQL/Redis
+matrix and exact-ZIP install/reactivation. Companion run `33879843135` passes
+PHP 8.1–8.5 at 355 tests / 8102 assertions, lint, JavaScript, audit and bundle
+reproducibility. The current delta security re-audit passes with zero confirmed
+findings. A post-audit gate-5 run is still required, and no current ZIP is
+approved for production while the real fatal error remains unexplained.
 
 ## Mandatory release gates
 
 The table below records the last completed historical cycle. Its final ZIP is
 now **WITHDRAWN** by the later production incident and is not current release
 approval.
+
+Current incident-cycle progress: gate 1 remains resolved; gate 2 passed in run
+`33879843211`; gates 3 and 4 passed for source `4c7f928` with no new finding;
+gate 5 is pending a post-audit run. The production activation incident remains
+an independent release blocker even if gate 5 succeeds locally/CI.
 
 | Order | Gate | Result |
 |---:|---|---|
@@ -47,9 +55,9 @@ its own delta security review, full CI and a new exact-ZIP validation.
 ## Current automated evidence
 
 - GitHub PHP/JavaScript run
-  [`33874105427`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33874105427):
-  **PASS** on post-audit commit `a9a1a6713876c0e5c736100150c3218baa358bc9`.
-- PHP 8.1–8.5: **354 tests / 8090 assertions** on every runtime.
+  [`33879843135`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843135):
+  **PASS** on audited source `4c7f928f49a1997f67895730099beecd095ffbd0`.
+- PHP 8.1–8.5: **355 tests / 8102 assertions** on every runtime.
 - PHP 7.4/8.0 production lint: **PASS**.
 - Node 24: `npm ci --ignore-scripts`, audit, six JavaScript tests,
   production build and exact committed-bundle comparison: **PASS**, zero
@@ -58,11 +66,13 @@ its own delta security review, full CI and a new exact-ZIP validation.
   advisories.
 - Module-loader security runner and `git diff --check`: **PASS**.
 - GitHub WooCommerce run
-  [`33874105335`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33874105335):
+  [`33879843211`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843211):
   **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11, Redis Object Cache 2.8.0 and HPOS. The same job
   first passed the inactive-module Russian product-title regression, then built,
-  inspected, installed, reactivated and published the designated exact ZIP.
+  inspected, installed and reactivated the exact ZIP; it additionally passed
+  LV/RU/EN HTTP, WordPress REST and Woo Store API routes. This pre-audit
+  artifact is evidence only, not the current production-designated ZIP.
 
 ## Security decision
 
