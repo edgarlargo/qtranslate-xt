@@ -34,4 +34,14 @@ foreach ( $fixtures as $page => $fixture ) {
     }
 }
 
+$product = new WC_Product_Simple();
+$product->set_name( 'QTX system-page fixture product' );
+$product->set_status( 'publish' );
+$product->set_regular_price( '1.00' );
+$productId = $product->save();
+if ( $productId <= 0 ) {
+    WP_CLI::error( 'WooCommerce system-page fixture product was not created.' );
+}
+update_option( 'qtx_system_page_fixture_product_id', $productId, false );
+
 WP_CLI::success( 'WooCommerce system-page fallback fixtures prepared.' );

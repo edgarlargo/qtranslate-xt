@@ -151,7 +151,10 @@ jobs:
           check_language_route '/ru/' 'QTX_HTTP_RU'
           check_language_route '/en/' 'QTX_HTTP_EN'
           check_language_route '/ru/cart/' 'QTX_WOO_SYSTEM_CART'
-          check_language_route '/lv/checkout/' 'QTX_WOO_SYSTEM_CHECKOUT'
+          fixture_product_id="$(wp option get qtx_system_page_fixture_product_id --path="$WP_PATH")"
+          curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" --cookie-jar /tmp/qtx-system-page.cookies "${http_origin}/lv/?add-to-cart=${fixture_product_id}" --output /tmp/qtx-system-page-add.html
+          curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" --cookie /tmp/qtx-system-page.cookies "${http_origin}/lv/checkout/" --output /tmp/qtx-http-QTX_WOO_SYSTEM_CHECKOUT.html
+          grep --fixed-strings 'QTX_WOO_SYSTEM_CHECKOUT' /tmp/qtx-http-QTX_WOO_SYSTEM_CHECKOUT.html
           check_language_route '/ru/my-account/' 'QTX_WOO_SYSTEM_MYACCOUNT'
           curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" "$http_origin/wp-json/" --output /tmp/qtx-http-rest.json
           grep --fixed-strings '"namespaces"' /tmp/qtx-http-rest.json
