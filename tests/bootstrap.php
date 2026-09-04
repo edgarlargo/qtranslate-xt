@@ -191,6 +191,7 @@ require_once dirname( __DIR__ ) . '/src/Integration/Acf/AcfValueProjector.php';
 require_once dirname( __DIR__ ) . '/src/Integration/Acf/AcfLifecycleAdapter.php';
 require_once dirname( __DIR__ ) . '/src/Integration/Acf/AcfScalarTranslator.php';
 require_once dirname( __DIR__ ) . '/src/Integration/Acf/AcfAdminEditingService.php';
+require_once dirname( __DIR__ ) . '/src/Integration/Acf/AcfSafeBridgeValueAdapter.php';
 require_once dirname( __DIR__ ) . '/src/Integration/WooCommerce/WooCommerceDataPolicy.php';
 require_once dirname( __DIR__ ) . '/src/modules/module_loader.php';
 require_once dirname( __DIR__ ) . '/src/utils.php';
