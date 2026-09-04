@@ -1,6 +1,6 @@
 # QTX 4 final security re-audit
 
-Date: 2026-09-03
+Date: 2026-09-04
 Audited remediation commit: `7a0ca6553bddca329c5b871b589e75364551e59f`
 Post-Woo-Blocks delta audited source: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
 CI reproducibility follow-up audited commit: `ef83e1effc3f60eb88c186ee0bb86371bbc30734`
@@ -29,15 +29,15 @@ after this delta audit.
 ## Current CI evidence
 
 - PHP/JavaScript run
-  [`33786090026`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786090026):
-  **PASS** on commit `f793c024b0cf48d086d15552ccfca872db6536d8`.
-- PHP 8.1, 8.2, 8.3, 8.4 and 8.5: **349 tests / 8054 assertions**
+  [`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763):
+  **PASS** on commit `f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`.
+- PHP 8.1, 8.2, 8.3, 8.4 and 8.5: **349 tests / 8064 assertions**
   per runtime.
 - Production syntax on PHP 7.4 and 8.0: **PASS**.
-- Node 24.11.1: clean `npm ci --ignore-scripts`, npm audit, 5 JS tests,
+- Node 24: clean `npm ci --ignore-scripts`, npm audit, 6 JS tests,
   production build and committed-bundle reproducibility check: **PASS**.
 - WooCommerce run
-  [`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998):
+  [`33869856719`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856719):
   **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0 with HPOS enabled.
 - Local module-loader security runner, `git diff --check`, Composer validation,
@@ -344,3 +344,18 @@ SHA-256 `53ca21bf862200a06f3ac69c014573ae94e1bd4645cbc6d2168a3958221d0868`,
 size 1,467,442 bytes and 1,138 entries. The archive has one `qtranslate-xt/`
 root, contains the Latvian MO, Woo Blocks and ACF bundles, and has zero
 forbidden development/private/database/mail entries. Packaging gate: **PASS**.
+
+Those post-ACF-bridge bytes predate the complete Safe Bridge 0.4 isolated-panel
+behavior and are also withdrawn. After the expanded delta audit, companion run
+[`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763)
+passed 349 tests / 8064 assertions on PHP 8.1–8.5, six JavaScript tests, zero
+npm advisories, production build and committed-bundle comparison. Final run
+[`33869856719`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856719)
+passed 176/176 WooCommerce assertions on source
+`f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`, built and installed the exact
+archive, and retained Redis connectivity. Independent download verification
+matched SHA-256
+`449209b7a6856a63426389dbe6d43f3df773fbf2fc26942d786f6e7d908b0047`,
+size 1,469,533 bytes and 1,138 entries. It has one `qtranslate-xt/` root,
+contains the Latvian MO, Woo Blocks and ACF bundles, and has zero forbidden
+development/private/database/mail entries. Final packaging gate: **PASS**.

@@ -1,17 +1,17 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **NOT READY — EXPANDED ACF BRIDGE DELTA GATES PENDING**
+Decision: **READY — ALL MANDATORY RELEASE GATES PASS**
 
 ## Mandatory release gates
 
 | Order | Gate | Result |
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
-| 2 | WooCommerce MySQL/Redis CI | **PASS** — final run `33786089998`, 176/176 assertions |
+| 2 | WooCommerce MySQL/Redis CI | **PASS** — final run `33869856719`, 176/176 assertions |
 | 3 | Final security re-audit | **PASS** — expanded Safe Bridge 0.4 delta audit on `eef319b` |
 | 4 | Fix release-blocking re-audit findings | **PASS** — remediation commit `7a0ca65` |
-| 5 | Build and validate final RC ZIP | **PENDING** — previous ZIP predates expanded bridge behavior |
+| 5 | Build and validate final RC ZIP | **PASS** — run `33869856719`, exact archive independently verified |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
 Blocks report exposed a missing Store API path in the original Woo matrix, so
@@ -23,22 +23,22 @@ its own delta security review, full CI and a new exact-ZIP validation.
 ## Current automated evidence
 
 - GitHub PHP/JavaScript run
-  [`33786090026`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786090026):
-  **PASS** on `f793c024b0cf48d086d15552ccfca872db6536d8`.
-- PHP 8.1–8.5: **349 tests / 8054 assertions** on every runtime.
+  [`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763):
+  **PASS** on `f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`.
+- PHP 8.1–8.5: **349 tests / 8064 assertions** on every runtime.
 - PHP 7.4/8.0 production lint: **PASS**.
-- Node 24.11.1: `npm ci --ignore-scripts`, audit, five JavaScript tests,
+- Node 24: `npm ci --ignore-scripts`, audit, six JavaScript tests,
   production build and exact committed-bundle comparison: **PASS**, zero
   advisories.
 - Composer manifest validation and installed-graph audit: **PASS**, zero
   advisories.
 - Module-loader security runner and `git diff --check`: **PASS**.
 - GitHub WooCommerce run
-  [`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998):
+  [`33869856719`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856719):
   **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11, Redis Object Cache 2.8.0 and HPOS. The same job
   built, installed, reactivated and published the exact final ZIP from
-  `f793c024b0cf48d086d15552ccfca872db6536d8`.
+  `f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`.
 
 ## Security decision
 
@@ -68,6 +68,25 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
   runtime/storage matrix: **PASS**. Newer Pro versions are not inferred.
 - Woo product/cart/checkout/order/HPOS/email/REST/AJAX/cache matrix:
   **PASS** on the current remediation commit.
+
+## Designated final release-candidate ZIP
+
+- File: `build/qtranslate-xt-4.0.0-rc1.zip`
+- Source commit: `f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`
+- CI workflow: `33869856719`
+- SHA-256: `449209b7a6856a63426389dbe6d43f3df773fbf2fc26942d786f6e7d908b0047`
+- Size: **1,469,533 bytes**
+- ZIP entries: **1,138**
+- Top-level root: exactly `qtranslate-xt/`
+- Required `lang/qtranslate-lv.mo`, `dist/woocommerce-blocks.js` and
+  `dist/modules/acf.js`: **present**
+- Forbidden development/private/database/mail content: **0 entries**
+
+These exact bytes were built only after the expanded Safe Bridge delta audit,
+installed and re-exercised in disposable WordPress 7.1, downloaded from the
+successful workflow, and independently matched to the raw CI SHA-256. Redis
+remained connected after archive installation. This is the only designated RC
+archive; every hash listed below is withdrawn.
 
 ## Withdrawn pre-expanded-bridge ZIP
 

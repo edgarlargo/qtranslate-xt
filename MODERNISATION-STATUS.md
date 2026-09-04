@@ -21,7 +21,7 @@ progress. O2 now allowlists database maintenance actions, requires explicit
 backup confirmation, and confines SQL splitting to trusted canonical roots.
 Optional built-in integrations have a source-validated, explicitly NOT TESTED
 real-plugin matrix in `BUILTIN-INTEGRATIONS-COMPATIBILITY.md`. Phase Q local
-and CI matrix is green at 349 tests / 8054 assertions on each PHP 8.1–8.5; production
+and CI matrix is green at 349 tests / 8064 assertions on each PHP 8.1–8.5; production
 sources also lint cleanly on PHP 7.4 and 8.0; required
 real testing now covers WordPress 7.1, ACF Free/theme-bundled 6.8.8,
 WooCommerce 11.0.1 smoke paths and Gutenberg save/autosave/409 conflicts. ACF
@@ -33,11 +33,11 @@ Pro and theme-bundled runtime/value tests are documented in
 The final comprehensive Woo matrix passed after the ACF Options Bridge delta
 security audit in
 disposable GitHub Actions run
-[`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998).
+[`33869856719`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856719).
 Its source review and failed-run remediation fixed HPOS order-language storage,
 frontend lifecycle fidelity and canonical term fixtures. The final result is
 176/176 assertions on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11
-and Redis 7.4.11. The companion PHP/JavaScript run `33786090026` passed all
+and Redis 7.4.11. The companion PHP/JavaScript run `33869856763` passed all
 runtime, audit, build and bundle-reproducibility jobs.
 
 Historical 2026-09-02 attempt: the release-gate retry passed `actionlint`
@@ -70,7 +70,7 @@ tested. The final security re-audit then remediated ACF output sinks, the npm
 development graph, mutable CI inputs, diagnostic AJAX, slug-save authorization,
 DOM label sinks and the remaining direct redirect. It records zero confirmed
 open Critical, High, Medium or Low findings. The full PHP 8.1-8.5 matrix is
-green at 349 tests / 8054 assertions.
+green at 349 tests / 8064 assertions.
 
 ## Completed work
 
@@ -185,7 +185,7 @@ green at 349 tests / 8054 assertions.
 ## Current test status
 
 - PHP 7.4 and 8.0 production lint: zero syntax errors.
-- PHP 8.1–8.5: 349 tests, 8054 assertions per version, zero failures/errors.
+- PHP 8.1–8.5: 349 tests, 8064 assertions per version, zero failures/errors.
 - Shared JS/PHP corpus parity: 100% (27/27); generated parser parity 400/400.
 - Production PHP lint, Webpack build, JS tests and
   `git diff --check`: green.
@@ -200,8 +200,9 @@ green at 349 tests / 8054 assertions.
 The earlier ACF Pro 5.7.7, security and WooCommerce gates remain resolved. The
 built-in bridge is now expanded to the complete Safe Bridge 0.4 isolated-panel
 behavior. Its delta security audit passes with zero open confirmed findings;
-CI and exact-ZIP gates remain pending, so no release archive is currently
-designated.
+PHP/JavaScript CI, WooCommerce CI and exact-ZIP gates also pass. The designated
+release archive is `build/qtranslate-xt-4.0.0-rc1.zip`, SHA-256
+`449209b7a6856a63426389dbe6d43f3df773fbf2fc26942d786f6e7d908b0047`.
 
 ## Security status
 
@@ -226,7 +227,8 @@ designated.
 
 ## Next planned phase
 
-Complete the expanded ACF bridge delta audit, rerun PHP/JS and WooCommerce CI,
-then build and validate a new exact ZIP. Deploy only those new bytes to staging
-and visually verify an ACF Options Page plus the reported RU Cart/Checkout
-pages. Previous artifacts remain withdrawn for traceability.
+Deploy only the designated CI-verified ZIP to staging, deactivate the standalone
+Safe Bridge plugin, clear caches and visually verify an ACF Options Page plus
+the reported RU Cart/Checkout pages. Interactive browser clicks remain the only
+explicitly unexecuted ACF bridge check; previous artifacts remain withdrawn for
+traceability.

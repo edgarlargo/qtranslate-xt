@@ -1,6 +1,6 @@
 # ACF compatibility
 
-Date: 2026-09-03
+Date: 2026-09-04
 Branch: `modernisation`
 
 ## Native architecture
@@ -97,11 +97,15 @@ the tabs are enabled by default and can be disabled in the ACF integration
 settings without disabling value translation.
 
 Post-audit GitHub Actions run
-[`33786090026`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786090026)
-passed the bridge contract in the 349-test / 8054-assertion PHP 8.1–8.5 matrix,
-five JavaScript tests and the reproducible production build. Run
-[`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998)
+[`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763)
+passed the bridge contract in the 349-test / 8064-assertion PHP 8.1–8.5 matrix,
+six JavaScript tests and the reproducible production build. Run
+[`33869856719`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856719)
 installed and retested the exact archive containing `dist/modules/acf.js`.
+The independently downloaded archive matched SHA-256
+`449209b7a6856a63426389dbe6d43f3df773fbf2fc26942d786f6e7d908b0047`.
+The standalone Safe Bridge plugin is therefore no longer required and should
+be deactivated before deploying the native Modern build.
 
 ## ACF Pro validation result
 

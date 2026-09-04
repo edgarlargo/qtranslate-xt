@@ -1,6 +1,6 @@
 # QTX 4 full test matrix
 
-Date: 2026-09-03
+Date: 2026-09-04
 Branch: `modernisation`
 
 Status is limited to what was actually executed. `PASS` never means inferred
@@ -10,10 +10,10 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1–8.5 | **PASS CI** | 349 tests, 8054 assertions per runtime, 0 failures/errors |
+| PHPUnit PHP 8.1–8.5 | **PASS CI** | 349 tests, 8064 assertions per runtime, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
-| JavaScript shared corpus/security | **PASS local; CI PENDING** | 27 corpus cases plus 6 Node tests; ACF bridge value round-trip and text-only DOM assertions PASS |
+| JavaScript shared corpus/security | **PASS local and CI** | 27 corpus cases plus 6 Node tests; ACF bridge value round-trip and text-only DOM assertions PASS |
 | Webpack production build | **PASS** | Node 24.11.1 CI rebuild matched all committed bundles exactly |
 | npm audit | **PASS** | 0 development/runtime advisories after lock-graph update |
 | Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
@@ -60,7 +60,7 @@ digests. The local Node 18.14 engine warning is therefore not release evidence.
 | Options API (`option`/`options`) | **PASS ACF Free 6.8.8 and Pro Options Page 5.7.7 runtime/storage** |
 | Text/Textarea/WYSIWYG frontend LV/RU/EN | **PASS — ACF Free 6.8.8 and Pro 5.7.7; interactive browser JS NOT EXECUTED** |
 | Group/Repeater/Flexible Content | **PASS native runtime — ACF Pro 5.7.7** |
-| Built-in ACF Options language panels | **PASS local; CI PENDING** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; interactive browser click test NOT EXECUTED |
+| Built-in ACF Options language panels | **PASS local and CI** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; interactive browser click test NOT EXECUTED |
 
 Repository unit tests for runtime capability detection, field schema,
 projection/merge, stable field keys, nested leaves, dynamic ACF JS actions and
@@ -85,16 +85,16 @@ Data-policy and cache-boundary unit/source tests are **PASS**. WooCommerce
 claims are limited to the installed 11.0.1 transactional matrix;
 `WOOCOMMERCE-COMPATIBILITY.md` makes no broader version claim.
 
-The final disposable workflow and fail-closed runner passed after the ACF bridge
-delta audit on 2026-09-03 in GitHub Actions run
-[`33786089998`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786089998),
-commit `f793c024b0cf48d086d15552ccfca872db6536d8`: **176/176 assertions**, WordPress 7.1, WooCommerce 11.0.1,
+The final disposable workflow and fail-closed runner passed after the expanded
+Safe Bridge delta audit on 2026-09-04 in GitHub Actions run
+[`33869856719`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856719),
+commit `f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`: **176/176 assertions**, WordPress 7.1, WooCommerce 11.0.1,
 PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and Redis Object Cache 2.8.0. HPOS was
 enabled and order language used WooCommerce CRUD. After the delta security
 audit, the job built, inspected, installed, reactivated and published the exact
 final archive. Companion run
-[`33786090026`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33786090026)
-passed 349 tests / 8054 assertions on PHP 8.1–8.5, five JavaScript tests,
+[`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763)
+passed 349 tests / 8064 assertions on PHP 8.1–8.5, six JavaScript tests,
 audits, build and committed-bundle reproducibility.
 
 Historical release-gate attempt on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
@@ -150,5 +150,7 @@ and the associated archive. The Store API/frontend-filter and dynamic text
 adapter remediation passes the expanded MySQL/Redis CI, and its delta security
 re-audit is **PASS**. The first built-in ACF Options Bridge passed its delta
 gates. Its later expansion to the complete standalone 0.4 isolated-panel
-behavior passes local tests and delta security review, but requires PHP/JS and
-WooCommerce CI plus exact-ZIP installation before distribution.
+behavior passes local tests, delta security review, PHP/JavaScript CI and the
+WooCommerce exact-ZIP installation gate. The independently verified designated
+archive has SHA-256
+`449209b7a6856a63426389dbe6d43f3df773fbf2fc26942d786f6e7d908b0047`.
