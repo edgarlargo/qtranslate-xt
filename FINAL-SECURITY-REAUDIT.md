@@ -5,6 +5,7 @@ Audited remediation commit: `7a0ca6553bddca329c5b871b589e75364551e59f`
 Post-Woo-Blocks delta audited source: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
 CI reproducibility follow-up audited commit: `ef83e1effc3f60eb88c186ee0bb86371bbc30734`
 Post-ACF-Options-Bridge delta audited source: `8782c8804217b17b49d3e6441b690f095a0b5858`
+Expanded-Safe-Bridge-0.4 delta audited source: `eef319b985614aad7a37eb69de99f6b15294c247`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -110,6 +111,47 @@ Local Node execution passed five JavaScript tests and the production Webpack
 bundle rebuilt successfully. Post-audit run `33786090026` then passed the ACF
 contract in the 349-test / 8054-assertion PHP 8.1–8.5 matrix, five JavaScript
 tests, audits and reproducible bundle build.
+
+## Expanded Safe Bridge 0.4 delta security re-audit
+
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the expanded bridge delta: **0**.
+
+The review covered source commit
+`eef319b985614aad7a37eb69de99f6b15294c247`, including
+`js/acf/options-bridge.js`, `js/acf/options-bridge-values.js`, ACF lifecycle and
+configuration integration, CSS, the generated production bundle, tests and the
+supplied standalone 0.4 reference implementation.
+
+- The bridge creates no PHP/AJAX/REST endpoint, remote request, filesystem or
+  database operation. It remains limited to authenticated ACF admin assets.
+- All UI is created with `document.createElement()`, `textContent`, value and
+  attribute properties. There is no `innerHTML`, `outerHTML`,
+  `insertAdjacentHTML`, dynamic evaluation or script-bearing markup sink.
+- Language identifiers originate in qTranslate-XT configuration and must match
+  the bounded `[a-z0-9_-]{2,12}` policy before becoming a panel identifier or
+  serialized language tag.
+- Per-language editors have no form name. The existing original ACF input stays
+  the sole named submission field and receives the canonical serialized value
+  on every edit, so no parallel write endpoint or storage schema is introduced.
+- The native parser handles bracket, comment and curly legacy values. Content
+  for currently disabled languages is preserved during serialization, avoiding
+  destructive language-configuration changes.
+- Only ACF Text/Textarea fields already admitted by the existing field and
+  post-type policy are enhanced. Technical fields, clone templates and
+  unsupported field types remain outside the bridge.
+- A live in-memory marker makes repeated callbacks idempotent. A serialized
+  marker copied by ACF row cloning causes generated UI to be rebuilt with fresh
+  event handlers. The standalone bridge marker is both recognized and emitted,
+  preventing double UI regardless of script order during a transition.
+- Older saved ACF settings are completed from safe defaults with
+  `array_replace_recursive`; explicit administrator values remain authoritative.
+  Neither code path reads or mutates `active_plugins`.
+
+Local evidence is six passing JavaScript tests, including configured/disabled
+language round-trip coverage, a reproducible production Webpack build and clean
+`git diff --check`. PHP 7.4–8.5 and exact-archive evidence must follow this audit
+before a new ZIP is designated.
 
 ## Historical findings revalidated
 

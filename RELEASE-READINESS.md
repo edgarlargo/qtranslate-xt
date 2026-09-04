@@ -9,7 +9,7 @@ Decision: **NOT READY — EXPANDED ACF BRIDGE DELTA GATES PENDING**
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
 | 2 | WooCommerce MySQL/Redis CI | **PASS** — final run `33786089998`, 176/176 assertions |
-| 3 | Final security re-audit | **PENDING** — expanded Safe Bridge 0.4 behavior requires delta audit |
+| 3 | Final security re-audit | **PASS** — expanded Safe Bridge 0.4 delta audit on `eef319b` |
 | 4 | Fix release-blocking re-audit findings | **PASS** — remediation commit `7a0ca65` |
 | 5 | Build and validate final RC ZIP | **PENDING** — previous ZIP predates expanded bridge behavior |
 

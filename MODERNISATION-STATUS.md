@@ -199,8 +199,9 @@ green at 349 tests / 8054 assertions.
 
 The earlier ACF Pro 5.7.7, security and WooCommerce gates remain resolved. The
 built-in bridge is now expanded to the complete Safe Bridge 0.4 isolated-panel
-behavior; its new delta security, CI and exact-ZIP gates are pending, so no
-release archive is currently designated.
+behavior. Its delta security audit passes with zero open confirmed findings;
+CI and exact-ZIP gates remain pending, so no release archive is currently
+designated.
 
 ## Security status
 

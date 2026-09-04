@@ -150,5 +150,5 @@ and the associated archive. The Store API/frontend-filter and dynamic text
 adapter remediation passes the expanded MySQL/Redis CI, and its delta security
 re-audit is **PASS**. The first built-in ACF Options Bridge passed its delta
 gates. Its later expansion to the complete standalone 0.4 isolated-panel
-behavior passes local tests but requires a new delta security review, PHP/JS
-and WooCommerce CI, and exact-ZIP installation before distribution.
+behavior passes local tests and delta security review, but requires PHP/JS and
+WooCommerce CI plus exact-ZIP installation before distribution.
