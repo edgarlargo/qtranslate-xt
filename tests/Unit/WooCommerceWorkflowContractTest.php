@@ -74,6 +74,10 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( "check_language_route '/lv/' 'QTX_HTTP_LV'", $workflow );
         self::assertStringContainsString( "check_language_route '/ru/' 'QTX_HTTP_RU'", $workflow );
         self::assertStringContainsString( "check_language_route '/en/' 'QTX_HTTP_EN'", $workflow );
+        self::assertStringContainsString( 'WooCommerce/system-page-fallback.php', $workflow );
+        self::assertStringContainsString( "check_language_route '/ru/cart/' 'QTX_WOO_SYSTEM_CART'", $workflow );
+        self::assertStringContainsString( "check_language_route '/lv/checkout/' 'QTX_WOO_SYSTEM_CHECKOUT'", $workflow );
+        self::assertStringContainsString( "check_language_route '/ru/my-account/' 'QTX_WOO_SYSTEM_MYACCOUNT'", $workflow );
         self::assertStringContainsString( "wp option update home 'http://qtx.test:8097'", $workflow );
         self::assertStringContainsString( "wp option update siteurl 'http://qtx.test:8097'", $workflow );
         self::assertStringContainsString( "curl_resolve='qtx.test:8097:127.0.0.1'", $workflow );

@@ -116,6 +116,7 @@ jobs:
           wp option update page_on_front "$page_id" --path="$WP_PATH"
           wp option update home 'http://qtx.test:8097' --path="$WP_PATH"
           wp option update siteurl 'http://qtx.test:8097' --path="$WP_PATH"
+          wp eval-file "$GITHUB_WORKSPACE/tests/Integration/WooCommerce/system-page-fallback.php" --path="$WP_PATH"
 
           http_origin='http://qtx.test:8097'
           curl_resolve='qtx.test:8097:127.0.0.1'
@@ -149,6 +150,9 @@ jobs:
           check_language_route '/lv/' 'QTX_HTTP_LV'
           check_language_route '/ru/' 'QTX_HTTP_RU'
           check_language_route '/en/' 'QTX_HTTP_EN'
+          check_language_route '/ru/cart/' 'QTX_WOO_SYSTEM_CART'
+          check_language_route '/lv/checkout/' 'QTX_WOO_SYSTEM_CHECKOUT'
+          check_language_route '/ru/my-account/' 'QTX_WOO_SYSTEM_MYACCOUNT'
           curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" "$http_origin/wp-json/" --output /tmp/qtx-http-rest.json
           grep --fixed-strings '"namespaces"' /tmp/qtx-http-rest.json
           curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" "$http_origin/wp-json/wc/store/v1/cart" --output /tmp/qtx-http-store-cart.json

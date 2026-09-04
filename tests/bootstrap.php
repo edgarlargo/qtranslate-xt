@@ -48,6 +48,8 @@ function remove_action( $hook_name, $callback, $priority = 10 ): bool {
 
 function home_url(): string { return $GLOBALS['qtx_test_home_url'] ?? 'https://example.test'; }
 function site_url(): string { return $GLOBALS['qtx_test_site_url'] ?? 'https://example.test/wp'; }
+function get_the_ID(): int { return (int) ( $GLOBALS['qtx_test_post_id'] ?? 0 ); }
+function wc_get_page_id( string $page ): int { return (int) ( $GLOBALS['qtx_test_wc_page_ids'][ $page ] ?? -1 ); }
 function is_multisite(): bool { return $GLOBALS['qtx_test_is_multisite'] ?? false; }
 function network_home_url(): string { return $GLOBALS['qtx_test_network_home_url'] ?? 'https://network.example.test'; }
 function wp_safe_redirect( string $location, int $status = 302, string $x_redirect_by = 'WordPress' ): bool {

@@ -30,8 +30,48 @@ final class WooCommerceBlocksAdapter {
         }
 
         add_filter( 'rest_pre_dispatch', array( $this, 'prepareStoreApiRequest' ), 5, 3 );
+        add_filter( 'the_content', array( $this, 'translateSystemPageContent' ), 99 );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueueFrontend' ), 20 );
         $this->registered = true;
+    }
+
+    /**
+     * Keep WooCommerce structural pages available in every language.
+     *
+     * Cart, Checkout and My Account are single configured WordPress pages.
+     * Their block/shortcode document is structural rather than a language-
+     * specific article. If an upgraded site stored that document only in one
+     * qTranslate language, use the normal default-language fallback without
+     * emitting the public "translation not available" notice. Product and
+     * interface strings are translated later by their own Woo/QTX adapters.
+     *
+     * @param mixed $content
+     * @return mixed
+     */
+    public function translateSystemPageContent( $content ) {
+        if ( ! is_string( $content ) || ! function_exists( 'wc_get_page_id' ) || ! function_exists( 'get_the_ID' ) ) {
+            return $content;
+        }
+
+        $postId = (int) get_the_ID();
+        if ( $postId <= 0 ) {
+            return $content;
+        }
+
+        $isSystemPage = false;
+        foreach ( array( 'cart', 'checkout', 'myaccount' ) as $page ) {
+            if ( (int) wc_get_page_id( $page ) === $postId ) {
+                $isSystemPage = true;
+                break;
+            }
+        }
+        if ( ! $isSystemPage ) {
+            return $content;
+        }
+
+        global $q_config;
+
+        return qtranxf_use( $q_config['language'], $content, false, false );
     }
 
     /**
