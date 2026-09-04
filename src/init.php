@@ -53,6 +53,7 @@ require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfScalarTranslator.php';
 require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfAdminEditingService.php';
 require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfSafeBridgeValueAdapter.php';
 require_once QTRANSLATE_DIR . '/src/Integration/WooCommerce/WooCommerceDataPolicy.php';
+require_once QTRANSLATE_DIR . '/src/Integration/WooCommerce/WooCommerceBlocksAdapter.php';
 require_once QTRANSLATE_DIR . '/src/language_blocks.php';
 require_once QTRANSLATE_DIR . '/src/language_config.php';
 require_once QTRANSLATE_DIR . '/src/language_detect.php';
@@ -161,6 +162,12 @@ function qtranxf_init_language(): void {
     $acf_safe_bridge = new \QTX\Integration\Acf\AcfSafeBridgeValueAdapter();
     $acf_safe_bridge->register();
     $GLOBALS['qtx_acf_safe_bridge_value_adapter'] = $acf_safe_bridge;
+
+    // Gutenberg Cart/Checkout product presentation cannot depend on a legacy
+    // module-state option: upgraded sites may otherwise expose raw markers.
+    $woo_blocks = new \QTX\Integration\WooCommerce\WooCommerceBlocksAdapter();
+    $woo_blocks->register();
+    $GLOBALS['qtx_woocommerce_blocks_adapter'] = $woo_blocks;
 
     require_once QTRANSLATE_DIR . '/src/date_time.php';
     qtranxf_add_date_time_filters();

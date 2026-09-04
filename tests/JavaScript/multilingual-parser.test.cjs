@@ -93,6 +93,10 @@ test('WooCommerce block strings select the active language without HTML sinks', 
     const select = module.exports.selectTranslation;
 
     assert.equal(select('[:en]Checkout[:lv]Pasūtījums[:ru]Оформление заказа[:]', settings), 'Оформление заказа');
+    assert.equal(
+        select('[:en]Set of 250 mockups[:lv]Viss 250 maketu komplekts[:ru]Весь набор 250 мокапов[:]', settings),
+        'Весь набор 250 мокапов',
+    );
     assert.equal(select('<!--:lv-->Summa<!--:ru-->Итого<!--:en-->Subtotal<!--:-->', settings), 'Итого');
     assert.equal(select('{:lv}Grozs{:en}Cart{:}', {...settings, language: 'de'}), 'Cart');
     assert.equal(select('€20.00', settings), '€20.00');

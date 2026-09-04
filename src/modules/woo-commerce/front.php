@@ -45,46 +45,6 @@ function qtranxf_wc_add_filters_front(): void {
     add_filter( 'woocommerce_paypal_args', 'qtranxf_wc_paypal_args' );
 }
 
-/**
- * Translate dynamic labels rendered by the WooCommerce Cart and Checkout
- * blocks. Store API presentation data is translated server-side; this small
- * text-only client adapter also covers block labels stored with QTX markers.
- */
-function qtranxf_wc_enqueue_blocks_frontend(): void {
-    $is_cart     = function_exists( 'is_cart' ) && is_cart();
-    $is_checkout = function_exists( 'is_checkout' ) && is_checkout();
-    $has_blocks  = function_exists( 'has_block' ) && (
-        has_block( 'woocommerce/cart' )
-        || has_block( 'woocommerce/checkout' )
-        || has_block( 'woocommerce/mini-cart' )
-    );
-    if ( ! $is_cart && ! $is_checkout && ! $has_blocks ) {
-        return;
-    }
-
-    global $q_config;
-    wp_register_script(
-        'qtx-woocommerce-blocks',
-        plugins_url( 'dist/woocommerce-blocks.js', QTRANSLATE_FILE ),
-        array( 'wp-hooks' ),
-        QTX_VERSION,
-        true
-    );
-    wp_localize_script(
-        'qtx-woocommerce-blocks',
-        'qtxWooBlocks',
-        array(
-            'language'            => $q_config['language'],
-            'defaultLanguage'     => $q_config['default_language'],
-            'enabledLanguages'    => array_values( $q_config['enabled_languages'] ),
-            'languageCodePattern' => QTX_LANG_CODE_FORMAT,
-        )
-    );
-    wp_enqueue_script( 'qtx-woocommerce-blocks' );
-}
-
-add_action( 'wp_enqueue_scripts', 'qtranxf_wc_enqueue_blocks_frontend', 20 );
-
 function qtranxf_wc_filter_postmeta( $original_value, int $object_id, string $meta_key = '', bool $single = false ) {
     static $policy;
     if ( $policy === null ) {

@@ -77,7 +77,11 @@ jobs:
       - name: Execute WooCommerce transactional matrix
         env:
           WP_PATH: /tmp/qtx-woo-wordpress
-        run: wp eval-file "$GITHUB_WORKSPACE/tests/Integration/WooCommerce/transaction-matrix.php" --path="$WP_PATH"
+        run: |
+          wp option patch update qtranslate_modules_state woo-commerce 2 --path="$WP_PATH"
+          wp eval-file "$GITHUB_WORKSPACE/tests/Integration/WooCommerce/store-api-core-bootstrap.php" --path="$WP_PATH"
+          wp option patch update qtranslate_modules_state woo-commerce 1 --path="$WP_PATH"
+          wp eval-file "$GITHUB_WORKSPACE/tests/Integration/WooCommerce/transaction-matrix.php" --path="$WP_PATH"
       - name: Build and inspect exact release-candidate archive
         run: |
           git archive --format=zip --prefix=qtranslate-xt/ --output=/tmp/qtranslate-xt-4.0.0-rc1.zip "$GITHUB_SHA" -- qtranslate.php readme.txt license.txt changelog-qtranslate-x.md CHANGELOG.md UPGRADE.md css dist flags i18n-config.json i18n-config img lang src

@@ -44,36 +44,6 @@ function qtranxf_wc_detect_language( array $url_info ): array {
 add_filter( 'qtranslate_detect_language', 'qtranxf_wc_detect_language', 5 );
 
 /**
- * Store API requests power the Cart, Checkout and Mini-Cart blocks. WordPress
- * classifies them as REST rather than normal frontend requests, so the normal
- * qtranslate_init_language branch can otherwise load only Woo admin filters.
- * Activate the existing presentation filters before WooCommerce builds its
- * response while leaving authenticated /wc/v3 technical responses untouched.
- *
- * @param mixed $response Early REST response.
- * @param mixed $server REST server.
- * @param mixed $request REST request.
- * @return mixed
- */
-function qtranxf_wc_prepare_store_api_request( $response, $server, $request ) {
-    if ( ! is_object( $request ) || ! method_exists( $request, 'get_route' ) ) {
-        return $response;
-    }
-
-    $route = $request->get_route();
-    if ( ! is_string( $route ) || strpos( $route, '/wc/store/' ) !== 0 ) {
-        return $response;
-    }
-
-    require_once __DIR__ . '/front.php';
-    qtranxf_wc_add_filters_front();
-
-    return $response;
-}
-
-add_filter( 'rest_pre_dispatch', 'qtranxf_wc_prepare_store_api_request', 5, 3 );
-
-/**
  * Handler for webhooks, which should always send information in Raw ML format.
  *
  * For some cases (e.g. variations updates) the webhook is generated through AJAX instead of cron.

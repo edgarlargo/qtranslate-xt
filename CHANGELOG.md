@@ -24,6 +24,9 @@ integration and exact-archive gates recorded in the repository readiness report.
 * Added the standalone-compatible priority-99 ACF frontend fallback directly
   to core so theme-embedded/legacy Options fields are translated even when the
   legacy ACF module state is inactive or its field metadata is unavailable.
+* Registered WooCommerce Cart/Checkout Blocks integration directly from core,
+  so Store API product names and the text-only fallback do not depend on a
+  stale legacy `qtranslate_modules_state` value.
 * Accept stable Unicode ACF field keys (for example Latvian and Cyrillic keys)
   while continuing to reject spaces, path separators and control characters.
 * Repair the packaged `i18n-config.json` option when upgrading from a plugin

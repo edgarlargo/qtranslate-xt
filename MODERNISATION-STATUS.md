@@ -197,7 +197,12 @@ green at 349 tests / 8064 assertions.
 
 ## Known blockers
 
-The earlier ACF Pro 5.7.7, security and WooCommerce gates remain resolved. A
+The previously designated ZIP is withdrawn after a real Gutenberg Cart path
+exposed raw product-title markers when the legacy Woo module state was inactive.
+Core-owned Store API/client registration and an exact integration regression
+are implemented; PHP/Woo CI, delta audit and replacement ZIP are pending.
+
+The earlier ACF Pro 5.7.7 and ACF frontend gates remain resolved. A
 real-site theme-embedded/legacy Options path nevertheless exposed raw language
 markers because the module-scoped adapter was unavailable. A priority-99 core
 fallback now mirrors standalone Safe Bridge behavior independently from legacy

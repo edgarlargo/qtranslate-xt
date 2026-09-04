@@ -75,7 +75,7 @@ versions are not covered by that result.
 | Products/categories/attributes/variations | **PASS — LV/RU/EN; tags outside required gate remain NOT TESTED** |
 | Permalinks/slugs/canonical URLs | **NOT TESTED; outside required transactional gate** |
 | Classic cart/AJAX/fragments/variation selection | **PASS** |
-| Cart/Checkout Blocks Store API and dynamic labels | **PASS — translated Store API product name; text-only dynamic adapter** |
+| Cart/Checkout Blocks Store API and dynamic labels | **FIX IMPLEMENTED; CI RERUN PENDING** — core registration no longer depends on legacy Woo module state; exact reported product-title regression added |
 | Classic checkout/order review/offline COD | **PASS** |
 | Orders/customer language/HPOS/emails | **PASS** |
 | WooCommerce REST | **PASS — authenticated products/variations/orders** |

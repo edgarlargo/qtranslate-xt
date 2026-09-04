@@ -52,6 +52,12 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( "'/wc/store/v1/cart'", $runner );
         self::assertStringContainsString( 'Store API cart product name was not translated for the block UI', $runner );
         self::assertStringContainsString( 'Store API block translation changed product ID, quantity or price data', $runner );
+
+        $coreRunner = file_get_contents( dirname( __DIR__, 2 ) . '/tests/Integration/WooCommerce/store-api-core-bootstrap.php' );
+        self::assertStringContainsString( 'WooCommerce legacy module must be inactive', $coreRunner );
+        self::assertStringContainsString( 'Весь набор 250 мокапов', $coreRunner );
+        self::assertStringContainsString( 'store-api-core-bootstrap.php', $workflow );
+        self::assertStringContainsString( 'qtranslate_modules_state woo-commerce 2', $workflow );
         self::assertStringContainsString( 'Cancelled order email was not captured in its stored LV context', $runner );
         self::assertStringContainsString( 'Refund email was not captured in its stored EN context', $runner );
         self::assertStringContainsString( 'Redis direct cache-group flush control failed', $runner );

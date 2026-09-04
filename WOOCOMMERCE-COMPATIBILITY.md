@@ -5,6 +5,13 @@ This document records evidence, not aspirational compatibility. WooCommerce
 7.1/PHP 8.4, MySQL 8.4.11 and Redis 7.4.11. One tested version is not a broad
 supported range; unrelated areas remain explicit.
 
+A real Gutenberg Cart report later showed raw product-title markers while the
+block interface itself was translated. The Store API and client adapter were
+still registered only through the legacy Woo module state. The replacement
+registers both paths from the core bootstrap and adds an integration run with
+`woo-commerce` explicitly inactive. CI, delta audit and replacement ZIP are
+pending; the previous archive is withdrawn.
+
 The latest ACF frontend fallback is outside WooCommerce behavior but changes
 production bytes. Required rerun
 [`33871964443`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33871964443)

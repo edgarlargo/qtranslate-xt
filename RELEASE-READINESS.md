@@ -1,17 +1,17 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **READY — ALL MANDATORY GATES PASS**
+Decision: **NOT READY — WOO BLOCK PRODUCT TITLE REGRESSION GATES PENDING**
 
 ## Mandatory release gates
 
 | Order | Gate | Result |
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
-| 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33871964443`, 176/176 assertions on the frontend fallback source |
-| 3 | Final security re-audit | **PASS** — post-ACF-frontend delta audited at `8fa5f236`; no confirmed findings |
-| 4 | Fix release-blocking re-audit findings | **PASS** — delta found zero Critical/High/Medium/Low findings |
-| 5 | Build and validate final RC ZIP | **PASS** — run `33872439685`; exact downloaded bytes independently verified |
+| 2 | WooCommerce MySQL/Redis CI | **PENDING RERUN** — reported Gutenberg cart product-title path changed |
+| 3 | Final security re-audit | **PENDING DELTA** — required after the new Woo core bootstrap passes CI |
+| 4 | Fix release-blocking re-audit findings | **PENDING** — depends on delta result |
+| 5 | Build and validate final RC ZIP | **PENDING** — previously designated bytes are withdrawn |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
 Blocks report exposed a missing Store API path in the original Woo matrix, so
@@ -55,7 +55,7 @@ The final audit found and fixed release-integrity and output-hardening defects:
 Open confirmed Critical/High/Medium/Low findings: **0**. Non-blocking
 conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 
-## Final designated post-audit ZIP
+## Withdrawn pre-Woo-product-title-fix ZIP
 
 - File: `build/qtranslate-xt-4.0.0-rc1.zip`
 - Source commit: `8fe046c466418f5d8e787ff4ddda9c6cf5456847`
@@ -70,8 +70,10 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 - Forbidden development/private/database/mail content: **0 entries**
 
 The workflow built with `git archive`, inspected, installed, activated and
-exercised these exact bytes in fresh WordPress 7.1. Independent download SHA
-and entry inspection match the pre-upload values. Redis remained connected.
+exercised these exact bytes in fresh WordPress 7.1. A later real Gutenberg Cart
+report showed that a stale inactive Woo module state could still expose the raw
+multilingual product title. These bytes are withdrawn despite their prior CI
+result.
 
 ## Integration evidence retained
 
@@ -175,6 +177,7 @@ Follow `UPGRADE.md`: take complete database/files backups, validate on staging,
 do not run database conversion automatically, and retain the previous plugin
 directory plus database backup for rollback.
 
-Only the final ZIP identified above is designated for staging/distribution.
-Older copies with the same filename or the name `qtranslate-xt-modern-rc1.zip`
-remain withdrawn unless their SHA-256 exactly matches the designated value.
+No ZIP is currently designated for staging/distribution. Every existing copy
+named `qtranslate-xt-4.0.0-rc1.zip` or `qtranslate-xt-modern-rc1.zip` is
+withdrawn until the Woo core-bootstrap delta passes CI, security re-audit and
+a fresh exact-archive run.
