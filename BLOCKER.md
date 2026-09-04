@@ -1,7 +1,38 @@
-# Resolved WooCommerce release-candidate blocker
+# Open production activation blocker
 
 Date: 2026-09-04
-Status: **RESOLVED**
+Status: **OPEN — RELEASE BLOCKED**
+
+The previously designated `4.0.0-rc1` archive is withdrawn after the real
+`edgarlargo.com` installation returned HTTP 500 while qTranslate-XT Modern was
+active. Deactivating qTranslate-XT restored the site and exposed the expected
+raw `[:lang]` storage markers. This is a new post-CI compatibility incident;
+the earlier green gates do not override real production evidence.
+
+The exact withdrawn ZIP was reinstalled in a disposable local WordPress 7.1 /
+PHP 8.4.16 / SQLite environment with WooCommerce 11.0.1 and the user's actual
+`edgarlargo` theme, including its theme-embedded ACF Pro 6.3.3 runtime. Plugin
+activation, `/`, `/lv/`, `/ru/`, `/en/`, `/wp-json/` and the Woo Store API cart
+route returned successfully. The native ACF Options Page, Group, Repeater and
+Flexible Content runner also passed. The production failure is therefore not
+reproduced by the available source/theme fixture and currently depends on
+production configuration, stored data or the Apache/PHP runtime boundary.
+
+Release work added an exact-ZIP HTTP route gate covering LV/RU/EN projection,
+raw-marker leakage, REST and Woo Store API. Local PHP 8.1–8.5 tests pass at
+355 tests / 8098 assertions per runtime, PHP 7.4/8.0 production lint passes,
+JavaScript/build/audit checks pass and actionlint 1.7.12 accepts the workflow.
+These checks narrow the incident but do not resolve it.
+
+Required evidence before a code fix can be selected safely: the fresh
+production `PHP Fatal error` / `Uncaught` entry and stack trace produced by one
+request with qTranslate-XT active. After remediation, the required order is a
+new WooCommerce MySQL/Redis run, final delta security re-audit, remediation of
+any finding, and only then an exact-ZIP build/installation gate. GitHub CLI
+authentication is currently invalid, so no new workflow can be pushed or
+dispatched until it is renewed.
+
+## Historical resolved WooCommerce blocker
 
 The WooCommerce defect gate remains resolved. The later Gutenberg product-title
 regression is fixed by core-owned Store API registration. Run `33873804477`

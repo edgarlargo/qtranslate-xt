@@ -3,6 +3,11 @@
 Date: 2026-09-04
 Branch: `modernisation`
 
+Current release status: **BLOCKED**. A real installation returns HTTP 500 with
+qTranslate-XT Modern active and recovers when the plugin is deactivated. The
+previous exact ZIP is withdrawn pending the production fatal-error stack trace,
+remediation and a complete rerun of the ordered release gates.
+
 Status is limited to what was actually executed. `PASS` never means inferred
 compatibility with an absent WordPress or third-party runtime.
 
@@ -19,6 +24,8 @@ compatibility with an absent WordPress or third-party runtime.
 | Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
 | `git diff --check` | **PASS** | no whitespace errors |
 | Module loader traversal regression | **PASS** | registry, traversal, wrapper, absolute/unknown/corrupt-state cases covered |
+| Exact-ZIP HTTP language/REST routes | **PASS local; CI PENDING** | WordPress 7.1, PHP 8.4.16, WooCommerce 11.0.1 and the real `edgarlargo` theme/embedded ACF Pro 6.3.3: `/`, LV/RU/EN, REST and Store API passed; new CI gate not yet pushed |
+| Real production activation | **FAIL / BLOCKER** | production HTTP 500 only while qTranslate-XT Modern is active; exact PHP fatal/stack trace not yet available |
 
 Release CI uses exact Node 24.11.1, installs the lock graph with lifecycle
 scripts disabled, audits it, rebuilds production assets and fails on any bundle

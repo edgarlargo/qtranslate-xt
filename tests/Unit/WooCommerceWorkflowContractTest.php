@@ -64,4 +64,18 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( 'Webhook did not invoke every required cache-group flush', $runner );
         self::assertStringContainsString( 'Webhook performed an unnecessary global cache flush', $runner );
     }
+
+    public function test_exact_archive_is_exercised_through_http_language_and_rest_routes(): void {
+        $workflow = $this->workflow();
+        $router = file_get_contents( dirname( __DIR__ ) . '/Integration/http-router.php' );
+
+        self::assertStringContainsString( 'Exercise exact-ZIP HTTP language and REST routes', $workflow );
+        self::assertStringContainsString( 'tests/Integration/http-router.php', $workflow );
+        self::assertStringContainsString( "check_language_route '/lv/' 'QTX_HTTP_LV'", $workflow );
+        self::assertStringContainsString( "check_language_route '/ru/' 'QTX_HTTP_RU'", $workflow );
+        self::assertStringContainsString( "check_language_route '/en/' 'QTX_HTTP_EN'", $workflow );
+        self::assertStringContainsString( '/wp-json/wc/store/v1/cart', $workflow );
+        self::assertStringContainsString( "grep --fixed-strings '[:lv]'", $workflow );
+        self::assertStringContainsString( "require rtrim( \$document_root, '/\\\\' ) . '/index.php';", $router );
+    }
 }

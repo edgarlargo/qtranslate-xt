@@ -197,11 +197,21 @@ green at 349 tests / 8064 assertions.
 
 ## Known blockers
 
-The previously designated ZIP is withdrawn after a real Gutenberg Cart path
+**Current release blocker (2026-09-04):** the real `edgarlargo.com` site
+returns HTTP 500 while qTranslate-XT Modern is active and recovers on plugin
+deactivation. The previously designated `19fa840e…bcc55` ZIP is withdrawn.
+The exact archive passes a new disposable HTTP route lab with WordPress 7.1,
+PHP 8.4.16, WooCommerce 11.0.1, the actual `edgarlargo` theme and its embedded
+ACF Pro 6.3.3, so a production fatal-error stack trace is required to isolate
+the configuration/data/runtime-specific path. GitHub authentication must also
+be renewed before the expanded HTTP gate and ordered release workflow can run.
+
+Historically, the earlier designated ZIP was withdrawn after a real Gutenberg Cart path
 exposed raw product-title markers when the legacy Woo module state was inactive.
 Core-owned Store API/client registration and an exact integration regression
-passed PHP/Woo CI, delta audit and the post-audit exact-ZIP gate. The designated
-SHA-256 is `19fa840eb4c7467d0d04df212122d253e383a8907882aa4fedc3e17d5d3bcc55`.
+passed PHP/Woo CI, delta audit and the post-audit exact-ZIP gate. That later
+SHA-256 was `19fa840eb4c7467d0d04df212122d253e383a8907882aa4fedc3e17d5d3bcc55`,
+but it is now withdrawn by the production activation incident above.
 
 The earlier ACF Pro 5.7.7 and ACF frontend gates remain resolved. A
 real-site theme-embedded/legacy Options path nevertheless exposed raw language
@@ -235,6 +245,7 @@ The previous `449209…b0047` archive is withdrawn.
 
 ## Next planned phase
 
-Deploy only the designated replacement ZIP to staging and visually verify the
-reported ACF output plus RU Cart/Checkout.
-Previous artifacts remain withdrawn for traceability.
+Do not deploy a current ZIP. Capture the production fatal-error stack, fix the
+confirmed cause, then repeat WooCommerce CI, the final delta security audit and
+the exact-ZIP gate in the mandatory order. Previous artifacts remain withdrawn
+for traceability.

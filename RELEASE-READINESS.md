@@ -1,9 +1,33 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **READY — ALL MANDATORY GATES PASS**
+Decision: **NOT READY — PRODUCTION ACTIVATION BLOCKER OPEN**
+
+## Current production incident
+
+The ZIP previously designated below is withdrawn. On the real
+`edgarlargo.com` installation the site returned HTTP 500 while qTranslate-XT
+Modern was active and recovered immediately after deactivation. Raw language
+markers displayed with the plugin disabled, confirming that stored multilingual
+content remains present.
+
+The same exact ZIP passes activation and HTTP language routes locally with
+WordPress 7.1, PHP 8.4.16, WooCommerce 11.0.1 and the user's actual
+`edgarlargo` theme with embedded ACF Pro 6.3.3. This makes the production
+fatal-error line and stack trace mandatory evidence; the cause must not be
+guessed from the generic Apache 500 page.
+
+A new exact-ZIP HTTP gate has been added for LV/RU/EN output, raw-marker
+leakage, WordPress REST and Woo Store API. It passes in the local disposable
+lab, but GitHub CLI authentication is currently invalid and the updated gate
+has not run in CI. After the production defect is fixed, gates 2 through 5 must
+be rerun in order. No current ZIP is approved for release.
 
 ## Mandatory release gates
+
+The table below records the last completed historical cycle. Its final ZIP is
+now **WITHDRAWN** by the later production incident and is not current release
+approval.
 
 | Order | Gate | Result |
 |---:|---|---|
@@ -55,7 +79,7 @@ The final audit found and fixed release-integrity and output-hardening defects:
 Open confirmed Critical/High/Medium/Low findings: **0**. Non-blocking
 conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 
-## Final designated post-Woo-product-title-fix ZIP
+## Withdrawn post-Woo-product-title-fix ZIP
 
 - File: `build/qtranslate-xt-4.0.0-rc1.zip`
 - Source commit: `a9a1a6713876c0e5c736100150c3218baa358bc9`
@@ -68,6 +92,10 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 - Latvian MO, Woo Blocks bundle, ACF bundle, `AcfSafeBridgeValueAdapter.php`
   and `WooCommerceBlocksAdapter.php`: **present**
 - Forbidden development/private/database/mail content: **0 entries**
+
+Withdrawal reason: real-site HTTP 500 with qTranslate-XT Modern active. These
+bytes remain useful as reproducible evidence but are not designated for staging
+or distribution.
 
 The workflow built with `git archive`, inspected, installed, activated and
 exercised these exact bytes in fresh WordPress 7.1. It explicitly set the legacy
@@ -177,6 +205,6 @@ Follow `UPGRADE.md`: take complete database/files backups, validate on staging,
 do not run database conversion automatically, and retain the previous plugin
 directory plus database backup for rollback.
 
-Only the final ZIP identified above is designated for staging/distribution.
-Older copies with the same filename or `qtranslate-xt-modern-rc1.zip` remain
-withdrawn unless their SHA-256 exactly matches the designated value.
+No ZIP identified in this document is currently designated for staging or
+distribution. The hashes remain only to distinguish historical artifacts and
+must not be treated as current release approval.
