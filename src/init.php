@@ -51,6 +51,7 @@ require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfValueProjector.php';
 require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfLifecycleAdapter.php';
 require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfScalarTranslator.php';
 require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfAdminEditingService.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfSafeBridgeValueAdapter.php';
 require_once QTRANSLATE_DIR . '/src/Integration/WooCommerce/WooCommerceDataPolicy.php';
 require_once QTRANSLATE_DIR . '/src/language_blocks.php';
 require_once QTRANSLATE_DIR . '/src/language_config.php';
@@ -153,6 +154,13 @@ function qtranxf_init_language(): void {
 
     require_once QTRANSLATE_DIR . '/src/hooks.php';  // Common hooks need language already detected.
     qtranxf_add_main_filters();
+
+    // Keep the proven Safe Bridge frontend path available independently from
+    // legacy module/plugin state. This is required for theme-embedded ACF and
+    // older Options Pages whose field metadata is not visible to the module.
+    $acf_safe_bridge = new \QTX\Integration\Acf\AcfSafeBridgeValueAdapter();
+    $acf_safe_bridge->register();
+    $GLOBALS['qtx_acf_safe_bridge_value_adapter'] = $acf_safe_bridge;
 
     require_once QTRANSLATE_DIR . '/src/date_time.php';
     qtranxf_add_date_time_filters();

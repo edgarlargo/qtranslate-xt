@@ -197,12 +197,12 @@ green at 349 tests / 8064 assertions.
 
 ## Known blockers
 
-The earlier ACF Pro 5.7.7, security and WooCommerce gates remain resolved. The
-built-in bridge is now expanded to the complete Safe Bridge 0.4 isolated-panel
-behavior. Its delta security audit passes with zero open confirmed findings;
-PHP/JavaScript CI, WooCommerce CI and exact-ZIP gates also pass. The designated
-release archive is `build/qtranslate-xt-4.0.0-rc1.zip`, SHA-256
-`449209b7a6856a63426389dbe6d43f3df773fbf2fc26942d786f6e7d908b0047`.
+The earlier ACF Pro 5.7.7, security and WooCommerce gates remain resolved. A
+real-site theme-embedded/legacy Options path nevertheless exposed raw language
+markers because the module-scoped adapter was unavailable. A priority-99 core
+fallback now mirrors standalone Safe Bridge behavior independently from legacy
+module state and field metadata. Its delta audit and complete CI/exact-ZIP
+reruns are pending; the previous `449209…b0047` archive is withdrawn.
 
 ## Security status
 
@@ -227,8 +227,7 @@ release archive is `build/qtranslate-xt-4.0.0-rc1.zip`, SHA-256
 
 ## Next planned phase
 
-Deploy only the designated CI-verified ZIP to staging, deactivate the standalone
-Safe Bridge plugin, clear caches and visually verify an ACF Options Page plus
-the reported RU Cart/Checkout pages. Interactive browser clicks remain the only
-explicitly unexecuted ACF bridge check; previous artifacts remain withdrawn for
-traceability.
+Audit the ACF frontend fallback, rerun PHP/JavaScript and WooCommerce CI, then
+build and validate replacement exact ZIP bytes. Deploy only that replacement
+to staging and visually verify the reported ACF output plus RU Cart/Checkout.
+Previous artifacts remain withdrawn for traceability.

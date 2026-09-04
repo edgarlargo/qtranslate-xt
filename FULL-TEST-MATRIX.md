@@ -60,7 +60,7 @@ digests. The local Node 18.14 engine warning is therefore not release evidence.
 | Options API (`option`/`options`) | **PASS ACF Free 6.8.8 and Pro Options Page 5.7.7 runtime/storage** |
 | Text/Textarea/WYSIWYG frontend LV/RU/EN | **PASS — ACF Free 6.8.8 and Pro 5.7.7; interactive browser JS NOT EXECUTED** |
 | Group/Repeater/Flexible Content | **PASS native runtime — ACF Pro 5.7.7** |
-| Built-in ACF Options language panels | **PASS local and CI** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; interactive browser click test NOT EXECUTED |
+| Built-in ACF Options language panels | **PASS previous CI; frontend regression rerun PENDING** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; reported theme path now has a priority-99 core fallback; interactive browser click test NOT EXECUTED |
 
 Repository unit tests for runtime capability detection, field schema,
 projection/merge, stable field keys, nested leaves, dynamic ACF JS actions and
@@ -150,7 +150,9 @@ and the associated archive. The Store API/frontend-filter and dynamic text
 adapter remediation passes the expanded MySQL/Redis CI, and its delta security
 re-audit is **PASS**. The first built-in ACF Options Bridge passed its delta
 gates. Its later expansion to the complete standalone 0.4 isolated-panel
-behavior passes local tests, delta security review, PHP/JavaScript CI and the
-WooCommerce exact-ZIP installation gate. The independently verified designated
-archive has SHA-256
-`449209b7a6856a63426389dbe6d43f3df773fbf2fc26942d786f6e7d908b0047`.
+behavior passed its previous local/CI gates. A later real-site report exposed
+raw ACF markers through a theme-embedded/legacy Options path that did not have
+the module adapter. A standalone-compatible priority-99 core fallback and an
+EN/LV/RU/FI/SV regression were added; delta audit, PHP CI, WooCommerce CI and
+replacement exact-ZIP validation are pending. The previous `449209…b0047`
+archive is withdrawn.

@@ -3,6 +3,10 @@
 Date: 2026-09-04
 Status: **RESOLVED**
 
+The WooCommerce defect gate remains resolved. A later ACF frontend regression
+withdraws the release ZIP and requires the full matrix to be rerun against the
+new production bytes; this does not reopen the historical Woo defect itself.
+
 ## Resolution
 
 The required WooCommerce MySQL/Redis blocker is **RESOLVED**. GitHub Actions

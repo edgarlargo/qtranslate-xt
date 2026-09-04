@@ -104,8 +104,18 @@ six JavaScript tests and the reproducible production build. Run
 installed and retested the exact archive containing `dist/modules/acf.js`.
 The independently downloaded archive matched SHA-256
 `449209b7a6856a63426389dbe6d43f3df773fbf2fc26942d786f6e7d908b0047`.
-The standalone Safe Bridge plugin is therefore no longer required and should
-be deactivated before deploying the native Modern build.
+That archive was subsequently withdrawn after a real theme-embedded/legacy
+Options path exposed its complete marker string on the frontend. The cause was
+an architectural difference from the standalone plugin: the native value
+adapter still depended on legacy ACF module state and modern field metadata.
+
+The replacement adds a core, type-specific priority-99 fallback for ACF Text,
+Textarea and WYSIWYG values. It is registered after language detection without
+checking `active_plugins`, the legacy module-state option or field metadata;
+normal wp-admin editing remains raw, while frontend and admin AJAX use the
+selected language exactly like Safe Bridge 0.4.0. A regression reproduces the
+reported EN/LV/RU/FI/SV `Location / Year` value. PHP syntax and JavaScript tests
+pass locally; delta security audit and full CI/exact-ZIP validation are pending.
 
 ## ACF Pro validation result
 

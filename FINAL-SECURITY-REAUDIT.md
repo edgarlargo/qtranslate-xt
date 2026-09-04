@@ -359,3 +359,12 @@ matched SHA-256
 size 1,469,533 bytes and 1,138 entries. It has one `qtranslate-xt/` root,
 contains the Latvian MO, Woo Blocks and ACF bundles, and has zero forbidden
 development/private/database/mail entries. Final packaging gate: **PASS**.
+
+## 2026-09-04 post-audit ACF frontend regression notice
+
+A real theme-embedded/legacy ACF Options path subsequently exposed the complete
+inline marker string on the frontend. The `449209…b0047` archive is withdrawn.
+A core priority-99 compatibility fallback and an exact EN/LV/RU/FI/SV
+regression have been added, but this production delta is not covered by the
+verdict above until its WooCommerce CI run and follow-up delta security review
+complete. No replacement release archive is currently designated.

@@ -5,6 +5,11 @@ This document records evidence, not aspirational compatibility. WooCommerce
 7.1/PHP 8.4, MySQL 8.4.11 and Redis 7.4.11. One tested version is not a broad
 supported range; unrelated areas remain explicit.
 
+The latest ACF frontend fallback is outside WooCommerce behavior but changes
+production bytes. Therefore run `33869856719` remains valid historical Woo
+evidence while a release-gate rerun is required before a replacement ZIP can be
+designated.
+
 | Area | Current implementation | Status |
 | --- | --- | --- |
 | Product title/description/short description | WordPress post adapters plus existing WooCommerce hooks | PASS (11.0.1, LV/RU/EN) |

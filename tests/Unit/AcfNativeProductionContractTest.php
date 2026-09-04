@@ -54,6 +54,20 @@ final class AcfNativeProductionContractTest extends TestCase {
         self::assertStringNotContainsString( "add_filter( 'acf/format_value',", $legacy );
     }
 
+    public function testSafeBridgeFallbackIsIndependentFromLegacyAcfModuleState(): void {
+        $root = dirname( __DIR__, 2 );
+        $init = file_get_contents( $root . '/src/init.php' );
+        $bridge = file_get_contents( $root . '/src/Integration/Acf/AcfSafeBridgeValueAdapter.php' );
+
+        self::assertStringContainsString( 'AcfSafeBridgeValueAdapter.php', $init );
+        self::assertStringContainsString( 'new \\QTX\\Integration\\Acf\\AcfSafeBridgeValueAdapter()', $init );
+        self::assertStringContainsString( "'acf/format_value/type='", $bridge );
+        self::assertStringContainsString( ', 99, 3', $bridge );
+        self::assertStringContainsString( 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', $bridge );
+        self::assertStringNotContainsString( 'active_plugins', $bridge );
+        self::assertStringNotContainsString( 'QTX_OPTIONS_MODULES_STATE', $bridge );
+    }
+
     public function testRuntimeDiscoveryIsGenericAndAcfUsesOfficialInitHook(): void {
         $module = file_get_contents( dirname( __DIR__, 2 ) . '/src/modules/admin_module.php' );
         $loader = file_get_contents( dirname( __DIR__, 2 ) . '/src/modules/module_loader.php' );

@@ -1,17 +1,17 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **READY — ALL MANDATORY RELEASE GATES PASS**
+Decision: **NOT READY — ACF FRONTEND REGRESSION FIX GATES PENDING**
 
 ## Mandatory release gates
 
 | Order | Gate | Result |
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
-| 2 | WooCommerce MySQL/Redis CI | **PASS** — final run `33869856719`, 176/176 assertions |
-| 3 | Final security re-audit | **PASS** — expanded Safe Bridge 0.4 delta audit on `eef319b` |
-| 4 | Fix release-blocking re-audit findings | **PASS** — remediation commit `7a0ca65` |
-| 5 | Build and validate final RC ZIP | **PASS** — run `33869856719`, exact archive independently verified |
+| 2 | WooCommerce MySQL/Redis CI | **PENDING RERUN** — prior run `33869856719` predates the frontend fallback |
+| 3 | Final security re-audit | **PENDING DELTA** — prior expanded Safe Bridge audit remains historical evidence |
+| 4 | Fix release-blocking re-audit findings | **PENDING** — depends on the new delta result |
+| 5 | Build and validate final RC ZIP | **PENDING** — the previous archive exposes raw ACF markers on the reported theme path |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
 Blocks report exposed a missing Store API path in the original Woo matrix, so
@@ -69,7 +69,7 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 - Woo product/cart/checkout/order/HPOS/email/REST/AJAX/cache matrix:
   **PASS** on the current remediation commit.
 
-## Designated final release-candidate ZIP
+## Withdrawn pre-ACF-frontend-fix ZIP
 
 - File: `build/qtranslate-xt-4.0.0-rc1.zip`
 - Source commit: `f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`
@@ -82,11 +82,12 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
   `dist/modules/acf.js`: **present**
 - Forbidden development/private/database/mail content: **0 entries**
 
-These exact bytes were built only after the expanded Safe Bridge delta audit,
-installed and re-exercised in disposable WordPress 7.1, downloaded from the
-successful workflow, and independently matched to the raw CI SHA-256. Redis
-remained connected after archive installation. This is the only designated RC
-archive; every hash listed below is withdrawn.
+These exact bytes passed the recorded automated gates, but the subsequent
+real-site report proved that a theme-embedded/legacy ACF Options value could
+still expose its complete `[:lang]` storage string. They are withdrawn. A new
+archive may be designated only after the priority-99 standalone-compatible
+fallback passes its delta audit, PHP/JavaScript CI, WooCommerce CI and exact
+archive installation.
 
 ## Withdrawn pre-expanded-bridge ZIP
 
