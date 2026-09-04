@@ -64,6 +64,16 @@ final class WooCommerceBlocksContractTest extends TestCase {
         $GLOBALS['qtx_test_post_id'] = 999;
         self::assertSame( $raw, $adapter->translateSystemPageContent( $raw ) );
         self::assertSame( array( 'not', 'text' ), $adapter->translateSystemPageContent( array( 'not', 'text' ) ) );
+
+        $cart = (object) array( 'ID' => 101, 'post_title' => '[:en]Cart[:]', 'post_content' => $raw );
+        $ordinary = (object) array( 'ID' => 999, 'post_content' => $raw );
+        self::assertSame(
+            array( $cart, $ordinary ),
+            $adapter->translateSystemPagePosts( array( $cart, $ordinary ), null )
+        );
+        self::assertSame( '<!-- wp:woocommerce/cart /--><p>QTX_CART_STRUCTURE</p>', $cart->post_content );
+        self::assertSame( '[:en]Cart[:]', $cart->post_title );
+        self::assertSame( $raw, $ordinary->post_content );
     }
 
     public function testCoreRegistrationIsIndependentFromLegacyWooModuleState(): void {
@@ -72,6 +82,7 @@ final class WooCommerceBlocksContractTest extends TestCase {
         $init = file_get_contents( $root . '/src/init.php' );
 
         self::assertStringContainsString( "add_filter( 'rest_pre_dispatch', array( \$this, 'prepareStoreApiRequest' ), 5, 3 )", $source );
+        self::assertStringContainsString( "add_filter( 'the_posts', array( \$this, 'translateSystemPagePosts' ), 4, 2 )", $source );
         self::assertStringContainsString( "add_filter( 'the_content', array( \$this, 'translateSystemPageContent' ), 99 )", $source );
         self::assertStringContainsString( "array( 'cart', 'checkout', 'myaccount' )", $source );
         self::assertStringContainsString( "strpos( \$route, '/wc/store/' ) !== 0", $source );

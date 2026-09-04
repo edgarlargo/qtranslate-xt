@@ -30,6 +30,7 @@ final class WooCommerceBlocksAdapter {
         }
 
         add_filter( 'rest_pre_dispatch', array( $this, 'prepareStoreApiRequest' ), 5, 3 );
+        add_filter( 'the_posts', array( $this, 'translateSystemPagePosts' ), 4, 2 );
         add_filter( 'the_content', array( $this, 'translateSystemPageContent' ), 99 );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueueFrontend' ), 20 );
         $this->registered = true;
@@ -58,20 +59,52 @@ final class WooCommerceBlocksAdapter {
             return $content;
         }
 
-        $isSystemPage = false;
-        foreach ( array( 'cart', 'checkout', 'myaccount' ) as $page ) {
-            if ( (int) wc_get_page_id( $page ) === $postId ) {
-                $isSystemPage = true;
-                break;
-            }
-        }
-        if ( ! $isSystemPage ) {
+        if ( ! $this->isSystemPageId( $postId ) ) {
             return $content;
         }
 
         global $q_config;
 
         return qtranxf_use( $q_config['language'], $content, false, false );
+    }
+
+    /**
+     * Project structural content before QTX's general the_posts translation.
+     * The general adapter intentionally emits the normal availability notice;
+     * system pages must select their reusable document before that happens.
+     *
+     * @param mixed $posts
+     * @param mixed $query
+     * @return mixed
+     */
+    public function translateSystemPagePosts( $posts, $query ) {
+        if ( ! is_array( $posts ) || ! function_exists( 'wc_get_page_id' ) ) {
+            return $posts;
+        }
+        if ( function_exists( 'is_admin' ) && is_admin() ) {
+            return $posts;
+        }
+
+        global $q_config;
+        foreach ( $posts as $post ) {
+            if ( ! is_object( $post ) || ! isset( $post->ID, $post->post_content )
+                 || ! is_string( $post->post_content ) || ! $this->isSystemPageId( (int) $post->ID ) ) {
+                continue;
+            }
+            $post->post_content = qtranxf_use( $q_config['language'], $post->post_content, false, false );
+        }
+
+        return $posts;
+    }
+
+    private function isSystemPageId( int $postId ): bool {
+        foreach ( array( 'cart', 'checkout', 'myaccount' ) as $page ) {
+            if ( (int) wc_get_page_id( $page ) === $postId ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
