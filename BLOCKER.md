@@ -3,9 +3,10 @@
 Date: 2026-09-04
 Status: **RESOLVED**
 
-The WooCommerce defect gate remains resolved. A later ACF frontend regression
-withdrew the release ZIP; the full matrix rerun against the corrected production
-bytes passed in run `33871964443`. This did not reopen the historical Woo defect.
+The WooCommerce defect gate remains resolved. The later Gutenberg product-title
+regression is fixed by core-owned Store API registration. Run `33873804477`
+passed the inactive-module fixture and the full 176/176 matrix; a post-audit
+replacement ZIP is still required.
 
 ## Resolution
 

@@ -10,7 +10,7 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1–8.5 | **PASS CI** | 353 tests, 8078 assertions per runtime, 0 failures/errors |
+| PHPUnit PHP 8.1–8.5 | **PASS CI** | 354 tests, 8090 assertions per runtime, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
 | JavaScript shared corpus/security | **PASS local and CI** | 27 corpus cases plus 6 Node tests; ACF bridge value round-trip and text-only DOM assertions PASS |
@@ -75,7 +75,7 @@ versions are not covered by that result.
 | Products/categories/attributes/variations | **PASS — LV/RU/EN; tags outside required gate remain NOT TESTED** |
 | Permalinks/slugs/canonical URLs | **NOT TESTED; outside required transactional gate** |
 | Classic cart/AJAX/fragments/variation selection | **PASS** |
-| Cart/Checkout Blocks Store API and dynamic labels | **FIX IMPLEMENTED; CI RERUN PENDING** — core registration no longer depends on legacy Woo module state; exact reported product-title regression added |
+| Cart/Checkout Blocks Store API and dynamic labels | **PASS CI; exact-ZIP rerun PENDING** — core registration independent from legacy Woo module state; exact Russian product-title regression PASS |
 | Classic checkout/order review/offline COD | **PASS** |
 | Orders/customer language/HPOS/emails | **PASS** |
 | WooCommerce REST | **PASS — authenticated products/variations/orders** |

@@ -7,6 +7,7 @@ CI reproducibility follow-up audited commit: `ef83e1effc3f60eb88c186ee0bb86371bb
 Post-ACF-Options-Bridge delta audited source: `8782c8804217b17b49d3e6441b690f095a0b5858`
 Expanded-Safe-Bridge-0.4 delta audited source: `eef319b985614aad7a37eb69de99f6b15294c247`
 Post-ACF-frontend-fallback delta audited source: `8fa5f23621b22dbc0a2782326796b461b53bd713`
+Post-Woo-core-block-bootstrap delta audited source: `26b49eef7b56418d74af3f90531a239c157d5172`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -405,3 +406,43 @@ Redis connectivity. The independently downloaded ZIP matches SHA-256
 `e9f53257b486fc6749b58f831b31d094a84cda61c8332e835e6e4663d96a53f7`,
 size 1,470,737 bytes and 1,139 entries, with one `qtranslate-xt/` root, all
 required Latvian/Woo/ACF files and zero forbidden entries. Gate 5: **PASS**.
+
+## 2026-09-04 Woo core block bootstrap delta security re-audit
+
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the delta: **0**.
+
+The review covered `WooCommerceBlocksAdapter`, its core initialization, removal
+of the former module-scoped block bootstrap, the exact product-title regression
+and the disposable workflow fixture.
+
+- The adapter registers only `rest_pre_dispatch` and `wp_enqueue_scripts`. It
+  creates no route, write endpoint, permission override or external request.
+- REST activation is restricted to the exact `/wc/store/` prefix; authenticated
+  `/wc/v3/` technical APIs remain outside the adapter.
+- The included frontend file is a fixed plugin-owned path. No option, route or
+  request value participates in filesystem selection.
+- Reapplying the existing Woo presentation filter graph is idempotent and
+  changes presentation strings only. SKU, price, stock, tax, IDs, quantities,
+  payment identifiers and order data remain protected by existing policy.
+- Client configuration contains only resolved language codes and the bounded
+  language-code pattern. The existing client modifies text nodes only and has
+  no HTML sink or dynamic execution.
+- The production adapter does not read or mutate `active_plugins` or
+  `qtranslate_modules_state`; independence from stale state is deliberate.
+- The workflow-only fixture is WP-CLI guarded, uses the disposable CI database,
+  creates and removes its product, performs no external payment/mail traffic
+  and restores the module state before the full matrix.
+- No SQL construction from request data, deserialization, command execution,
+  credential, remote I/O, cache flush or new data-retention path was introduced.
+
+PHP/JavaScript run
+[`33873804508`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33873804508)
+passed PHP 7.4/8.0 production syntax, **354 tests / 8090 assertions** on each PHP
+8.1–8.5 runtime, six JavaScript tests, zero npm advisories, production build and
+bundle reproducibility. WooCommerce run
+[`33873804477`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33873804477)
+first passed the exact Russian title with legacy Woo module state inactive,
+then passed the complete **176/176** WordPress 7.1/WooCommerce 11.0.1/MySQL
+8.4.11/Redis 7.4.11/HPOS matrix and retained Redis connectivity. Security gates
+3 and 4 are complete; a fresh post-audit exact ZIP remains required.

@@ -9,8 +9,9 @@ A real Gutenberg Cart report later showed raw product-title markers while the
 block interface itself was translated. The Store API and client adapter were
 still registered only through the legacy Woo module state. The replacement
 registers both paths from the core bootstrap and adds an integration run with
-`woo-commerce` explicitly inactive. CI, delta audit and replacement ZIP are
-pending; the previous archive is withdrawn.
+`woo-commerce` explicitly inactive. PHP/JavaScript run `33873804508`, Woo run
+`33873804477` and the delta security audit passed. A final post-audit exact ZIP
+is pending; the previous archive remains withdrawn.
 
 The latest ACF frontend fallback is outside WooCommerce behavior but changes
 production bytes. Required rerun

@@ -1,16 +1,16 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **NOT READY — WOO BLOCK PRODUCT TITLE REGRESSION GATES PENDING**
+Decision: **NOT READY — FINAL POST-AUDIT ZIP PENDING**
 
 ## Mandatory release gates
 
 | Order | Gate | Result |
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
-| 2 | WooCommerce MySQL/Redis CI | **PENDING RERUN** — reported Gutenberg cart product-title path changed |
-| 3 | Final security re-audit | **PENDING DELTA** — required after the new Woo core bootstrap passes CI |
-| 4 | Fix release-blocking re-audit findings | **PENDING** — depends on delta result |
+| 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33873804477`; inactive-module regression plus 176/176 matrix |
+| 3 | Final security re-audit | **PASS** — Woo core-bootstrap delta audited at `26b49ee`; zero confirmed findings |
+| 4 | Fix release-blocking re-audit findings | **PASS** — delta found no release-blocking finding |
 | 5 | Build and validate final RC ZIP | **PENDING** — previously designated bytes are withdrawn |
 
 The gates were executed in the required order. A later real-site Cart/Checkout

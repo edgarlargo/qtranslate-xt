@@ -200,7 +200,8 @@ green at 349 tests / 8064 assertions.
 The previously designated ZIP is withdrawn after a real Gutenberg Cart path
 exposed raw product-title markers when the legacy Woo module state was inactive.
 Core-owned Store API/client registration and an exact integration regression
-are implemented; PHP/Woo CI, delta audit and replacement ZIP are pending.
+passed PHP/Woo CI and delta audit; only the post-audit replacement ZIP remains
+pending.
 
 The earlier ACF Pro 5.7.7 and ACF frontend gates remain resolved. A
 real-site theme-embedded/legacy Options path nevertheless exposed raw language
