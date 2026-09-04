@@ -1,7 +1,7 @@
 # Open production activation blocker
 
 Date: 2026-09-04
-Status: **OPEN — RELEASE BLOCKED**
+Status: **OPEN — LOCAL RC VALIDATED, PRODUCTION DEPLOYMENT BLOCKED**
 
 The previously designated `4.0.0-rc1` archive is withdrawn after the real
 `edgarlargo.com` installation returned HTTP 500 while qTranslate-XT Modern was
@@ -31,8 +31,11 @@ production-only failure.
 Required evidence before a code fix can be selected safely: the fresh
 production `PHP Fatal error` / `Uncaught` entry and stack trace produced by one
 request with qTranslate-XT active. GitHub authorization is working. Gates 2–4
-have been rerun successfully for the HTTP-test delta; gate 5 must run from the
-post-audit documentation commit before any new archive can be designated.
+were rerun successfully for the HTTP-test delta, and post-audit gate 5 passed
+in run `33880500389`. The independently downloaded local RC has SHA-256
+`3a8a9ef2a18733a5bd8599d57df6ffa53d0f2a0feab5028199fa1c19947e07f5`.
+It is approved as a reproducible local/CI candidate, not for production
+deployment while this incident remains open.
 
 ## Historical resolved WooCommerce blocker
 

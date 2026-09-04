@@ -509,3 +509,17 @@ does not misclassify the unresolved deployment incident as fixed.
 Security gates 3 and 4 are complete. Exact release-candidate construction and
 installation may now run as gate 5; production designation remains subject to
 the separately documented activation blocker.
+
+Post-audit gate 5 subsequently passed. PHP/JavaScript run
+[`33880500490`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33880500490)
+and Woo/exact-ZIP run
+[`33880500389`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33880500389)
+are green on audit commit `48a816ba3544fa172bee1e64811daeb83ba4fcf2`.
+The latter repeated 176/176 assertions, exact-ZIP install/reactivation,
+LV/RU/EN HTTP, REST, Store API and Redis checks. The downloaded archive
+independently matches SHA-256
+`3a8a9ef2a18733a5bd8599d57df6ffa53d0f2a0feab5028199fa1c19947e07f5`,
+size 1,471,467 bytes and 1,140 entries, with one `qtranslate-xt/` root,
+required Latvian/Woo/ACF files and zero forbidden entries. Local packaging
+gate: **PASS**. Production deployment gate: **BLOCKED** by the separately
+documented activation incident, not by an open security finding.

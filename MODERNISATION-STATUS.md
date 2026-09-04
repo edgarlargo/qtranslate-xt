@@ -207,7 +207,9 @@ the configuration/data/runtime-specific path. GitHub authentication is now
 working: run `33879843135` passes the 355-test PHP 8.1–8.5 matrix and run
 `33879843211` passes the 176-assertion Woo MySQL/Redis matrix, exact-ZIP
 installation plus LV/RU/EN HTTP/REST/Store API checks. The delta security audit
-also passes with zero confirmed findings; a post-audit gate-5 run remains.
+also passes with zero confirmed findings. Post-audit runs `33880500490` and
+`33880500389` pass the full PHP/JavaScript and exact-ZIP gates. The local RC is
+`build/qtranslate-xt-4.0.0-rc1.zip`, SHA-256 `3a8a9ef2…e07f5`.
 
 Historically, the earlier designated ZIP was withdrawn after a real Gutenberg Cart path
 exposed raw product-title markers when the legacy Woo module state was inactive.
@@ -248,7 +250,7 @@ The previous `449209…b0047` archive is withdrawn.
 
 ## Next planned phase
 
-Run the post-audit exact-ZIP gate for local/CI evidence, but do not deploy its
-artifact to production. Capture the production fatal-error stack and fix the
-confirmed cause before production designation. Previous artifacts remain
-withdrawn for traceability.
+The local/CI release sequence is complete. Do not deploy its artifact to
+production. Capture the production fatal-error stack and fix the confirmed
+cause before production designation. Previous artifacts remain withdrawn for
+traceability.

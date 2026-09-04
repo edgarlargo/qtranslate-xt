@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **NOT READY — PRODUCTION ACTIVATION BLOCKER OPEN**
+Decision: **LOCAL RC VALIDATED — PRODUCTION ACTIVATION BLOCKER OPEN**
 
 ## Current production incident
 
@@ -34,8 +34,28 @@ approval.
 
 Current incident-cycle progress: gate 1 remains resolved; gate 2 passed in run
 `33879843211`; gates 3 and 4 passed for source `4c7f928` with no new finding;
-gate 5 is pending a post-audit run. The production activation incident remains
-an independent release blocker even if gate 5 succeeds locally/CI.
+gate 5 passed post-audit in run `33880500389`. The production activation
+incident remains an independent release blocker despite the completed
+local/CI release sequence.
+
+## Current locally validated release candidate
+
+- File: `build/qtranslate-xt-4.0.0-rc1.zip`
+- Source commit: `48a816ba3544fa172bee1e64811daeb83ba4fcf2`
+- PHP/JavaScript workflow: `33880500490` — **PASS**
+- WooCommerce/exact-ZIP workflow: `33880500389` — **PASS**, 176/176 plus HTTP routes
+- SHA-256: `3a8a9ef2a18733a5bd8599d57df6ffa53d0f2a0feab5028199fa1c19947e07f5`
+- Size: **1,471,467 bytes**
+- ZIP entries: **1,140**
+- Top-level root: exactly `qtranslate-xt/`
+- Latvian MO, Woo Blocks bundle, ACF bundle and core adapters: **present**
+- Forbidden development/private/database/mail content: **0 entries**
+
+This exact archive was built only after the delta security report commit,
+installed, activated, deactivated/reactivated and exercised through LV/RU/EN,
+WordPress REST and Woo Store API routes. It is the complete local RC artifact.
+Do not install it on production until the open production fatal is identified
+and remediated.
 
 | Order | Gate | Result |
 |---:|---|---|

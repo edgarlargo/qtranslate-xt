@@ -5,8 +5,9 @@ Branch: `modernisation`
 
 Current release status: **BLOCKED**. A real installation returns HTTP 500 with
 qTranslate-XT Modern active and recovers when the plugin is deactivated. The
-previous exact ZIP is withdrawn pending the production fatal-error stack trace,
-remediation and a complete rerun of the ordered release gates.
+previous exact ZIP is withdrawn. The full ordered local/CI sequence now passes
+with a new exact ZIP, but production promotion remains blocked pending the
+production fatal-error stack trace and remediation.
 
 Status is limited to what was actually executed. `PASS` never means inferred
 compatibility with an absent WordPress or third-party runtime.
@@ -25,6 +26,7 @@ compatibility with an absent WordPress or third-party runtime.
 | `git diff --check` | **PASS** | no whitespace errors |
 | Module loader traversal regression | **PASS** | registry, traversal, wrapper, absolute/unknown/corrupt-state cases covered |
 | Exact-ZIP HTTP language/REST routes | **PASS local and CI** | local actual-theme lab passed; run `33879843211` passed LV/RU/EN, raw-marker rejection, REST and Store API against the exact installed ZIP |
+| Post-audit exact-ZIP construction/install | **PASS** | run `33880500389`, source `48a816b`, SHA-256 `3a8a9ef2…e07f5`, 1,140 entries, Redis connected |
 | Real production activation | **FAIL / BLOCKER** | production HTTP 500 only while qTranslate-XT Modern is active; exact PHP fatal/stack trace not yet available |
 
 Release CI uses exact Node 24.11.1, installs the lock graph with lifecycle

@@ -30,6 +30,11 @@ again passed 176/176 on WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
 MySQL 8.4.11, Redis 7.4.11 and HPOS. It also installed/reactivated the exact
 ZIP and passed LV/RU/EN HTTP, WordPress REST and Store API routes. This closes
 the current Woo gate but does not resolve the separate production HTTP 500.
+Post-audit run
+[`33880500389`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33880500389)
+repeated the same complete matrix and exact HTTP/install checks from audit
+commit `48a816b`; Redis remained connected. The local RC is therefore current
+for WooCommerce 11.0.1 compatibility evidence.
 
 | Area | Current implementation | Status |
 | --- | --- | --- |
