@@ -13,7 +13,7 @@ compatibility with an absent WordPress or third-party runtime.
 | PHPUnit PHP 8.1–8.5 | **PASS CI** | 349 tests, 8054 assertions per runtime, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
-| JavaScript shared corpus/security | **PASS** | 27 corpus cases plus 5 Node tests; ACF bridge text-only DOM assertion PASS |
+| JavaScript shared corpus/security | **PASS local; CI PENDING** | 27 corpus cases plus 6 Node tests; ACF bridge value round-trip and text-only DOM assertions PASS |
 | Webpack production build | **PASS** | Node 24.11.1 CI rebuild matched all committed bundles exactly |
 | npm audit | **PASS** | 0 development/runtime advisories after lock-graph update |
 | Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
@@ -60,7 +60,7 @@ digests. The local Node 18.14 engine warning is therefore not release evidence.
 | Options API (`option`/`options`) | **PASS ACF Free 6.8.8 and Pro Options Page 5.7.7 runtime/storage** |
 | Text/Textarea/WYSIWYG frontend LV/RU/EN | **PASS — ACF Free 6.8.8 and Pro 5.7.7; interactive browser JS NOT EXECUTED** |
 | Group/Repeater/Flexible Content | **PASS native runtime — ACF Pro 5.7.7** |
-| Built-in ACF Options language tabs | **PASS local and CI** — text-only tabs, initial/dynamic fields, no `active_plugins` mutation; interactive browser click test NOT EXECUTED |
+| Built-in ACF Options language panels | **PASS local; CI PENDING** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; interactive browser click test NOT EXECUTED |
 
 Repository unit tests for runtime capability detection, field schema,
 projection/merge, stable field keys, nested leaves, dynamic ACF JS actions and
@@ -148,6 +148,7 @@ listed in `FINAL-SECURITY-REAUDIT.md`.
 A real Cart/Checkout Blocks report invalidated the previous broad cart claim
 and the associated archive. The Store API/frontend-filter and dynamic text
 adapter remediation passes the expanded MySQL/Redis CI, and its delta security
-re-audit is **PASS**. The later built-in ACF Options Bridge passed delta
-security review, post-audit PHP/JS and WooCommerce CI, and exact-ZIP
-installation. Final distribution gate: **PASS**.
+re-audit is **PASS**. The first built-in ACF Options Bridge passed its delta
+gates. Its later expansion to the complete standalone 0.4 isolated-panel
+behavior passes local tests but requires a new delta security review, PHP/JS
+and WooCommerce CI, and exact-ZIP installation before distribution.

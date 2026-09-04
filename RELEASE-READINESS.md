@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
-Date: 2026-09-03
-Decision: **READY — ALL MANDATORY RELEASE GATES PASS**
+Date: 2026-09-04
+Decision: **NOT READY — EXPANDED ACF BRIDGE DELTA GATES PENDING**
 
 ## Mandatory release gates
 
@@ -9,9 +9,9 @@ Decision: **READY — ALL MANDATORY RELEASE GATES PASS**
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
 | 2 | WooCommerce MySQL/Redis CI | **PASS** — final run `33786089998`, 176/176 assertions |
-| 3 | Final security re-audit | **PASS** — includes ACF Options Bridge delta audit |
+| 3 | Final security re-audit | **PENDING** — expanded Safe Bridge 0.4 behavior requires delta audit |
 | 4 | Fix release-blocking re-audit findings | **PASS** — remediation commit `7a0ca65` |
-| 5 | Build and validate final RC ZIP | **PASS** — run `33786089998`, exact ZIP installed and retested |
+| 5 | Build and validate final RC ZIP | **PENDING** — previous ZIP predates expanded bridge behavior |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
 Blocks report exposed a missing Store API path in the original Woo matrix, so
@@ -69,7 +69,7 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 - Woo product/cart/checkout/order/HPOS/email/REST/AJAX/cache matrix:
   **PASS** on the current remediation commit.
 
-## Final release-candidate ZIP
+## Withdrawn pre-expanded-bridge ZIP
 
 - File: `build/qtranslate-xt-4.0.0-rc1.zip`
 - Source commit: `f793c024b0cf48d086d15552ccfca872db6536d8`
@@ -82,10 +82,12 @@ conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
   `dist/modules/acf.js`: **present**
 - Forbidden development/private/database/mail content: **0 entries**
 
-The exact bytes were built by `git archive`, installed and activated in a
+These previously designated bytes were built by `git archive`, installed and activated in a
 second disposable WordPress 7.1 site, exercised against the WooCommerce matrix,
 downloaded independently and matched to the raw SHA-256 printed before artifact
-upload. Redis remained connected after the archive test.
+upload. Redis remained connected after the archive test. They are now withdrawn
+because they predate the complete isolated-panel behavior imported from Safe
+Bridge 0.4.0.
 
 ## Withdrawn pre-ACF-bridge ZIP
 
@@ -135,6 +137,7 @@ Follow `UPGRADE.md`: take complete database/files backups, validate on staging,
 do not run database conversion automatically, and retain the previous plugin
 directory plus database backup for rollback.
 
-Only the exact ZIP identified above is the designated release candidate. Older
-copies with the same filename or `qtranslate-xt-modern-rc1.zip` are staging or
-withdrawn artifacts and must not be distributed.
+No ZIP is currently designated for distribution. All existing copies named
+`qtranslate-xt-4.0.0-rc1.zip` or `qtranslate-xt-modern-rc1.zip` are staging or
+withdrawn artifacts until the expanded bridge passes delta security, CI and a
+new exact-archive run.

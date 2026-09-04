@@ -116,6 +116,14 @@ class QTX_Module_Acf_Admin {
      * Load javascript and stylesheets on admin pages
      */
     public function admin_enqueue_scripts(): void {
+        $acf_options = get_option( QTX_OPTIONS_MODULE_ACF, array() );
+        if ( ! is_array( $acf_options ) ) {
+            $acf_options = array();
+        }
+        // Complete older saved settings with new safe defaults without
+        // overriding any explicit administrator preference.
+        $acf_options = array_replace_recursive( self::default_options(), $acf_options );
+
         wp_enqueue_style( 'qtranslate-acf', plugins_url( 'css/modules/acf.css', QTRANSLATE_FILE ),
             array( 'acf-input' ), QTX_VERSION );
 
@@ -127,7 +135,7 @@ class QTX_Module_Acf_Admin {
             'wp-hooks',
         ), QTX_VERSION );
 
-        wp_localize_script( 'qtranslate-acf', 'qTranslateModuleAcf', get_option( QTX_OPTIONS_MODULE_ACF, self::default_options() ) );
+        wp_localize_script( 'qtranslate-acf', 'qTranslateModuleAcf', $acf_options );
     }
 
     /**

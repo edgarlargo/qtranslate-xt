@@ -76,15 +76,22 @@ multilingual strings after LV/RU/EN reads.
 
 ## Built-in ACF Options Bridge Safe
 
-The behavior formerly described as `qTranslate-XT ACF Options Bridge Safe` is
-native. The value adapter registers its type-specific format filters before the
-late ACF runtime bootstrap, and the ACF admin bundle adds local language tabs
-to enabled Text/Textarea fields on ACF forms, including Options Pages. Initial
-fields and fields appended by Group/Repeater/Flexible Content use the same
-official qTranslate content hook and language-switch event.
+The complete editing behavior of `qTranslate-XT ACF Options Bridge Safe 0.4.0`
+is native. The value adapter registers its type-specific format filters before
+the late ACF runtime bootstrap. For ordinary Text/Textarea fields, the ACF admin
+bundle creates one local edit panel per enabled language and keeps the original
+named ACF input as the single serialized submission field. This works on
+Options Pages and other ACF forms without depending on a global language switch.
+Initial fields and dynamically appended Group/Repeater/Flexible Content leaves
+are handled through current `new_field/type=*` and ACF 5.x `append` actions.
 
-Tab labels are created with `textContent`; the bridge does not write HTML,
-register an endpoint, install another ACF copy or mutate `active_plugins`.
+Plain legacy values are assigned only to the configured default language. The
+native parser reads bracket, comment and curly formats, while serialization uses
+the canonical bracket format and preserves content from currently disabled
+languages. Tab labels and editors are created with DOM properties and
+`textContent`; the bridge does not write HTML, register an endpoint, install
+another ACF copy or mutate `active_plugins`. If the standalone 0.4 bridge is
+still active, its marker is detected so a second editor is not attached.
 Existing explicit ACF-module preferences are respected. On a new configuration
 the tabs are enabled by default and can be disabled in the ACF integration
 settings without disabling value translation.

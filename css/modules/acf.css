@@ -46,6 +46,31 @@
     color: #fff;
 }
 
+.qtx-acf-options-original {
+    position: absolute !important;
+    left: -10000px !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.qtx-acf-language-panels,
+.qtx-acf-language-panel,
+.qtx-acf-language-input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.qtx-acf-language-panel[hidden] {
+    display: none !important;
+}
+
+textarea.qtx-acf-language-input {
+    min-height: 110px;
+    resize: vertical;
+}
+
 .acf_wysiwyg .wp-editor-container,
 .acf-editor-wrap .wp-editor-container {
     border: 1px solid #e5e5e5 !important;

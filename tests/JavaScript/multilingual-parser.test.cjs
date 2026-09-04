@@ -25,6 +25,19 @@ function loadParser(configuration) {
 const parser = loadParser(corpus.configuration);
 const cases = corpus.cases.filter((entry) => entry.runtimes.includes('js'));
 
+function loadAcfBridgeValues() {
+    let source = fs.readFileSync(path.join(root, 'js', 'acf', 'options-bridge-values.js'), 'utf8');
+    source = source
+        .replace("import {splitLangs} from '../core/multi-lang';", '')
+        .replaceAll('export const ', 'const ')
+        .concat('\nmodule.exports = {normalizeBridgeLanguages, parseBridgeValue, serializeBridgeValue};\n');
+    const module = {exports: {}};
+    vm.runInNewContext(source, {splitLangs: parser.splitLangs, module, Object, Array, String, RegExp}, {
+        filename: 'js/acf/options-bridge-values.js',
+    });
+    return module.exports;
+}
+
 function rawValue(entry) {
     if (typeof entry.raw === 'string') return entry.raw;
     const generator = entry.raw_generator;
@@ -90,12 +103,34 @@ test('WooCommerce block strings select the active language without HTML sinks', 
     assert.match(domSource, /i18n\.gettext/);
 });
 
-test('ACF Options bridge uses the native language hook and text-only tabs', () => {
+test('ACF Options bridge uses isolated text-only panels and a named original field', () => {
     const source = fs.readFileSync(path.join(root, 'js', 'acf', 'options-bridge.js'), 'utf8');
 
     assert.match(source, /qTranslateModuleAcf\?\.show_language_tabs/);
-    assert.match(source, /qTranx\.hooks\.switchActiveLanguage\(language\)/);
+    assert.match(source, /qtx-acf-options-original/);
+    assert.match(source, /serializeBridgeValue\(values, languages\)/);
+    assert.match(source, /document\.createElement\(fieldType === 'textarea'/);
     assert.match(source, /tab\.textContent = language\.toUpperCase\(\)/);
-    assert.match(source, /qtranx\.languageSwitch/);
     assert.doesNotMatch(source, /innerHTML|outerHTML|insertAdjacentHTML|document\.write|active_plugins/);
+});
+
+test('ACF Options bridge round-trips configured and disabled language values', () => {
+    const bridge = loadAcfBridgeValues();
+    const languages = bridge.normalizeBridgeLanguages({lv: {}, ru: {}, en: {}, '<bad>': {}});
+    assert.deepStrictEqual(Array.from(languages), ['lv', 'ru', 'en']);
+
+    const plain = bridge.parseBridgeValue('Sākuma teksts', languages, 'lv');
+    assert.equal(plain.lv, 'Sākuma teksts');
+    assert.equal(plain.ru, '');
+    assert.equal(plain.en, '');
+
+    const values = bridge.parseBridgeValue('[:lv]Latviski[:ru]Русский[:en]English[:de]Deutsch[:]', languages, 'lv');
+    assert.equal(values.lv, 'Latviski');
+    assert.equal(values.ru, 'Русский');
+    assert.equal(values.en, 'English');
+    assert.equal(values.de, 'Deutsch');
+    assert.equal(
+        bridge.serializeBridgeValue(values, languages),
+        '[:lv]Latviski[:ru]Русский[:en]English[:de]Deutsch[:]',
+    );
 });

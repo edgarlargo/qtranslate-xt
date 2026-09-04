@@ -1,9 +1,8 @@
 ### 4.0.0-rc1 — QTX 4 development release candidate
 
 This is a development release candidate, not an official upstream
-qTranslate-XT release. Production promotion remains subject to the external
-WooCommerce transactional gate recorded in the repository release-readiness
-report.
+qTranslate-XT release. Production promotion is governed by the security,
+integration and exact-archive gates recorded in the repository readiness report.
 
 * Added a lossless multilingual core and compatibility facades backed by the
   characterization corpus; existing inline storage is unchanged.
@@ -17,9 +16,11 @@ report.
   schema/editing foundations and dynamic admin field handling.
 * Register ACF Options value filters before a theme-embedded runtime starts, so
   standard Text/Textarea/WYSIWYG values no longer require an external bridge.
-* Integrated the safe ACF Options UI bridge: standard Text/Textarea fields on
-  Options Pages receive text-only language tabs without modifying
-  `active_plugins`.
+* Integrated the complete safe ACF Options Bridge 0.4 behavior: standard
+  Text/Textarea fields receive isolated per-language edit panels, serialize
+  through the original named ACF input, preserve disabled-language content and
+  support initial plus dynamically appended ACF 5.x/6.x fields without
+  modifying `active_plugins`.
 * Accept stable Unicode ACF field keys (for example Latvian and Cyrillic keys)
   while continuing to reject spaces, path separators and control characters.
 * Repair the packaged `i18n-config.json` option when upgrading from a plugin
@@ -28,8 +29,8 @@ report.
 * Added PHP 8.1–8.5, JavaScript corpus and real WordPress 7.1 smoke testing.
 * Declared WordPress 7.1 in the public `Tested up to` metadata after validating
   activation, frontend, REST and block-editor save/autosave/conflict paths.
-* This is not yet an RC: comprehensive WooCommerce transactional, email, REST
-  and persistent-cache tests remain blocked by the missing integration lab.
+* Release status and exact validated archive identity are maintained in
+  `RELEASE-READINESS.md`.
 
 ### 3.16.1
 * Fix `array_any` not supported in PHP 7.4 (#1473)

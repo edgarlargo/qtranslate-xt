@@ -197,9 +197,10 @@ green at 349 tests / 8054 assertions.
 
 ## Known blockers
 
-No release blocker remains. ACF Pro 5.7.7, final security, the built-in ACF
-Options Bridge and expanded WooCommerce Store API/MySQL/Redis gates pass. The
-post-audit exact ZIP passed installation, matrix and integrity verification.
+The earlier ACF Pro 5.7.7, security and WooCommerce gates remain resolved. The
+built-in bridge is now expanded to the complete Safe Bridge 0.4 isolated-panel
+behavior; its new delta security, CI and exact-ZIP gates are pending, so no
+release archive is currently designated.
 
 ## Security status
 
@@ -224,8 +225,7 @@ post-audit exact ZIP passed installation, matrix and integrity verification.
 
 ## Next planned phase
 
-Deploy `build/qtranslate-xt-4.0.0-rc1.zip` with SHA-256
-`53ca21bf862200a06f3ac69c014573ae94e1bd4645cbc6d2168a3958221d0868` to
-staging and visually verify an ACF Options Page plus the reported RU
-Cart/Checkout pages. Do not distribute previous artifacts; their withdrawn
-SHA-256 values remain recorded for traceability.
+Complete the expanded ACF bridge delta audit, rerun PHP/JS and WooCommerce CI,
+then build and validate a new exact ZIP. Deploy only those new bytes to staging
+and visually verify an ACF Options Page plus the reported RU Cart/Checkout
+pages. Previous artifacts remain withdrawn for traceability.

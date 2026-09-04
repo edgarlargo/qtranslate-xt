@@ -34,7 +34,7 @@ wp.hooks.addAction('qtranx.load', 'qtranx/acf/load', function () {
             // They are given as .acf-field but the hooks must be set on the child elements like input and texts.
             settingField.$el.find('input:text, textarea').each(function () {
                 const element = this;
-                if (!qTranx.hooks.hasContentHook(element) && isTranslatableGroupElement(element)) {
+                if (!qTranx.hooks.hasContentHook(element.id) && isTranslatableGroupElement(element)) {
                     qTranx.hooks.addContentHook(element);
                 }
             });
@@ -51,24 +51,24 @@ wp.hooks.addAction('qtranx.load', 'qtranx/acf/load', function () {
         // The general case is for content fields, not in ACF settings.
         return isTranslatableStandardField(element.type);
     }
-    const attachStandardField = function (field, selector) {
+    const attachStandardField = function (field, fieldType, selector) {
         if (!field) {
             return;
         }
         const fieldElement = field.$el ? field.$el : $(field);
-        let hasTranslatableInput = false;
+        const bridgeInput = fieldElement.find(selector).first()[0];
+        if (bridgeInput && isTranslatableElementForPostType(bridgeInput, postType) &&
+            attachSafeOptionsTabs(fieldElement, fieldType, selector)) {
+            return;
+        }
         fieldElement.find(selector).each(function () {
             if (!isTranslatableElementForPostType(this, postType)) {
                 return;
             }
-            if (!qTranx.hooks.hasContentHook(this)) {
+            if (!qTranx.hooks.hasContentHook(this.id)) {
                 qTranx.hooks.addContentHook(this);
             }
-            hasTranslatableInput = hasTranslatableInput || qTranx.hooks.hasContentHook(this);
         });
-        if (hasTranslatableInput) {
-            attachSafeOptionsTabs(fieldElement);
-        }
     };
 
     // Add hooks for translatable standard fields, defined as field type -> selector.
@@ -78,16 +78,30 @@ wp.hooks.addAction('qtranx.load', 'qtranx/acf/load', function () {
     };
     $.each(fieldTypes, function (fieldType, selector) {
         acf.findFields({type: fieldType}).each(function () {
-            attachStandardField(this, selector);
+            attachStandardField(this, fieldType, selector);
         });
         // ACF emits this official action for fields appended later by Group,
         // Repeater and Flexible Content. Initial fields are handled by the scan
         // above because their new_field action may predate qtranx.load.
         acf.addAction('new_field/type=' + fieldType, function (field) {
-            attachStandardField(field, selector);
+            attachStandardField(field, fieldType, selector);
             if (qTranx.config.isEditorModeLSB()) {
                 syncLanguageSwitch(qTranx.hooks.getActiveLanguage());
             }
+        });
+    });
+
+    // ACF 5.x exposes the broader append action used by the standalone Safe
+    // Bridge. Keep it as a compatibility fallback; the field marker makes the
+    // callback idempotent when newer new_field/type=* actions also fire.
+    acf.addAction('append', function (appended) {
+        const root = appended?.$el ? appended.$el : $(appended);
+        $.each(fieldTypes, function (fieldType, selector) {
+            root.find('.acf-field[data-type="' + fieldType + '"]')
+                .addBack('.acf-field[data-type="' + fieldType + '"]')
+                .each(function () {
+                    attachStandardField(this, fieldType, selector);
+                });
         });
     });
 
