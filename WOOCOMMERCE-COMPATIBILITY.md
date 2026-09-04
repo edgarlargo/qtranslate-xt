@@ -10,8 +10,9 @@ block interface itself was translated. The Store API and client adapter were
 still registered only through the legacy Woo module state. The replacement
 registers both paths from the core bootstrap and adds an integration run with
 `woo-commerce` explicitly inactive. PHP/JavaScript run `33873804508`, Woo run
-`33873804477` and the delta security audit passed. A final post-audit exact ZIP
-is pending; the previous archive remains withdrawn.
+`33873804477` and the delta security audit passed. Post-audit runs `33874105427`
+and `33874105335` then passed the same gates and exact-ZIP installation. The
+replacement archive is designated; all earlier hashes remain withdrawn.
 
 The latest ACF frontend fallback is outside WooCommerce behavior but changes
 production bytes. Required rerun

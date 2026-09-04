@@ -445,4 +445,13 @@ bundle reproducibility. WooCommerce run
 first passed the exact Russian title with legacy Woo module state inactive,
 then passed the complete **176/176** WordPress 7.1/WooCommerce 11.0.1/MySQL
 8.4.11/Redis 7.4.11/HPOS matrix and retained Redis connectivity. Security gates
-3 and 4 are complete; a fresh post-audit exact ZIP remains required.
+3 and 4 are complete. Post-audit PHP/JavaScript run
+[`33874105427`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33874105427)
+reconfirmed 354 tests / 8090 assertions and six JavaScript tests. Exact-ZIP run
+[`33874105335`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33874105335)
+reconfirmed the inactive-module title and 176/176 matrix, installed/reactivated
+the exact archive and retained Redis connectivity. Independent verification
+matched SHA-256
+`19fa840eb4c7467d0d04df212122d253e383a8907882aa4fedc3e17d5d3bcc55`,
+size 1,471,467 bytes and 1,140 entries, with one `qtranslate-xt/` root, all
+required Latvian/Woo/ACF adapters and zero forbidden entries. Gate 5: **PASS**.

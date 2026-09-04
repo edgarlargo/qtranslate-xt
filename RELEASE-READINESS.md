@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **NOT READY — FINAL POST-AUDIT ZIP PENDING**
+Decision: **READY — ALL MANDATORY GATES PASS**
 
 ## Mandatory release gates
 
@@ -11,7 +11,7 @@ Decision: **NOT READY — FINAL POST-AUDIT ZIP PENDING**
 | 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33873804477`; inactive-module regression plus 176/176 matrix |
 | 3 | Final security re-audit | **PASS** — Woo core-bootstrap delta audited at `26b49ee`; zero confirmed findings |
 | 4 | Fix release-blocking re-audit findings | **PASS** — delta found no release-blocking finding |
-| 5 | Build and validate final RC ZIP | **PENDING** — previously designated bytes are withdrawn |
+| 5 | Build and validate final RC ZIP | **PASS** — run `33874105335`; exact downloaded bytes independently verified |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
 Blocks report exposed a missing Store API path in the original Woo matrix, so
@@ -23,9 +23,9 @@ its own delta security review, full CI and a new exact-ZIP validation.
 ## Current automated evidence
 
 - GitHub PHP/JavaScript run
-  [`33872439659`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33872439659):
-  **PASS** on post-audit commit `8fe046c466418f5d8e787ff4ddda9c6cf5456847`.
-- PHP 8.1–8.5: **353 tests / 8078 assertions** on every runtime.
+  [`33874105427`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33874105427):
+  **PASS** on post-audit commit `a9a1a6713876c0e5c736100150c3218baa358bc9`.
+- PHP 8.1–8.5: **354 tests / 8090 assertions** on every runtime.
 - PHP 7.4/8.0 production lint: **PASS**.
 - Node 24: `npm ci --ignore-scripts`, audit, six JavaScript tests,
   production build and exact committed-bundle comparison: **PASS**, zero
@@ -34,11 +34,11 @@ its own delta security review, full CI and a new exact-ZIP validation.
   advisories.
 - Module-loader security runner and `git diff --check`: **PASS**.
 - GitHub WooCommerce run
-  [`33872439685`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33872439685):
+  [`33874105335`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33874105335):
   **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11, Redis Object Cache 2.8.0 and HPOS. The same job
-  built, inspected, installed, reactivated and published the designated exact
-  post-audit ZIP from `8fe046c`.
+  first passed the inactive-module Russian product-title regression, then built,
+  inspected, installed, reactivated and published the designated exact ZIP.
 
 ## Security decision
 
@@ -55,25 +55,25 @@ The final audit found and fixed release-integrity and output-hardening defects:
 Open confirmed Critical/High/Medium/Low findings: **0**. Non-blocking
 conditional observations are recorded in `FINAL-SECURITY-REAUDIT.md`.
 
-## Withdrawn pre-Woo-product-title-fix ZIP
+## Final designated post-Woo-product-title-fix ZIP
 
 - File: `build/qtranslate-xt-4.0.0-rc1.zip`
-- Source commit: `8fe046c466418f5d8e787ff4ddda9c6cf5456847`
-- PHP/JavaScript workflow: `33872439659` — **PASS**
-- WooCommerce/exact-ZIP workflow: `33872439685` — **PASS**, 176/176
-- SHA-256: `e9f53257b486fc6749b58f831b31d094a84cda61c8332e835e6e4663d96a53f7`
-- Size: **1,470,737 bytes**
-- ZIP entries: **1,139**
+- Source commit: `a9a1a6713876c0e5c736100150c3218baa358bc9`
+- PHP/JavaScript workflow: `33874105427` — **PASS**
+- WooCommerce/exact-ZIP workflow: `33874105335` — **PASS**, inactive-module regression plus 176/176
+- SHA-256: `19fa840eb4c7467d0d04df212122d253e383a8907882aa4fedc3e17d5d3bcc55`
+- Size: **1,471,467 bytes**
+- ZIP entries: **1,140**
 - Top-level root: exactly `qtranslate-xt/`
-- Latvian MO, Woo Blocks bundle, ACF bundle and
-  `AcfSafeBridgeValueAdapter.php`: **present**
+- Latvian MO, Woo Blocks bundle, ACF bundle, `AcfSafeBridgeValueAdapter.php`
+  and `WooCommerceBlocksAdapter.php`: **present**
 - Forbidden development/private/database/mail content: **0 entries**
 
 The workflow built with `git archive`, inspected, installed, activated and
-exercised these exact bytes in fresh WordPress 7.1. A later real Gutenberg Cart
-report showed that a stale inactive Woo module state could still expose the raw
-multilingual product title. These bytes are withdrawn despite their prior CI
-result.
+exercised these exact bytes in fresh WordPress 7.1. It explicitly set the legacy
+Woo module inactive and verified the reported Russian title before restoring
+the state and running the full matrix. Independent SHA/entry inspection matches
+the pre-upload values; Redis remained connected.
 
 ## Integration evidence retained
 
@@ -177,7 +177,6 @@ Follow `UPGRADE.md`: take complete database/files backups, validate on staging,
 do not run database conversion automatically, and retain the previous plugin
 directory plus database backup for rollback.
 
-No ZIP is currently designated for staging/distribution. Every existing copy
-named `qtranslate-xt-4.0.0-rc1.zip` or `qtranslate-xt-modern-rc1.zip` is
-withdrawn until the Woo core-bootstrap delta passes CI, security re-audit and
-a fresh exact-archive run.
+Only the final ZIP identified above is designated for staging/distribution.
+Older copies with the same filename or `qtranslate-xt-modern-rc1.zip` remain
+withdrawn unless their SHA-256 exactly matches the designated value.

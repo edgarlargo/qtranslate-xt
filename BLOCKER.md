@@ -5,8 +5,8 @@ Status: **RESOLVED**
 
 The WooCommerce defect gate remains resolved. The later Gutenberg product-title
 regression is fixed by core-owned Store API registration. Run `33873804477`
-passed the inactive-module fixture and the full 176/176 matrix; a post-audit
-replacement ZIP is still required.
+passed the inactive-module fixture and the full 176/176 matrix. Post-audit run
+`33874105335` repeated both and validated the designated replacement ZIP.
 
 ## Resolution
 
