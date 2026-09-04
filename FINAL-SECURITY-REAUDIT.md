@@ -9,6 +9,7 @@ Expanded-Safe-Bridge-0.4 delta audited source: `eef319b985614aad7a37eb69de99f6b1
 Post-ACF-frontend-fallback delta audited source: `8fa5f23621b22dbc0a2782326796b461b53bd713`
 Post-Woo-core-block-bootstrap delta audited source: `26b49eef7b56418d74af3f90531a239c157d5172`
 Post-exact-ZIP-HTTP-gate delta audited source: `4c7f928f49a1997f67895730099beecd095ffbd0`
+Post-Woo-system-page-fallback delta audited source: `e1979506e8fc6a93e1639d68f90f403ab847129f`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -523,3 +524,49 @@ size 1,471,467 bytes and 1,140 entries, with one `qtranslate-xt/` root,
 required Latvian/Woo/ACF files and zero forbidden entries. Local packaging
 gate: **PASS**. Production deployment gate: **BLOCKED** by the separately
 documented activation incident, not by an open security finding.
+
+## 2026-09-04 Woo system-page fallback delta security re-audit
+
+Audited source: `e1979506e8fc6a93e1639d68f90f403ab847129f`.
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the delta: **0/0/0/0**. Confirmed exploitable findings: **0**.
+
+The runtime delta is confined to `WooCommerceBlocksAdapter`. It projects the
+default-language structural `post_content` before the general qTranslate post
+availability check, and only when the post ID exactly equals WooCommerce's
+configured Cart, Checkout or My Account page ID.
+
+- The early filter is frontend-only and changes only the in-memory
+  `post_content` property. It performs no database write and leaves titles,
+  products, orders, metadata and technical fields untouched.
+- Page selection comes from trusted WooCommerce configuration through
+  `wc_get_page_id()`; no request value, route fragment or user-controlled file
+  path selects the target.
+- Projection reuses the existing parser with availability messaging disabled.
+  Parsed content remains opaque text; there is no execution, deserialization,
+  SQL construction, filesystem access or new HTML/JavaScript sink.
+- No endpoint, permission, nonce, capability, redirect, cache invalidation,
+  credential, payment, mail or external network boundary changed.
+- The late `the_content` projection is an idempotent secondary guard for the
+  same exact system-page IDs. Ordinary posts and administrative editing retain
+  the established behavior.
+- The CI-only fixture is guarded for WP-CLI, operates in the disposable test
+  database, creates a one-euro product, and uses an isolated cookie jar solely
+  to prevent WooCommerce's normal empty-cart Checkout redirect. It introduces
+  no production file or outbound payment/mail traffic and is excluded from the
+  release ZIP.
+
+Pre-audit PHP/JavaScript run
+[`33884190527`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884190527)
+passed **356 tests / 8120 assertions** on each PHP 8.1-8.5 runtime plus all
+lint, JavaScript, audit, build and reproducibility gates. WooCommerce run
+[`33884190637`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884190637)
+passed the complete **176/176** matrix on WordPress 7.1, WooCommerce 11.0.1,
+PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and HPOS. It installed the exact archive
+and proved `/ru/cart/`, session-backed `/lv/checkout/` and
+`/ru/my-account/` render the English-only shared structural document without
+the unavailable-language notice. Redis remained connected.
+
+Security gates 3 and 4 for this delta are complete. Gate 5 must now rebuild and
+validate new exact bytes from the audit commit. The independent production
+HTTP 500 blocker remains open pending its fatal stack trace.

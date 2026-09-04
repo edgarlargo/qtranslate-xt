@@ -33,8 +33,36 @@ the current Woo gate but does not resolve the separate production HTTP 500.
 Post-audit run
 [`33880500389`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33880500389)
 repeated the same complete matrix and exact HTTP/install checks from audit
-commit `48a816b`; Redis remained connected. The local RC is therefore current
-for WooCommerce 11.0.1 compatibility evidence.
+commit `48a816b`; Redis remained connected. That archive is now superseded by
+the system-page fallback described below.
+
+## Cart, Checkout and My Account structural-page fallback
+
+WooCommerce uses one configured WordPress page as the structural document for
+each of Cart, Checkout and My Account. A migrated site can have that block or
+shortcode document stored only in the former default language. Treating it as
+an ordinary article caused qTranslate-XT to replace the whole page with the
+"available only in ENG" notice, even though WooCommerce could translate the
+dynamic block UI and product data correctly.
+
+The core Woo adapter now selects the default-language structural document for
+only the exact configured `cart`, `checkout` and `myaccount` page IDs before
+the general post availability check. It changes only `post_content` on the
+frontend. Page titles, products, orders, prices, stock, tax, IDs and stored raw
+multilingual values are untouched. Editors therefore keep one Cart block, one
+Checkout block and one My Account page; separate copies per language are not
+required.
+
+GitHub run
+[`33884190637`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884190637)
+passed the complete **176/176** transactional matrix and exact-ZIP install on
+commit `e197950`, then proved the English-only structural fixture at
+`/ru/cart/`, `/lv/checkout/` with a real cart session, and `/ru/my-account/`.
+WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and HPOS
+were used; Redis remained connected. Companion run `33884190527` passed 356
+tests / 8120 assertions on each PHP 8.1-8.5 runtime. The delta security audit
+found zero confirmed Critical, High, Medium or Low issues. A new post-audit
+ZIP gate is required before designating replacement bytes.
 
 | Area | Current implementation | Status |
 | --- | --- | --- |

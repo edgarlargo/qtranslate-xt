@@ -209,7 +209,8 @@ working: run `33879843135` passes the 355-test PHP 8.1–8.5 matrix and run
 installation plus LV/RU/EN HTTP/REST/Store API checks. The delta security audit
 also passes with zero confirmed findings. Post-audit runs `33880500490` and
 `33880500389` pass the full PHP/JavaScript and exact-ZIP gates. The local RC is
-`build/qtranslate-xt-4.0.0-rc1.zip`, SHA-256 `3a8a9ef2…e07f5`.
+`build/qtranslate-xt-4.0.0-rc1.zip`, SHA-256 `3a8a9ef2…e07f5`, but those bytes
+are now superseded by the later Woo system-page fallback and must not be used.
 
 Historically, the earlier designated ZIP was withdrawn after a real Gutenberg Cart path
 exposed raw product-title markers when the legacy Woo module state was inactive.
@@ -250,7 +251,11 @@ The previous `449209…b0047` archive is withdrawn.
 
 ## Next planned phase
 
-The local/CI release sequence is complete. Do not deploy its artifact to
+The Woo system-page fallback passed pre-audit PHP run `33884190527` (356 tests /
+8120 assertions per PHP 8.1-8.5 runtime) and MySQL/Redis run `33884190637`
+(176/176 plus exact Cart/Checkout/My Account HTTP routes). Its delta security
+audit has no confirmed finding. The next mandatory step is the post-audit
+exact-ZIP gate; earlier ZIPs are superseded. Do not deploy an artifact to
 production. Capture the production fatal-error stack and fix the confirmed
 cause before production designation. Previous artifacts remain withdrawn for
 traceability.

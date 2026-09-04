@@ -35,14 +35,15 @@ release-blocking finding discovered by the final audit are remediated and
 regression-tested. The current runtime has no confirmed open Critical, High,
 Medium or Low issue; the final security gate authorizes exact release-candidate
 ZIP construction and validation, not publication without that package check.
-The latest delta audit covers source `4c7f928`, after successful PHP/JavaScript
-run `33879843135` and WooCommerce/MySQL/Redis/exact-HTTP run `33879843211`.
-It adds no runtime code and records zero new confirmed findings. The separate
-production activation HTTP 500 remains a compatibility release blocker until
-its fatal stack trace is captured; security PASS does not waive that blocker.
-Post-audit PHP/JavaScript run `33880500490` and exact-ZIP run `33880500389`
-subsequently passed; the independently verified local archive SHA-256 is
-`3a8a9ef2a18733a5bd8599d57df6ffa53d0f2a0feab5028199fa1c19947e07f5`.
+The latest delta audit covers source `e197950`, after successful PHP/JavaScript
+run `33884190527` and WooCommerce/MySQL/Redis/exact-HTTP run `33884190637`.
+It adds a frontend-only, exact-page-ID structural fallback for WooCommerce
+Cart, Checkout and My Account and records zero new confirmed findings. The
+post-audit exact-ZIP gate is pending, so the prior archive SHA-256
+`3a8a9ef2a18733a5bd8599d57df6ffa53d0f2a0feab5028199fa1c19947e07f5`
+is superseded. The separate production activation HTTP 500 remains a
+compatibility release blocker until its fatal stack trace is captured;
+security PASS does not waive that blocker.
 
 ## Reporting information
 

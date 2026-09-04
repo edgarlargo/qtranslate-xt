@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **LOCAL RC VALIDATED — PRODUCTION ACTIVATION BLOCKER OPEN**
+Decision: **CURRENT POST-AUDIT ZIP PENDING — PRODUCTION ACTIVATION BLOCKER OPEN**
 
 ## Current production incident
 
@@ -22,9 +22,12 @@ leakage, WordPress REST and Woo Store API. It passes in the local disposable
 lab and GitHub run `33879843211`, together with the 176-assertion MySQL/Redis
 matrix and exact-ZIP install/reactivation. Companion run `33879843135` passes
 PHP 8.1–8.5 at 355 tests / 8102 assertions, lint, JavaScript, audit and bundle
-reproducibility. The current delta security re-audit passes with zero confirmed
-findings. A post-audit gate-5 run is still required, and no current ZIP is
-approved for production while the real fatal error remains unexplained.
+reproducibility. A later Woo system-page fallback now suppresses the ordinary
+missing-translation notice only for configured Cart, Checkout and My Account
+documents. Pre-audit runs `33884190527` and `33884190637` pass, including exact
+HTTP checks for all three pages. Its delta security re-audit passes with zero
+confirmed findings. A new post-audit gate-5 run is required, and no current ZIP
+is approved for production while the real fatal error remains unexplained.
 
 ## Mandatory release gates
 
@@ -32,13 +35,12 @@ The table below records the last completed historical cycle. Its final ZIP is
 now **WITHDRAWN** by the later production incident and is not current release
 approval.
 
-Current incident-cycle progress: gate 1 remains resolved; gate 2 passed in run
-`33879843211`; gates 3 and 4 passed for source `4c7f928` with no new finding;
-gate 5 passed post-audit in run `33880500389`. The production activation
-incident remains an independent release blocker despite the completed
-local/CI release sequence.
+Current system-page cycle progress: gate 1 remains resolved; gate 2 passed in
+run `33884190637`; gates 3 and 4 passed for source `e197950` with no new
+finding; gate 5 is pending. The production activation incident remains an
+independent release blocker.
 
-## Current locally validated release candidate
+## Superseded locally validated release candidate
 
 - File: `build/qtranslate-xt-4.0.0-rc1.zip`
 - Source commit: `48a816ba3544fa172bee1e64811daeb83ba4fcf2`
@@ -51,11 +53,13 @@ local/CI release sequence.
 - Latvian MO, Woo Blocks bundle, ACF bundle and core adapters: **present**
 - Forbidden development/private/database/mail content: **0 entries**
 
-This exact archive was built only after the delta security report commit,
+This exact archive was built only after its earlier delta security report commit,
 installed, activated, deactivated/reactivated and exercised through LV/RU/EN,
 WordPress REST and Woo Store API routes. It is the complete local RC artifact.
-Do not install it on production until the open production fatal is identified
-and remediated.
+It predates the Woo system-page fallback and is therefore superseded. Do not
+install it; a replacement may be designated only after the current post-audit
+gate 5 succeeds. Production additionally remains blocked until the open fatal
+is identified and remediated.
 
 | Order | Gate | Result |
 |---:|---|---|
