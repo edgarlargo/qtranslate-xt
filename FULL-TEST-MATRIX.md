@@ -3,13 +3,12 @@
 Date: 2026-09-04
 Branch: `modernisation`
 
-Current release status: **POST-AUDIT ZIP GATE PENDING; PRODUCTION BLOCKED**. A
+Current release status: **LOCAL RC VALIDATED; PRODUCTION BLOCKED**. A
 real installation returns HTTP 500 with qTranslate-XT Modern active and
-recovers when the plugin is deactivated. The previous exact ZIP is superseded
-by the Woo system-page runtime fix. Its MySQL/Redis gate and delta security
-audit pass; replacement bytes may be designated only after the post-audit
-exact-ZIP workflow. Production promotion separately remains blocked pending
-the production fatal-error stack trace and remediation.
+recovers when the plugin is deactivated. The replacement Woo system-page ZIP
+passed its MySQL/Redis gate, delta security audit and post-audit exact-ZIP
+workflow. Production promotion separately remains blocked pending the
+production fatal-error stack trace and remediation.
 
 Status is limited to what was actually executed. `PASS` never means inferred
 compatibility with an absent WordPress or third-party runtime.
@@ -18,7 +17,7 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1–8.5 | **PASS CI** | run `33884190527`: 356 tests, 8120 assertions per runtime, 0 failures/errors |
+| PHPUnit PHP 8.1–8.5 | **PASS CI** | post-audit run `33884767613`: 356 tests, 8120 assertions per runtime, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
 | JavaScript shared corpus/security | **PASS local and CI** | 27 corpus cases plus 6 Node tests; ACF bridge value round-trip and text-only DOM assertions PASS |
@@ -27,8 +26,8 @@ compatibility with an absent WordPress or third-party runtime.
 | Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
 | `git diff --check` | **PASS** | no whitespace errors |
 | Module loader traversal regression | **PASS** | registry, traversal, wrapper, absolute/unknown/corrupt-state cases covered |
-| Exact-ZIP HTTP language/REST routes | **PASS local and CI** | local actual-theme lab passed; run `33879843211` passed LV/RU/EN, raw-marker rejection, REST and Store API against the exact installed ZIP |
-| Post-audit exact-ZIP construction/install | **PENDING FOR CURRENT DELTA** | prior run `33880500389` predates the Woo system-page fallback and its bytes are superseded |
+| Exact-ZIP HTTP language/REST routes | **PASS local and CI** | run `33884767696` passed LV/RU/EN, raw-marker rejection, Cart/Checkout/My Account shared structure, REST and Store API against the exact installed ZIP |
+| Post-audit exact-ZIP construction/install | **PASS** | run `33884767696`, source `9f34ca2`, SHA-256 `b433cc91…944644`, 1,140 entries, Redis connected |
 | Real production activation | **FAIL / BLOCKER** | production HTTP 500 only while qTranslate-XT Modern is active; exact PHP fatal/stack trace not yet available |
 
 Release CI uses exact Node 24.11.1, installs the lock graph with lifecycle
@@ -126,7 +125,16 @@ at **356 tests / 8120 assertions** on PHP 8.1-8.5 and Woo run
 at **176/176 assertions** on the pinned stack. Exact HTTP checks cover Cart,
 Checkout with a real Woo session, and My Account when the structural document
 exists only in English. The delta security audit passes with no confirmed
-findings; post-audit exact-ZIP validation remains the next mandatory gate.
+findings; the post-audit exact-ZIP validation below completed the final gate.
+
+Post-audit PHP run
+[`33884767613`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884767613)
+and Woo/exact-ZIP run
+[`33884767696`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884767696)
+subsequently passed on audit commit `9f34ca2`. The downloaded 1,472,159-byte
+archive has 1,140 entries and SHA-256 `b433cc91…944644`; the Latvian MO and
+required Woo/ACF adapters are present, with zero forbidden entries. Gate 5 is
+complete. The production HTTP 500 remains a separate blocker.
 
 Historical release-gate attempt on 2026-09-02: QTX4-SEC-001 was confirmed resolved first;
 `actionlint` 1.7.12 returned zero findings for the Woo workflow. The local

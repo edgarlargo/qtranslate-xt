@@ -254,8 +254,9 @@ The previous `449209…b0047` archive is withdrawn.
 The Woo system-page fallback passed pre-audit PHP run `33884190527` (356 tests /
 8120 assertions per PHP 8.1-8.5 runtime) and MySQL/Redis run `33884190637`
 (176/176 plus exact Cart/Checkout/My Account HTTP routes). Its delta security
-audit has no confirmed finding. The next mandatory step is the post-audit
-exact-ZIP gate; earlier ZIPs are superseded. Do not deploy an artifact to
-production. Capture the production fatal-error stack and fix the confirmed
-cause before production designation. Previous artifacts remain withdrawn for
-traceability.
+audit has no confirmed finding. Post-audit runs `33884767613` and `33884767696`
+passed, completing the exact-ZIP gate. The current local candidate is
+`build/qtranslate-xt-4.0.0-rc1.zip`, SHA-256 `b433cc91…944644`; earlier ZIPs are
+superseded. Do not deploy it to production. Capture the production fatal-error
+stack and fix the confirmed cause before production designation. Previous
+artifacts remain withdrawn for traceability.

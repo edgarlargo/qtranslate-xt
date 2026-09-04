@@ -41,9 +41,10 @@ That candidate is now superseded by the Woo system-page fallback requested
 after a real Cart page displayed the ordinary "available only in ENG" notice.
 Pre-audit runs `33884190527` and `33884190637` pass, including the complete
 176-assertion MySQL/Redis matrix and exact Cart/Checkout/My Account HTTP
-checks. The delta security audit passes with zero confirmed findings. A new
-post-audit ZIP must still be built and validated. This does not close or
-reclassify the independent production HTTP 500 blocker.
+checks. The delta security audit passes with zero confirmed findings.
+Post-audit runs `33884767613` and `33884767696` also pass; the downloaded local
+candidate has SHA-256 `b433cc91…944644`. This does not close or reclassify the
+independent production HTTP 500 blocker.
 
 ## Historical resolved WooCommerce blocker
 

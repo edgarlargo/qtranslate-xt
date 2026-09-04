@@ -62,7 +62,10 @@ WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL 8.4.11, Redis 7.4.11 and HPOS
 were used; Redis remained connected. Companion run `33884190527` passed 356
 tests / 8120 assertions on each PHP 8.1-8.5 runtime. The delta security audit
 found zero confirmed Critical, High, Medium or Low issues. A new post-audit
-ZIP gate is required before designating replacement bytes.
+ZIP gate was then completed: runs `33884767613` and `33884767696` passed on
+audit commit `9f34ca2`, and the latter installed and exercised the exact
+replacement archive. Its independently verified SHA-256 is
+`b433cc9114e66bef858552a7d5272829cfc0db7f98ac3553ac8b8e8be6944644`.
 
 | Area | Current implementation | Status |
 | --- | --- | --- |

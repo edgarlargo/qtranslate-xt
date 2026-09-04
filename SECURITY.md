@@ -39,9 +39,11 @@ The latest delta audit covers source `e197950`, after successful PHP/JavaScript
 run `33884190527` and WooCommerce/MySQL/Redis/exact-HTTP run `33884190637`.
 It adds a frontend-only, exact-page-ID structural fallback for WooCommerce
 Cart, Checkout and My Account and records zero new confirmed findings. The
-post-audit exact-ZIP gate is pending, so the prior archive SHA-256
-`3a8a9ef2a18733a5bd8599d57df6ffa53d0f2a0feab5028199fa1c19947e07f5`
-is superseded. The separate production activation HTTP 500 remains a
+post-audit PHP run `33884767613` and exact-ZIP run `33884767696` passed. The
+independently verified archive SHA-256 is
+`b433cc9114e66bef858552a7d5272829cfc0db7f98ac3553ac8b8e8be6944644`;
+the prior `3a8a9ef2…e07f5` archive is superseded. The separate production
+activation HTTP 500 remains a
 compatibility release blocker until its fatal stack trace is captured;
 security PASS does not waive that blocker.
 

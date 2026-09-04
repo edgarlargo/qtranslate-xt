@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **CURRENT POST-AUDIT ZIP PENDING — PRODUCTION ACTIVATION BLOCKER OPEN**
+Decision: **LOCAL RC VALIDATED — PRODUCTION ACTIVATION BLOCKER OPEN**
 
 ## Current production incident
 
@@ -26,8 +26,10 @@ reproducibility. A later Woo system-page fallback now suppresses the ordinary
 missing-translation notice only for configured Cart, Checkout and My Account
 documents. Pre-audit runs `33884190527` and `33884190637` pass, including exact
 HTTP checks for all three pages. Its delta security re-audit passes with zero
-confirmed findings. A new post-audit gate-5 run is required, and no current ZIP
-is approved for production while the real fatal error remains unexplained.
+confirmed findings. Post-audit runs `33884767613` and `33884767696` pass, and
+the latter built, installed and exercised the exact replacement ZIP. It is a
+validated local/CI candidate, but is not approved for production while the
+real fatal error remains unexplained.
 
 ## Mandatory release gates
 
@@ -37,8 +39,28 @@ approval.
 
 Current system-page cycle progress: gate 1 remains resolved; gate 2 passed in
 run `33884190637`; gates 3 and 4 passed for source `e197950` with no new
-finding; gate 5 is pending. The production activation incident remains an
-independent release blocker.
+finding; gate 5 passed in run `33884767696`. The production activation incident
+remains an independent release blocker.
+
+## Current locally validated release candidate
+
+- File: `build/qtranslate-xt-4.0.0-rc1.zip`
+- Source commit: `9f34ca2c73fcc5070ef3879ddc90324d69ca85aa`
+- PHP/JavaScript workflow: `33884767613` — **PASS**, 356 tests / 8120 assertions per PHP 8.1-8.5 runtime
+- WooCommerce/exact-ZIP workflow: `33884767696` — **PASS**, 176/176 plus Cart/Checkout/My Account HTTP routes
+- SHA-256: `b433cc9114e66bef858552a7d5272829cfc0db7f98ac3553ac8b8e8be6944644`
+- Size: **1,472,159 bytes**
+- ZIP entries: **1,140**
+- Top-level root: exactly `qtranslate-xt/`
+- Latvian MO (16,483 bytes), Woo Blocks bundle, ACF bundle and core adapters: **present**
+- Forbidden development/private/database/mail content: **0 entries**
+
+The exact downloaded bytes match the SHA-256 printed before artifact upload.
+CI installed and reactivated this ZIP, repeated the full transactional matrix,
+then proved the shared system-page structure through `/ru/cart/`, a real
+session-backed `/lv/checkout/`, and `/ru/my-account/`. Keep one Woo block page;
+language-specific copies are not required. Production deployment remains
+blocked by the separate unresolved fatal-error incident.
 
 ## Superseded locally validated release candidate
 
@@ -57,17 +79,17 @@ This exact archive was built only after its earlier delta security report commit
 installed, activated, deactivated/reactivated and exercised through LV/RU/EN,
 WordPress REST and Woo Store API routes. It is the complete local RC artifact.
 It predates the Woo system-page fallback and is therefore superseded. Do not
-install it; a replacement may be designated only after the current post-audit
-gate 5 succeeds. Production additionally remains blocked until the open fatal
-is identified and remediated.
+install it; the replacement is the current candidate documented above.
+Production additionally remains blocked until the open fatal is identified
+and remediated.
 
 | Order | Gate | Result |
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
-| 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33873804477`; inactive-module regression plus 176/176 matrix |
-| 3 | Final security re-audit | **PASS** — Woo core-bootstrap delta audited at `26b49ee`; zero confirmed findings |
+| 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33884190637`; 176/176 plus three Woo system-page HTTP regressions |
+| 3 | Final security re-audit | **PASS** — system-page delta audited at `e197950`; zero confirmed findings |
 | 4 | Fix release-blocking re-audit findings | **PASS** — delta found no release-blocking finding |
-| 5 | Build and validate final RC ZIP | **PASS** — run `33874105335`; exact downloaded bytes independently verified |
+| 5 | Build and validate final RC ZIP | **PASS** — run `33884767696`; exact downloaded bytes independently verified |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
 Blocks report exposed a missing Store API path in the original Woo matrix, so
@@ -79,9 +101,9 @@ its own delta security review, full CI and a new exact-ZIP validation.
 ## Current automated evidence
 
 - GitHub PHP/JavaScript run
-  [`33879843135`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843135):
-  **PASS** on audited source `4c7f928f49a1997f67895730099beecd095ffbd0`.
-- PHP 8.1–8.5: **355 tests / 8102 assertions** on every runtime.
+  [`33884767613`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884767613):
+  **PASS** on audit commit `9f34ca2c73fcc5070ef3879ddc90324d69ca85aa`.
+- PHP 8.1–8.5: **356 tests / 8120 assertions** on every runtime.
 - PHP 7.4/8.0 production lint: **PASS**.
 - Node 24: `npm ci --ignore-scripts`, audit, six JavaScript tests,
   production build and exact committed-bundle comparison: **PASS**, zero
@@ -90,13 +112,14 @@ its own delta security review, full CI and a new exact-ZIP validation.
   advisories.
 - Module-loader security runner and `git diff --check`: **PASS**.
 - GitHub WooCommerce run
-  [`33879843211`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843211):
+  [`33884767696`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884767696):
   **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11, Redis Object Cache 2.8.0 and HPOS. The same job
   first passed the inactive-module Russian product-title regression, then built,
   inspected, installed and reactivated the exact ZIP; it additionally passed
-  LV/RU/EN HTTP, WordPress REST and Woo Store API routes. This pre-audit
-  artifact is evidence only, not the current production-designated ZIP.
+  LV/RU/EN HTTP, Cart/Checkout/My Account structural pages, WordPress REST and
+  Woo Store API routes. This is the current local/CI candidate, not a
+  production-designated ZIP while the activation incident remains open.
 
 ## Security decision
 

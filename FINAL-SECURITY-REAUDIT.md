@@ -33,16 +33,17 @@ after this delta audit.
 ## Current CI evidence
 
 - Current PHP/JavaScript run
-  [`33879843135`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843135):
-  **PASS** on audited source `4c7f928f49a1997f67895730099beecd095ffbd0`.
-- PHP 8.1, 8.2, 8.3, 8.4 and 8.5: **355 tests / 8102 assertions**
+  [`33884767613`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884767613):
+  **PASS** on audit commit `9f34ca2c73fcc5070ef3879ddc90324d69ca85aa`.
+- PHP 8.1, 8.2, 8.3, 8.4 and 8.5: **356 tests / 8120 assertions**
   per runtime; PHP 7.4/8.0 production syntax, six Node tests, npm audit,
   production build and committed-bundle comparison: **PASS**.
 - Current WooCommerce/exact-ZIP run
-  [`33879843211`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33879843211):
+  [`33884767696`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884767696):
   **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11, HPOS, exact-ZIP install/reactivation,
-  LV/RU/EN HTTP routes, REST and Store API. Redis remained connected.
+  LV/RU/EN plus Cart/Checkout/My Account HTTP routes, REST and Store API.
+  Redis remained connected.
 
 - PHP/JavaScript run
   [`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763):
@@ -570,3 +571,16 @@ the unavailable-language notice. Redis remained connected.
 Security gates 3 and 4 for this delta are complete. Gate 5 must now rebuild and
 validate new exact bytes from the audit commit. The independent production
 HTTP 500 blocker remains open pending its fatal stack trace.
+
+Post-audit PHP/JavaScript run
+[`33884767613`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884767613)
+and Woo/exact-ZIP run
+[`33884767696`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33884767696)
+subsequently passed on audit commit `9f34ca2c73fcc5070ef3879ddc90324d69ca85aa`.
+The latter repeated 176/176 assertions, installed/reactivated the exact ZIP,
+passed LV/RU/EN, Cart/Checkout/My Account, REST and Store API HTTP checks, and
+retained Redis connectivity. Independent download verification matched SHA-256
+`b433cc9114e66bef858552a7d5272829cfc0db7f98ac3553ac8b8e8be6944644`,
+size 1,472,159 bytes and 1,140 entries, with one `qtranslate-xt/` root,
+required Latvian/Woo/ACF files and zero forbidden entries. Gate 5: **PASS**.
+Production deployment remains **BLOCKED** by the separate activation incident.
