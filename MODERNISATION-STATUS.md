@@ -201,8 +201,9 @@ The earlier ACF Pro 5.7.7, security and WooCommerce gates remain resolved. A
 real-site theme-embedded/legacy Options path nevertheless exposed raw language
 markers because the module-scoped adapter was unavailable. A priority-99 core
 fallback now mirrors standalone Safe Bridge behavior independently from legacy
-module state and field metadata. Its delta audit, PHP/JavaScript CI and complete
-WooCommerce rerun passed; the final post-audit exact-ZIP run remains pending.
+module state and field metadata. Its delta audit, PHP/JavaScript CI, complete
+WooCommerce rerun and final post-audit exact-ZIP run passed. The designated ZIP
+SHA-256 is `e9f53257b486fc6749b58f831b31d094a84cda61c8332e835e6e4663d96a53f7`.
 The previous `449209…b0047` archive is withdrawn.
 
 ## Security status
@@ -228,6 +229,6 @@ The previous `449209…b0047` archive is withdrawn.
 
 ## Next planned phase
 
-Build and validate the post-audit replacement exact ZIP bytes. Deploy only that replacement
-to staging and visually verify the reported ACF output plus RU Cart/Checkout.
+Deploy only the designated replacement ZIP to staging and visually verify the
+reported ACF output plus RU Cart/Checkout.
 Previous artifacts remain withdrawn for traceability.

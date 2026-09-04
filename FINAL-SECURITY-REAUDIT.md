@@ -396,4 +396,12 @@ and committed-bundle reproducibility. Required WooCommerce run
 [`33871964443`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33871964443)
 passed **176/176 assertions** with WordPress 7.1, WooCommerce 11.0.1, MySQL 8.4,
 Redis 7.4.11, Redis Object Cache 2.8.0 and HPOS enabled. Security gates 3 and 4
-are complete; a fresh post-audit exact ZIP is still required before release.
+are complete. Post-audit run
+[`33872439659`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33872439659)
+reconfirmed the PHP/JavaScript matrix, and exact-ZIP run
+[`33872439685`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33872439685)
+passed 176/176 assertions, archive inspection, fresh install/reactivation and
+Redis connectivity. The independently downloaded ZIP matches SHA-256
+`e9f53257b486fc6749b58f831b31d094a84cda61c8332e835e6e4663d96a53f7`,
+size 1,470,737 bytes and 1,139 entries, with one `qtranslate-xt/` root, all
+required Latvian/Woo/ACF files and zero forbidden entries. Gate 5: **PASS**.

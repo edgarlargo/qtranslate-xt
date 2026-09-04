@@ -60,7 +60,7 @@ digests. The local Node 18.14 engine warning is therefore not release evidence.
 | Options API (`option`/`options`) | **PASS ACF Free 6.8.8 and Pro Options Page 5.7.7 runtime/storage** |
 | Text/Textarea/WYSIWYG frontend LV/RU/EN | **PASS — ACF Free 6.8.8 and Pro 5.7.7; interactive browser JS NOT EXECUTED** |
 | Group/Repeater/Flexible Content | **PASS native runtime — ACF Pro 5.7.7** |
-| Built-in ACF Options language panels | **PASS CI; exact-ZIP rerun PENDING** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; priority-99 fallback has the exact reported EN/LV/RU/FI/SV regression; interactive live-theme test NOT EXECUTED |
+| Built-in ACF Options language panels | **PASS CI and exact ZIP** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; priority-99 fallback has the exact reported EN/LV/RU/FI/SV regression; interactive live-theme test NOT EXECUTED |
 
 Repository unit tests for runtime capability detection, field schema,
 projection/merge, stable field keys, nested leaves, dynamic ACF JS actions and
@@ -154,6 +154,7 @@ behavior passed its previous local/CI gates. A later real-site report exposed
 raw ACF markers through a theme-embedded/legacy Options path that did not have
 the module adapter. A standalone-compatible priority-99 core fallback and an
 EN/LV/RU/FI/SV regression were added; delta audit, PHP CI and WooCommerce CI
-passed in runs `33871964457` and `33871964443`. Replacement post-audit exact-ZIP
-validation is pending. The previous `449209…b0047`
+passed in runs `33871964457` and `33871964443`. Replacement post-audit runs
+`33872439659` and `33872439685` passed, including exact-ZIP installation and
+Redis connectivity. The previous `449209…b0047`
 archive is withdrawn.
