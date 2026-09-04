@@ -37,6 +37,7 @@ final class WooCommerceBlocksContractTest extends TestCase {
         self::assertStringContainsString( "add_filter( 'rest_pre_dispatch', array( \$this, 'prepareStoreApiRequest' ), 5, 3 )", $source );
         self::assertStringContainsString( "strpos( \$route, '/wc/store/' ) !== 0", $source );
         self::assertStringContainsString( "QTRANSLATE_DIR . '/src/modules/woo-commerce/front.php'", $source );
+        self::assertStringContainsString( 'qtranxf_wc_add_filters_front();', $source );
         self::assertStringContainsString( 'new \\QTX\\Integration\\WooCommerce\\WooCommerceBlocksAdapter()', $init );
         self::assertStringNotContainsString( 'QTX_OPTIONS_MODULES_STATE', $source );
         self::assertStringNotContainsString( 'active_plugins', $source );

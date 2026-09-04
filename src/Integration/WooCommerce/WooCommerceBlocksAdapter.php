@@ -17,6 +17,10 @@ final class WooCommerceBlocksAdapter {
     public function __construct( ?callable $activateFrontend = null ) {
         $this->activateFrontend = $activateFrontend ?? static function (): void {
             require_once QTRANSLATE_DIR . '/src/modules/woo-commerce/front.php';
+            // Store API requests may arrive after another integration removed
+            // the presentation graph. Re-adding WordPress filters is
+            // idempotent and guarantees the response boundary is translated.
+            qtranxf_wc_add_filters_front();
         };
     }
 
