@@ -6,6 +6,7 @@ Post-Woo-Blocks delta audited source: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
 CI reproducibility follow-up audited commit: `ef83e1effc3f60eb88c186ee0bb86371bbc30734`
 Post-ACF-Options-Bridge delta audited source: `8782c8804217b17b49d3e6441b690f095a0b5858`
 Expanded-Safe-Bridge-0.4 delta audited source: `eef319b985614aad7a37eb69de99f6b15294c247`
+Post-ACF-frontend-fallback delta audited source: `8fa5f23621b22dbc0a2782326796b461b53bd713`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -360,11 +361,39 @@ size 1,469,533 bytes and 1,138 entries. It has one `qtranslate-xt/` root,
 contains the Latvian MO, Woo Blocks and ACF bundles, and has zero forbidden
 development/private/database/mail entries. Final packaging gate: **PASS**.
 
-## 2026-09-04 post-audit ACF frontend regression notice
+## 2026-09-04 ACF frontend fallback delta security re-audit
+
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the delta: **0**.
 
 A real theme-embedded/legacy ACF Options path subsequently exposed the complete
 inline marker string on the frontend. The `449209…b0047` archive is withdrawn.
-A core priority-99 compatibility fallback and an exact EN/LV/RU/FI/SV
-regression have been added, but this production delta is not covered by the
-verdict above until its WooCommerce CI run and follow-up delta security review
-complete. No replacement release archive is currently designated.
+The cause was the native adapter's dependency on legacy module state and field
+metadata, which are not guaranteed for theme-embedded and older Options Pages.
+
+The review covered `AcfSafeBridgeValueAdapter`, its core registration, exact
+EN/LV/RU/FI/SV regression, source contract and PHPUnit bootstrap:
+
+- The fallback is read-only and is limited to ACF's official type-specific
+  `text`, `textarea` and `wysiwyg` format hooks at priority 99.
+- It registers after language detection, uses the existing bounded qTranslate
+  parser/selection function and does not depend on `active_plugins`, legacy
+  module state or optional field metadata.
+- Normal wp-admin requests retain raw storage for editing; frontend and admin
+  AJAX reads receive only the selected language, matching Safe Bridge 0.4.0.
+- Non-string and plain values are returned unchanged. If the earlier adapter
+  already projected a value, the late fallback sees no `[:` marker and is a
+  no-op.
+- No HTML/DOM sink, SQL, deserialization, command execution, filesystem or
+  remote I/O, credential, option mutation, AJAX/REST endpoint or global cache
+  flush was introduced.
+
+GitHub PHP/JavaScript run
+[`33871964457`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33871964457)
+passed PHP 7.4/8.0 production syntax, **353 tests / 8078 assertions** on each
+PHP 8.1–8.5 runtime, six JavaScript tests, zero npm advisories, production build
+and committed-bundle reproducibility. Required WooCommerce run
+[`33871964443`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33871964443)
+passed **176/176 assertions** with WordPress 7.1, WooCommerce 11.0.1, MySQL 8.4,
+Redis 7.4.11, Redis Object Cache 2.8.0 and HPOS enabled. Security gates 3 and 4
+are complete; a fresh post-audit exact ZIP is still required before release.

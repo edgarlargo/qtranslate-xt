@@ -1,16 +1,16 @@
 # QTX 4 release readiness
 
 Date: 2026-09-04
-Decision: **NOT READY — ACF FRONTEND REGRESSION FIX GATES PENDING**
+Decision: **NOT READY — FINAL POST-AUDIT ZIP PENDING**
 
 ## Mandatory release gates
 
 | Order | Gate | Result |
 |---:|---|---|
 | 1 | Resolve QTX4-SEC-001 | **PASS** — scalar guards, `esc_textarea()`, focused regressions |
-| 2 | WooCommerce MySQL/Redis CI | **PENDING RERUN** — prior run `33869856719` predates the frontend fallback |
-| 3 | Final security re-audit | **PENDING DELTA** — prior expanded Safe Bridge audit remains historical evidence |
-| 4 | Fix release-blocking re-audit findings | **PENDING** — depends on the new delta result |
+| 2 | WooCommerce MySQL/Redis CI | **PASS** — run `33871964443`, 176/176 assertions on the frontend fallback source |
+| 3 | Final security re-audit | **PASS** — post-ACF-frontend delta audited at `8fa5f236`; no confirmed findings |
+| 4 | Fix release-blocking re-audit findings | **PASS** — delta found zero Critical/High/Medium/Low findings |
 | 5 | Build and validate final RC ZIP | **PENDING** — the previous archive exposes raw ACF markers on the reported theme path |
 
 The gates were executed in the required order. A later real-site Cart/Checkout
@@ -23,9 +23,9 @@ its own delta security review, full CI and a new exact-ZIP validation.
 ## Current automated evidence
 
 - GitHub PHP/JavaScript run
-  [`33869856763`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856763):
-  **PASS** on `f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`.
-- PHP 8.1–8.5: **349 tests / 8064 assertions** on every runtime.
+  [`33871964457`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33871964457):
+  **PASS** on `8fa5f23621b22dbc0a2782326796b461b53bd713`.
+- PHP 8.1–8.5: **353 tests / 8078 assertions** on every runtime.
 - PHP 7.4/8.0 production lint: **PASS**.
 - Node 24: `npm ci --ignore-scripts`, audit, six JavaScript tests,
   production build and exact committed-bundle comparison: **PASS**, zero
@@ -34,11 +34,11 @@ its own delta security review, full CI and a new exact-ZIP validation.
   advisories.
 - Module-loader security runner and `git diff --check`: **PASS**.
 - GitHub WooCommerce run
-  [`33869856719`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33869856719):
+  [`33871964443`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33871964443):
   **PASS**, 176 assertions, WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
   MySQL 8.4.11, Redis 7.4.11, Redis Object Cache 2.8.0 and HPOS. The same job
-  built, installed, reactivated and published the exact final ZIP from
-  `f145b5c637d438e2c7c9df0b5a3d5ba27336a4e2`.
+  built and exercised a pre-audit proof ZIP from `8fa5f236`; those bytes are
+  not designated because the final exact archive must follow the delta audit.
 
 ## Security decision
 
@@ -159,5 +159,5 @@ directory plus database backup for rollback.
 
 No ZIP is currently designated for distribution. All existing copies named
 `qtranslate-xt-4.0.0-rc1.zip` or `qtranslate-xt-modern-rc1.zip` are staging or
-withdrawn artifacts until the expanded bridge passes delta security, CI and a
-new exact-archive run.
+withdrawn artifacts until the ACF frontend fallback passes a new post-audit
+exact-archive run.

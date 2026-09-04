@@ -4,8 +4,8 @@ Date: 2026-09-04
 Status: **RESOLVED**
 
 The WooCommerce defect gate remains resolved. A later ACF frontend regression
-withdraws the release ZIP and requires the full matrix to be rerun against the
-new production bytes; this does not reopen the historical Woo defect itself.
+withdrew the release ZIP; the full matrix rerun against the corrected production
+bytes passed in run `33871964443`. This did not reopen the historical Woo defect.
 
 ## Resolution
 

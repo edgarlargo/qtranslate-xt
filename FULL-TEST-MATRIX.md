@@ -10,7 +10,7 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1–8.5 | **PASS CI** | 349 tests, 8064 assertions per runtime, 0 failures/errors |
+| PHPUnit PHP 8.1–8.5 | **PASS CI** | 353 tests, 8078 assertions per runtime, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
 | JavaScript shared corpus/security | **PASS local and CI** | 27 corpus cases plus 6 Node tests; ACF bridge value round-trip and text-only DOM assertions PASS |
@@ -60,7 +60,7 @@ digests. The local Node 18.14 engine warning is therefore not release evidence.
 | Options API (`option`/`options`) | **PASS ACF Free 6.8.8 and Pro Options Page 5.7.7 runtime/storage** |
 | Text/Textarea/WYSIWYG frontend LV/RU/EN | **PASS — ACF Free 6.8.8 and Pro 5.7.7; interactive browser JS NOT EXECUTED** |
 | Group/Repeater/Flexible Content | **PASS native runtime — ACF Pro 5.7.7** |
-| Built-in ACF Options language panels | **PASS previous CI; frontend regression rerun PENDING** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; reported theme path now has a priority-99 core fallback; interactive browser click test NOT EXECUTED |
+| Built-in ACF Options language panels | **PASS CI; exact-ZIP rerun PENDING** — isolated Text/Textarea editors, initial/dynamic ACF 5.x/6.x fields, disabled-language preservation, no `active_plugins` mutation; priority-99 fallback has the exact reported EN/LV/RU/FI/SV regression; interactive live-theme test NOT EXECUTED |
 
 Repository unit tests for runtime capability detection, field schema,
 projection/merge, stable field keys, nested leaves, dynamic ACF JS actions and
@@ -153,6 +153,7 @@ gates. Its later expansion to the complete standalone 0.4 isolated-panel
 behavior passed its previous local/CI gates. A later real-site report exposed
 raw ACF markers through a theme-embedded/legacy Options path that did not have
 the module adapter. A standalone-compatible priority-99 core fallback and an
-EN/LV/RU/FI/SV regression were added; delta audit, PHP CI, WooCommerce CI and
-replacement exact-ZIP validation are pending. The previous `449209…b0047`
+EN/LV/RU/FI/SV regression were added; delta audit, PHP CI and WooCommerce CI
+passed in runs `33871964457` and `33871964443`. Replacement post-audit exact-ZIP
+validation is pending. The previous `449209…b0047`
 archive is withdrawn.

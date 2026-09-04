@@ -114,8 +114,11 @@ Textarea and WYSIWYG values. It is registered after language detection without
 checking `active_plugins`, the legacy module-state option or field metadata;
 normal wp-admin editing remains raw, while frontend and admin AJAX use the
 selected language exactly like Safe Bridge 0.4.0. A regression reproduces the
-reported EN/LV/RU/FI/SV `Location / Year` value. PHP syntax and JavaScript tests
-pass locally; delta security audit and full CI/exact-ZIP validation are pending.
+reported EN/LV/RU/FI/SV `Location / Year` value. Run `33871964457` passed PHP
+7.4/8.0 syntax, 353 tests / 8078 assertions on PHP 8.1–8.5 and six JavaScript
+tests; Woo run `33871964443` passed 176/176 assertions. The delta security audit
+passed with no confirmed findings. Only the final post-audit exact-ZIP gate is
+pending; interactive verification on the reported live theme remains unexecuted.
 
 ## ACF Pro validation result
 

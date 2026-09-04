@@ -21,7 +21,7 @@ progress. O2 now allowlists database maintenance actions, requires explicit
 backup confirmation, and confines SQL splitting to trusted canonical roots.
 Optional built-in integrations have a source-validated, explicitly NOT TESTED
 real-plugin matrix in `BUILTIN-INTEGRATIONS-COMPATIBILITY.md`. Phase Q local
-and CI matrix is green at 349 tests / 8064 assertions on each PHP 8.1–8.5; production
+and CI matrix is green at 353 tests / 8078 assertions on each PHP 8.1–8.5; production
 sources also lint cleanly on PHP 7.4 and 8.0; required
 real testing now covers WordPress 7.1, ACF Free/theme-bundled 6.8.8,
 WooCommerce 11.0.1 smoke paths and Gutenberg save/autosave/409 conflicts. ACF
@@ -185,7 +185,7 @@ green at 349 tests / 8064 assertions.
 ## Current test status
 
 - PHP 7.4 and 8.0 production lint: zero syntax errors.
-- PHP 8.1–8.5: 349 tests, 8064 assertions per version, zero failures/errors.
+- PHP 8.1–8.5: 353 tests, 8078 assertions per version, zero failures/errors.
 - Shared JS/PHP corpus parity: 100% (27/27); generated parser parity 400/400.
 - Production PHP lint, Webpack build, JS tests and
   `git diff --check`: green.
@@ -201,8 +201,9 @@ The earlier ACF Pro 5.7.7, security and WooCommerce gates remain resolved. A
 real-site theme-embedded/legacy Options path nevertheless exposed raw language
 markers because the module-scoped adapter was unavailable. A priority-99 core
 fallback now mirrors standalone Safe Bridge behavior independently from legacy
-module state and field metadata. Its delta audit and complete CI/exact-ZIP
-reruns are pending; the previous `449209…b0047` archive is withdrawn.
+module state and field metadata. Its delta audit, PHP/JavaScript CI and complete
+WooCommerce rerun passed; the final post-audit exact-ZIP run remains pending.
+The previous `449209…b0047` archive is withdrawn.
 
 ## Security status
 
@@ -227,7 +228,6 @@ reruns are pending; the previous `449209…b0047` archive is withdrawn.
 
 ## Next planned phase
 
-Audit the ACF frontend fallback, rerun PHP/JavaScript and WooCommerce CI, then
-build and validate replacement exact ZIP bytes. Deploy only that replacement
+Build and validate the post-audit replacement exact ZIP bytes. Deploy only that replacement
 to staging and visually verify the reported ACF output plus RU Cart/Checkout.
 Previous artifacts remain withdrawn for traceability.

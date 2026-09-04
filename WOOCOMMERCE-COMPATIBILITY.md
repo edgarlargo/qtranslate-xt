@@ -6,9 +6,10 @@ This document records evidence, not aspirational compatibility. WooCommerce
 supported range; unrelated areas remain explicit.
 
 The latest ACF frontend fallback is outside WooCommerce behavior but changes
-production bytes. Therefore run `33869856719` remains valid historical Woo
-evidence while a release-gate rerun is required before a replacement ZIP can be
-designated.
+production bytes. Required rerun
+[`33871964443`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/33871964443)
+passed 176/176 assertions on commit `8fa5f236`; a post-security-audit exact-ZIP
+run remains required before a replacement archive can be designated.
 
 | Area | Current implementation | Status |
 | --- | --- | --- |
