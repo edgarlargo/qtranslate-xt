@@ -584,3 +584,46 @@ retained Redis connectivity. Independent download verification matched SHA-256
 size 1,472,159 bytes and 1,140 entries, with one `qtranslate-xt/` root,
 required Latvian/Woo/ACF files and zero forbidden entries. Gate 5: **PASS**.
 Production deployment remains **BLOCKED** by the separate activation incident.
+
+## 2026-09-07 Latvian Woo Blocks locale delta security re-audit
+
+Audited source: `9eca41a50c4ea1398e12bd01906b5825ea9529b7`.
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the delta: **0/0/0/0**. Confirmed exploitable findings: **0**.
+
+The runtime delta adds Latvian to the complete predefined-language tables and
+maps the legacy qTranslate locale aliases `lv_LV`/`lv-LV` to WordPress'
+canonical plugin-language-pack locale `lv`. This corrects the real-site case
+where WooCommerce's PHP catalog loaded but Cart/Checkout block JSON catalogs
+were omitted.
+
+- The locale input remains trusted qTranslate configuration. Normalization is
+  a fixed equality mapping; it performs no dynamic evaluation, filesystem
+  selection, remote request, database write or output rendering.
+- Other languages and custom locale values are returned unchanged. Existing
+  saved Latvian settings require no migration or database mutation.
+- No REST/AJAX route, permission, capability, nonce, redirect, cache,
+  deserialization, SQL, payment, order, mail or credential boundary changed.
+- The workflow installs the official WooCommerce Latvian test catalog only in
+  the disposable CI lab. It contains no production secret and is excluded
+  from the release archive.
+- The exact-ZIP HTTP test now fails closed unless `/lv/cart/` emits the
+  `wc-cart-block-frontend-js-translations` payload containing the verified
+  Latvian `Groza kopsavilkums` translation.
+
+Pre-audit PHP/JavaScript run
+[`34108756312`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34108756312)
+passed PHP 7.4/8.0 production syntax, **362 tests / 8137 assertions** on each
+PHP 8.1-8.5 runtime, six JavaScript tests, zero npm advisories, production build
+and bundle reproducibility. WooCommerce run
+[`34108756339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34108756339)
+passed the complete **176/176** matrix on WordPress 7.1, WooCommerce 11.0.1,
+PHP 8.4, MySQL 8.4.11 and Redis 7.4.11. Its successful rerun additionally
+proved the real Latvian Cart block translation payload and retained Redis
+connectivity. The first attempt ended on a non-repeating empty response from
+the disposable PHP development server; no assertion failed and the identical
+commit passed on rerun.
+
+Security gates 3 and 4 for this delta are complete. Gate 5 must rebuild and
+validate exact post-audit bytes. The independent production HTTP 500 blocker
+remains open pending its fatal stack trace.

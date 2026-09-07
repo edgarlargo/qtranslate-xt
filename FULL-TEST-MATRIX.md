@@ -197,3 +197,20 @@ passed in runs `33871964457` and `33871964443`. Replacement post-audit runs
 `33872439659` and `33872439685` passed, including exact-ZIP installation and
 Redis connectivity. The previous `449209…b0047`
 archive is withdrawn.
+
+## 2026-09-07 Latvian Woo Blocks regression
+
+| Scenario | Status | Evidence |
+|---|---|---|
+| Legacy Latvian locale `lv_LV`/`lv-LV` | **PASS** | normalized to the canonical WordPress catalog locale `lv` without changing other locales |
+| Latvian predefined language completeness | **PASS** | name, locale, unavailable text, date/time and flag defaults covered |
+| WooCommerce Latvian PHP/JSON pack install | **PASS** | official `wp language plugin install woocommerce lv` in disposable CI |
+| `/lv/cart/` block JavaScript catalog | **PASS** | `wc-cart-block-frontend-js-translations` emitted |
+| Latvian Cart block label | **PASS** | `Cart totals` rendered from catalog as `Groza kopsavilkums` |
+
+PHP/JavaScript run `34108756312` passed 362 tests / 8137 assertions per PHP
+8.1-8.5 runtime, PHP 7.4/8.0 syntax, six JavaScript tests and zero npm
+advisories. Woo run `34108756339` passed 176/176 assertions with WordPress 7.1,
+WooCommerce 11.0.1, MySQL 8.4.11, Redis 7.4.11, HPOS and exact-ZIP HTTP checks.
+The delta security re-audit reports zero confirmed findings. Post-audit archive
+validation remains pending.

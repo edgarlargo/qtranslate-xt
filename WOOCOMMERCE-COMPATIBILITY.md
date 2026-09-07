@@ -191,3 +191,24 @@ tests cover the pinned stack, fail-closed download, generated credential,
 offline COD payment, local mail capture and `.example.test` recipients. They
 pass with 15 assertions; the full PHP 8.1-8.5 suite passes at 335 tests / 7963
 assertions per runtime. The transactional result remains NOT RUN.
+
+## 2026-09-07 Latvian Cart/Checkout Blocks locale fix
+
+WooCommerce 11.0.1 publishes its Latvian PHP and Gutenberg catalogs under the
+WordPress locale `lv`. Existing qTranslate sites can store `lv_LV`, which made
+WordPress search for nonexistent `woocommerce-lv_LV-*.json` files. Product
+content was translated by qTranslate, but dynamic block labels such as Cart
+totals remained English.
+
+qTranslate-XT Modern now treats `lv` as the canonical Latvian WordPress locale
+and transparently maps saved `lv_LV`/`lv-LV` aliases during runtime. No content,
+product or option migration is required. The official WooCommerce Latvian
+language files must still exist in `wp-content/languages/plugins`.
+
+Run [`34108756339`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34108756339)
+passed 176/176 transactional assertions on WordPress 7.1, WooCommerce 11.0.1,
+MySQL 8.4.11 and Redis 7.4.11. The exact-ZIP HTTP gate loaded `/lv/cart/` with
+a real cart session and confirmed both the Woo Cart frontend translation
+payload and `Cart totals` → `Groza kopsavilkums`. Products, Cart/Checkout,
+orders/HPOS, emails, REST, AJAX and cache results remain PASS for this pinned
+stack. Post-audit exact-ZIP validation is pending.

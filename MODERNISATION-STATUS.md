@@ -260,3 +260,18 @@ passed, completing the exact-ZIP gate. The current local candidate is
 superseded. Do not deploy it to production. Capture the production fatal-error
 stack and fix the confirmed cause before production designation. Previous
 artifacts remain withdrawn for traceability.
+
+## 2026-09-07 Latvian Woo Blocks locale status
+
+The real-site Gutenberg report is reproduced and resolved at the locale
+boundary: WooCommerce 11.0.1 ships Latvian block catalogs as `lv`, while the
+site's legacy qTranslate language configuration used `lv_LV`. Modern now
+defines Latvian completely and normalizes the two legacy aliases to `lv` at
+runtime without a data migration.
+
+Pre-audit run `34108756312` passes 362 tests / 8137 assertions per PHP 8.1-8.5
+runtime, and run `34108756339` passes the full 176-assertion WooCommerce
+MySQL/Redis matrix plus the exact `/lv/cart/` Gutenberg catalog/translation
+check. Delta security re-audit: **PASS**, zero confirmed findings. A new
+post-audit ZIP still has to pass the final packaging gate; the existing local
+ZIP is superseded. The production HTTP 500 blocker is unchanged.

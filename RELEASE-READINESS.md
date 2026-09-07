@@ -265,3 +265,24 @@ directory plus database backup for rollback.
 No ZIP identified in this document is currently designated for staging or
 distribution. The hashes remain only to distinguish historical artifacts and
 must not be treated as current release approval.
+
+## 2026-09-07 Latvian Woo Blocks release-gate cycle
+
+The installed standalone WooCommerce Latvian pack was valid, but qTranslate
+reported `lv_LV` while the pack and its Gutenberg JSON files are keyed by `lv`.
+Runtime commit `9eca41a` adds canonical Latvian defaults and repairs legacy
+locale aliases without modifying saved content.
+
+Mandatory gates completed in order:
+
+1. QTX4-SEC-001 remains **RESOLVED**.
+2. PHP/JavaScript run `34108756312` and Woo MySQL/Redis run `34108756339` are
+   **PASS**; the latter proves the Latvian Cart frontend JSON catalog and label.
+3. The locale/workflow delta security re-audit is **PASS** with zero confirmed
+   Critical/High/Medium/Low findings.
+4. Release-blocking findings discovered by the delta audit: **0**.
+5. Exact post-audit ZIP construction/validation: **PENDING**.
+
+The previous `b433cc91…944644` archive is superseded and must not be deployed.
+Production designation remains independently blocked by the unresolved
+real-site HTTP 500 until its fatal stack trace is captured and fixed.
