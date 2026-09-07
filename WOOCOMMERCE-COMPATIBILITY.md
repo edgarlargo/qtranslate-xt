@@ -211,4 +211,7 @@ MySQL 8.4.11 and Redis 7.4.11. The exact-ZIP HTTP gate loaded `/lv/cart/` with
 a real cart session and confirmed both the Woo Cart frontend translation
 payload and `Cart totals` → `Groza kopsavilkums`. Products, Cart/Checkout,
 orders/HPOS, emails, REST, AJAX and cache results remain PASS for this pinned
-stack. Post-audit exact-ZIP validation is pending.
+stack. Post-audit runs `34109440811` and `34109440849` passed; the latter
+installed and exercised the exact replacement ZIP and repeated the Latvian
+Cart catalog assertion. Its independently verified SHA-256 is
+`62bcc3296cce0a61deb48ced0382cae935badbeb478be6e9485601797f1d262b`.

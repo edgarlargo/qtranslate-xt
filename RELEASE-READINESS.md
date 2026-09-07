@@ -281,8 +281,18 @@ Mandatory gates completed in order:
 3. The locale/workflow delta security re-audit is **PASS** with zero confirmed
    Critical/High/Medium/Low findings.
 4. Release-blocking findings discovered by the delta audit: **0**.
-5. Exact post-audit ZIP construction/validation: **PENDING**.
+5. Exact post-audit ZIP construction/validation: **PASS** in runs
+   `34109440811` and `34109440849`.
 
 The previous `b433cc91…944644` archive is superseded and must not be deployed.
 Production designation remains independently blocked by the unresolved
 real-site HTTP 500 until its fatal stack trace is captured and fixed.
+
+Current local candidate:
+
+- file: `build/qtranslate-xt-4.0.0-rc1.zip`;
+- source/audit commit: `e5da883b6b74a2e210cd0e2d2e86fd8e7c4f5759`;
+- SHA-256: `62bcc3296cce0a61deb48ced0382cae935badbeb478be6e9485601797f1d262b`;
+- size: 1,472,497 bytes; ZIP entries: 1,140;
+- exact install/reactivation, LV/RU/EN HTTP, Latvian Cart Gutenberg catalog,
+  Woo matrix and Redis connectivity: **PASS**.

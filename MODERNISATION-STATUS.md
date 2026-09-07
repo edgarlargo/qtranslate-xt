@@ -272,6 +272,8 @@ runtime without a data migration.
 Pre-audit run `34108756312` passes 362 tests / 8137 assertions per PHP 8.1-8.5
 runtime, and run `34108756339` passes the full 176-assertion WooCommerce
 MySQL/Redis matrix plus the exact `/lv/cart/` Gutenberg catalog/translation
-check. Delta security re-audit: **PASS**, zero confirmed findings. A new
-post-audit ZIP still has to pass the final packaging gate; the existing local
-ZIP is superseded. The production HTTP 500 blocker is unchanged.
+check. Delta security re-audit: **PASS**, zero confirmed findings. Post-audit
+runs `34109440811` and `34109440849` passed the final packaging gate. The
+current local ZIP has SHA-256 `62bcc329…d262b`, size 1,472,497 bytes and 1,140
+entries. The previous `b433cc91…944644` ZIP is preserved as withdrawn. The
+production HTTP 500 blocker is unchanged.

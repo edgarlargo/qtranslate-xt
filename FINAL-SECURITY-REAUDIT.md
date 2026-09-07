@@ -624,6 +624,14 @@ connectivity. The first attempt ended on a non-repeating empty response from
 the disposable PHP development server; no assertion failed and the identical
 commit passed on rerun.
 
-Security gates 3 and 4 for this delta are complete. Gate 5 must rebuild and
-validate exact post-audit bytes. The independent production HTTP 500 blocker
-remains open pending its fatal stack trace.
+Security gates 3 and 4 for this delta are complete. Post-audit PHP/JavaScript
+run [`34109440811`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34109440811)
+and Woo/exact-ZIP run
+[`34109440849`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34109440849)
+subsequently passed on audit commit `e5da883b6b74a2e210cd0e2d2e86fd8e7c4f5759`.
+The downloaded archive independently matches SHA-256
+`62bcc3296cce0a61deb48ced0382cae935badbeb478be6e9485601797f1d262b`,
+size 1,472,497 bytes and 1,140 entries, with one `qtranslate-xt/` root,
+required Latvian/Woo/ACF files and zero forbidden entries. Gate 5: **PASS**.
+The independent production HTTP 500 blocker remains open pending its fatal
+stack trace.

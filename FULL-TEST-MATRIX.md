@@ -212,5 +212,7 @@ PHP/JavaScript run `34108756312` passed 362 tests / 8137 assertions per PHP
 8.1-8.5 runtime, PHP 7.4/8.0 syntax, six JavaScript tests and zero npm
 advisories. Woo run `34108756339` passed 176/176 assertions with WordPress 7.1,
 WooCommerce 11.0.1, MySQL 8.4.11, Redis 7.4.11, HPOS and exact-ZIP HTTP checks.
-The delta security re-audit reports zero confirmed findings. Post-audit archive
-validation remains pending.
+The delta security re-audit reports zero confirmed findings. Post-audit PHP run
+`34109440811` and Woo/exact-ZIP run `34109440849` passed. The downloaded exact
+archive has SHA-256 `62bcc329…d262b`, size 1,472,497 bytes, 1,140 entries, one
+plugin root and zero forbidden entries. Gate 5 is complete.
