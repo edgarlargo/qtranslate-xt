@@ -15,6 +15,7 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( "php-version: '8.4'", $workflow );
         self::assertStringContainsString( 'core download --version=7.1', $workflow );
         self::assertStringContainsString( 'plugin install woocommerce --version=11.0.1', $workflow );
+        self::assertStringContainsString( 'language plugin install woocommerce lv', $workflow );
         self::assertStringContainsString( 'plugin install redis-cache --version=2.8.0', $workflow );
         self::assertStringContainsString( 'wp config set WP_REDIS_PREFIX "qtx-woo-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}:"', $workflow );
     }
@@ -78,6 +79,9 @@ final class WooCommerceWorkflowContractTest extends TestCase {
         self::assertStringContainsString( "check_language_route '/ru/cart/' 'QTX_WOO_SYSTEM_CART'", $workflow );
         self::assertStringContainsString( 'qtx_system_page_fixture_product_id', $workflow );
         self::assertStringContainsString( '--cookie-jar /tmp/qtx-system-page.cookies', $workflow );
+        self::assertStringContainsString( 'QTX_WOO_SYSTEM_CART_LV.html', $workflow );
+        self::assertStringContainsString( 'wc-cart-block-frontend-js-translations', $workflow );
+        self::assertStringContainsString( 'Groza kopsavilkums', $workflow );
         self::assertStringContainsString( 'QTX_WOO_SYSTEM_CHECKOUT.html', $workflow );
         self::assertStringContainsString( "check_language_route '/ru/my-account/' 'QTX_WOO_SYSTEM_MYACCOUNT'", $workflow );
         self::assertStringContainsString( "wp option update home 'http://qtx.test:8097'", $workflow );

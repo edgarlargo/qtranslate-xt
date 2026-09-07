@@ -66,6 +66,7 @@ jobs:
           wp core install --path="$WP_PATH" --url=http://qtx.test --title='QTX Woo Lab' --admin_user=qtx-admin --admin_password="$QTX_ADMIN_PASSWORD" --admin_email=nobody@example.test --skip-email
           unset QTX_ADMIN_PASSWORD
           wp plugin install woocommerce --version=11.0.1 --activate --path="$WP_PATH"
+          wp language plugin install woocommerce lv --path="$WP_PATH"
           wp option update woocommerce_custom_orders_table_enabled yes --path="$WP_PATH"
           wp option update woocommerce_custom_orders_table_data_sync_enabled yes --path="$WP_PATH"
           wp plugin install redis-cache --version=2.8.0 --activate --path="$WP_PATH"
@@ -153,6 +154,9 @@ jobs:
           check_language_route '/ru/cart/' 'QTX_WOO_SYSTEM_CART'
           fixture_product_id="$(wp option get qtx_system_page_fixture_product_id --path="$WP_PATH")"
           curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" --cookie-jar /tmp/qtx-system-page.cookies "${http_origin}/lv/?add-to-cart=${fixture_product_id}" --output /tmp/qtx-system-page-add.html
+          curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" --cookie /tmp/qtx-system-page.cookies "${http_origin}/lv/cart/" --output /tmp/qtx-http-QTX_WOO_SYSTEM_CART_LV.html
+          grep --fixed-strings 'wc-cart-block-frontend-js-translations' /tmp/qtx-http-QTX_WOO_SYSTEM_CART_LV.html
+          grep --fixed-strings 'Groza kopsavilkums' /tmp/qtx-http-QTX_WOO_SYSTEM_CART_LV.html
           curl --fail --silent --show-error --location --max-redirs 5 --resolve "$curl_resolve" --cookie /tmp/qtx-system-page.cookies "${http_origin}/lv/checkout/" --output /tmp/qtx-http-QTX_WOO_SYSTEM_CHECKOUT.html
           grep --fixed-strings 'QTX_WOO_SYSTEM_CHECKOUT' /tmp/qtx-http-QTX_WOO_SYSTEM_CHECKOUT.html
           check_language_route '/ru/my-account/' 'QTX_WOO_SYSTEM_MYACCOUNT'

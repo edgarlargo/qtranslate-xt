@@ -176,6 +176,7 @@ require_once dirname( __DIR__ ) . '/src/date_time.php';
 require_once dirname( __DIR__ ) . '/src/deprecated.php';
 require_once dirname( __DIR__ ) . '/src/language_blocks.php';
 require_once dirname( __DIR__ ) . '/src/language_detect.php';
+require_once dirname( __DIR__ ) . '/src/default_language_config.php';
 require_once dirname( __DIR__ ) . '/src/hooks.php';
 require_once dirname( __DIR__ ) . '/src/class_translator.php';
 require_once dirname( __DIR__ ) . '/src/Integration/WordPress/FrontendTranslationAdapter.php';

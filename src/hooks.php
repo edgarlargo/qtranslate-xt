@@ -4,6 +4,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Map legacy/configured locale aliases to the canonical locale used by WordPress
+ * language packs. Latvian WordPress and plugin translations are published as
+ * `lv`, while older qTranslate configurations commonly store `lv_LV`.
+ */
+function qtranxf_normalize_wordpress_locale( string $language, string $locale ): string {
+    $locale = trim( $locale );
+
+    if ( $language === 'lv' ) {
+        $alias = strtolower( str_replace( '-', '_', $locale ) );
+        if ( $alias === 'lv' || $alias === 'lv_lv' ) {
+            return 'lv';
+        }
+    }
+
+    return $locale;
+}
+
+/**
  * locale for current language and set it on PHP.
  */
 function qtranxf_localeForCurrentLanguage( string $locale ): string {
@@ -12,8 +30,12 @@ function qtranxf_localeForCurrentLanguage( string $locale ): string {
         return $locale_lang;
     }
     global $q_config;
-    $lang        = $q_config['language'];
-    $locale_lang = $q_config['locale'][ $lang ];
+    $lang              = $q_config['language'];
+    $configured_locale = $q_config['locale'][ $lang ] ?? $locale;
+    $locale_lang       = qtranxf_normalize_wordpress_locale(
+        $lang,
+        is_string( $configured_locale ) ? $configured_locale : $locale
+    );
 
     // submit a few possible locales
     $lc             = array();
