@@ -138,3 +138,43 @@ test('ACF Options bridge round-trips configured and disabled language values', (
         '[:lv]Latviski[:ru]Русский[:en]English[:de]Deutsch[:]',
     );
 });
+
+test('Elementor bridge is scalar-only and uses text-safe DOM operations', () => {
+    const editor = fs.readFileSync(path.join(root, 'js', 'elementor', 'editor.js'), 'utf8');
+    const frontend = fs.readFileSync(path.join(root, 'js', 'elementor', 'frontend.js'), 'utf8');
+    let valuesSource = fs.readFileSync(path.join(root, 'js', 'elementor', 'values.js'), 'utf8');
+    valuesSource = valuesSource
+        .replaceAll('export const ', 'const ')
+        .concat('\nmodule.exports = {parseElementorValue, serializeElementorValue};\n');
+    const valuesModule = {exports: {}};
+    vm.runInNewContext(valuesSource, {module: valuesModule, Object, Array, RegExp, String}, {
+        filename: 'js/elementor/values.js',
+    });
+    const bridge = valuesModule.exports;
+
+    assert.match(editor, /elementor-control-type-text input\[data-setting]/);
+    assert.match(editor, /elementor-control-type-textarea textarea\[data-setting]/);
+    assert.match(editor, /elementor-control-type-wysiwyg textarea\[data-setting]/);
+    assert.match(editor, /serializeElementorValue\(values, languages\)/);
+    assert.match(editor, /original\.dispatchEvent\(new Event\('input'/);
+    assert.match(editor, /panel\/open_editor\/.*elementType/);
+    assert.doesNotMatch(editor, /innerHTML|outerHTML|document\.write|update_post_meta|_elementor_data/);
+
+    assert.match(frontend, /node\.nodeValue = translated/);
+    assert.match(frontend, /\['alt', 'aria-label', 'placeholder', 'title']/);
+    assert.doesNotMatch(frontend, /innerHTML|outerHTML|document\.write|insertAdjacentHTML|['"]href['"]|['"]src['"]/);
+
+    const parsed = bridge.parseElementorValue(
+        '[:lv]Par mums[:ru]О нас[:en]About[:de]Über uns[:]',
+        ['lv', 'ru', 'en'],
+        'en',
+    );
+    assert.equal(parsed.lv, 'Par mums');
+    assert.equal(parsed.ru, 'О нас');
+    assert.equal(parsed.en, 'About');
+    assert.equal(parsed.de, 'Über uns');
+    assert.equal(
+        bridge.serializeElementorValue(parsed, ['lv', 'ru', 'en']),
+        '[:lv]Par mums[:ru]О нас[:en]About[:de]Über uns[:]',
+    );
+});

@@ -85,7 +85,7 @@ jobs:
           wp eval-file "$GITHUB_WORKSPACE/tests/Integration/WooCommerce/transaction-matrix.php" --path="$WP_PATH"
       - name: Build and inspect exact release-candidate archive
         run: |
-          git archive --format=zip --prefix=qtranslate-xt/ --output=/tmp/qtranslate-xt-4.0.0-rc1.zip "$GITHUB_SHA" -- qtranslate.php readme.txt license.txt changelog-qtranslate-x.md CHANGELOG.md UPGRADE.md css dist flags i18n-config.json i18n-config img lang src
+          git archive --format=zip --prefix=qtranslate-xt/ --output=/tmp/qtranslate-xt-4.0.0-rc1.zip "$GITHUB_SHA" -- qtranslate.php readme.txt license.txt changelog-qtranslate-x.md CHANGELOG.md UPGRADE.md ELEMENTOR-COMPATIBILITY.md css dist flags i18n-config.json i18n-config img lang src
           test "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | cut -d/ -f1 | sort -u)" = 'qtranslate-xt'
           test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/lang/qtranslate-lv.mo$')"
           if unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep -E '(^|/)(\.git|\.github|tests|dev|js|node_modules|vendor|build)(/|$)|\.(po|pot|sql|sqlite|db)$'; then

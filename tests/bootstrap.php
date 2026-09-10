@@ -197,6 +197,7 @@ require_once dirname( __DIR__ ) . '/src/Integration/Acf/AcfAdminEditingService.p
 require_once dirname( __DIR__ ) . '/src/Integration/Acf/AcfSafeBridgeValueAdapter.php';
 require_once dirname( __DIR__ ) . '/src/Integration/WooCommerce/WooCommerceDataPolicy.php';
 require_once dirname( __DIR__ ) . '/src/Integration/WooCommerce/WooCommerceBlocksAdapter.php';
+require_once dirname( __DIR__ ) . '/src/Integration/Elementor/ElementorAdapter.php';
 require_once dirname( __DIR__ ) . '/src/modules/module_loader.php';
 require_once dirname( __DIR__ ) . '/src/utils.php';
 require_once dirname( __DIR__ ) . '/src/taxonomy.php';

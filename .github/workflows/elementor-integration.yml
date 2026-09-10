@@ -1,0 +1,108 @@
+name: Elementor integration
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: elementor-integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-matrix:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        elementor: ['3.35.9', '4.2.4']
+    services:
+      mysql:
+        image: mysql:8.4@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+        env:
+          MYSQL_DATABASE: wordpress
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.4'
+          extensions: intl, json, mysqli
+          coverage: none
+      - name: Install WP-CLI
+        run: |
+          curl --fail --location --retry 3 -o /tmp/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          echo 'ce34ddd838f7351d6759068d09793f26755463b4a4610a5a5c0a97b68220d85c  /tmp/wp-cli.phar' | sha256sum --check --strict
+          chmod +x /tmp/wp-cli.phar
+          sudo mv /tmp/wp-cli.phar /usr/local/bin/wp
+      - name: Provision WordPress 7.1 and Elementor ${{ matrix.elementor }}
+        env:
+          WP_PATH: /tmp/qtx-elementor-wordpress
+        run: |
+          mkdir -p "$WP_PATH"
+          wp core download --version=7.1 --path="$WP_PATH" --force
+          wp config create --path="$WP_PATH" --dbname=wordpress --dbuser=root --dbpass='' --dbhost=127.0.0.1:3306 --skip-check
+          wp config set WP_ENVIRONMENT_TYPE local --path="$WP_PATH"
+          QTX_ADMIN_PASSWORD="$(openssl rand -hex 24)"
+          wp core install --path="$WP_PATH" --url=http://qtx.test --title='QTX Elementor Lab' --admin_user=qtx-admin --admin_password="$QTX_ADMIN_PASSWORD" --admin_email=nobody@example.test --skip-email
+          unset QTX_ADMIN_PASSWORD
+          wp plugin install elementor --version='${{ matrix.elementor }}' --activate --path="$WP_PATH"
+          ln -s "$GITHUB_WORKSPACE" "$WP_PATH/wp-content/plugins/qtranslate-xt"
+          wp plugin activate qtranslate-xt --path="$WP_PATH"
+          wp option update qtranslate_enabled_languages --format=json '["lv","ru","en"]' --path="$WP_PATH"
+          wp option update qtranslate_default_language en --path="$WP_PATH"
+          wp rewrite structure '/%postname%/' --path="$WP_PATH"
+      - name: Execute Elementor JSON/render/assets matrix
+        env:
+          WP_PATH: /tmp/qtx-elementor-wordpress
+        run: wp eval-file "$GITHUB_WORKSPACE/tests/Integration/Elementor/render-matrix.php" --path="$WP_PATH"
+      - name: Exercise LV/RU/EN frontend routes
+        env:
+          WP_PATH: /tmp/qtx-elementor-wordpress
+        run: |
+          wp option update home 'http://qtx.test:8098' --path="$WP_PATH"
+          wp option update siteurl 'http://qtx.test:8098' --path="$WP_PATH"
+          php -S 127.0.0.1:8098 -t "$WP_PATH" "$GITHUB_WORKSPACE/tests/Integration/http-router.php" >/tmp/qtx-elementor-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent --resolve 'qtx.test:8098:127.0.0.1' --output /dev/null 'http://qtx.test:8098/'; then break; fi
+            sleep 1
+          done
+          check_route() {
+            route="$1"
+            expected="$2"
+            output="/tmp/qtx-elementor-${expected}.html"
+            curl --fail --silent --show-error --location --max-redirs 5 --resolve 'qtx.test:8098:127.0.0.1' "http://qtx.test:8098${route}" --output "$output" || { cat /tmp/qtx-elementor-http.log; exit 1; }
+            grep --fixed-strings "$expected" "$output"
+            grep --fixed-strings 'https://example.test/unchanged-target?ref=qtx' "$output"
+            if grep --fixed-strings '[:lv]' "$output"; then exit 1; fi
+          }
+          check_route '/lv/qtx-elementor/' 'QTX_ELEMENTOR_VIRSRAKSTS'
+          check_route '/ru/qtx-elementor/' 'QTX_ELEMENTOR_ЗАГОЛОВОК'
+          check_route '/en/qtx-elementor/' 'QTX_ELEMENTOR_HEADING'
+      - name: Build, install and re-run the exact archive
+        env:
+          WP_PATH: /tmp/qtx-elementor-wordpress
+        run: |
+          git archive --format=zip --prefix=qtranslate-xt/ --output=/tmp/qtranslate-xt-4.0.0-rc1.zip "$GITHUB_SHA" -- qtranslate.php readme.txt license.txt changelog-qtranslate-x.md CHANGELOG.md UPGRADE.md ELEMENTOR-COMPATIBILITY.md css dist flags i18n-config.json i18n-config img lang src
+          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/dist/elementor-editor.js$')"
+          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/dist/elementor-frontend.js$')"
+          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/src/Integration/Elementor/ElementorAdapter.php$')"
+          wp plugin deactivate qtranslate-xt --path="$WP_PATH"
+          unlink "$WP_PATH/wp-content/plugins/qtranslate-xt"
+          wp plugin install /tmp/qtranslate-xt-4.0.0-rc1.zip --activate --path="$WP_PATH"
+          wp eval-file "$GITHUB_WORKSPACE/tests/Integration/Elementor/render-matrix.php" --path="$WP_PATH"
+          sha256sum /tmp/qtranslate-xt-4.0.0-rc1.zip

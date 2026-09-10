@@ -15,8 +15,17 @@ compatibility with third-party versions that were not installed and executed.
 | Events Made Easy | `events-made-easy` plus packaged i18n config | QTX language lifecycle/admin field configuration | Loader and packaged JSON policy PASS | **NOT TESTED** |
 | Slugs | `slugs` | WordPress post/term rewrite, metadata and admin lifecycle | Unit/security/SQL source tests PASS | **NOT TESTED in real WP** |
 
-ACF and WooCommerce are tracked separately because they are required release
-features, not optional L2 integrations.
+ACF, WooCommerce and Elementor are tracked separately because their storage or
+rendering boundaries require dedicated compatibility evidence.
+
+## Elementor
+
+The built-in bridge keeps Elementor's private JSON under Elementor ownership,
+adds editor language panels only to standard Text/Textarea/WYSIWYG controls and
+projects translations at finished widget HTML plus safe visible attributes.
+Unit/JavaScript/source validation is **PASS**. A pinned real Elementor editor,
+save, template and frontend matrix is required before claiming a supported
+Elementor version range. See `ELEMENTOR-COMPATIBILITY.md`.
 
 ## Loading and trust boundary
 

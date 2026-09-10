@@ -14,6 +14,8 @@ module.exports = {
         'notices': './js/notices.js',
         'options': './js/options.js',
         'woocommerce-blocks': './js/woocommerce-blocks',
+        'elementor-frontend': './js/elementor/frontend.js',
+        'elementor-editor': './js/elementor/editor.js',
         'modules/acf': './js/acf',
     },
     output: {

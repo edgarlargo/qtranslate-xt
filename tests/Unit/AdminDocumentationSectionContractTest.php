@@ -16,6 +16,8 @@ final class AdminDocumentationSectionContractTest extends TestCase {
         $settings = file_get_contents( dirname( __DIR__, 2 ) . '/src/admin/admin_settings.php' );
 
         self::assertStringContainsString( 'Working with Gutenberg', $settings );
+        self::assertStringContainsString( 'Working with Elementor', $settings );
+        self::assertStringContainsString( 'Text, Textarea and WYSIWYG', $settings );
         self::assertStringContainsString( 'Concurrent editing and error 409', $settings );
         self::assertStringContainsString( 'Differences between the legacy and modern versions', $settings );
         self::assertStringContainsString( 'No routine content conversion is required', $settings );

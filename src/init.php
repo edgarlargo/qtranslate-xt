@@ -54,6 +54,7 @@ require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfAdminEditingService.php';
 require_once QTRANSLATE_DIR . '/src/Integration/Acf/AcfSafeBridgeValueAdapter.php';
 require_once QTRANSLATE_DIR . '/src/Integration/WooCommerce/WooCommerceDataPolicy.php';
 require_once QTRANSLATE_DIR . '/src/Integration/WooCommerce/WooCommerceBlocksAdapter.php';
+require_once QTRANSLATE_DIR . '/src/Integration/Elementor/ElementorAdapter.php';
 require_once QTRANSLATE_DIR . '/src/language_blocks.php';
 require_once QTRANSLATE_DIR . '/src/language_config.php';
 require_once QTRANSLATE_DIR . '/src/language_detect.php';
@@ -168,6 +169,12 @@ function qtranxf_init_language(): void {
     $woo_blocks = new \QTX\Integration\WooCommerce\WooCommerceBlocksAdapter();
     $woo_blocks->register();
     $GLOBALS['qtx_woocommerce_blocks_adapter'] = $woo_blocks;
+
+    // Elementor owns its private JSON document. Translate only supported text
+    // controls in the editor and finished widget HTML on the frontend.
+    $elementor = new \QTX\Integration\Elementor\ElementorAdapter();
+    $elementor->register();
+    $GLOBALS['qtx_elementor_adapter'] = $elementor;
 
     require_once QTRANSLATE_DIR . '/src/date_time.php';
     qtranxf_add_date_time_filters();

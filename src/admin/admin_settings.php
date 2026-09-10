@@ -1015,6 +1015,26 @@ class QTX_Admin_Settings {
                 <li><?php esc_html_e( 'The block-based Widgets editor is disabled for compatibility. Use the classic Widgets screen for multilingual widgets.', 'qtranslate' ); ?></li>
             </ul>
 
+            <h2><?php esc_html_e( 'Working with Elementor', 'qtranslate' ); ?></h2>
+            <p class="qtranxs-documentation-lead">
+                <?php esc_html_e( 'qTranslate-XT Modern adds language tabs to Elementor Text, Textarea and WYSIWYG controls. Keep one Elementor page or template for all languages; do not duplicate the page for each language.', 'qtranslate' ); ?>
+            </p>
+            <ol>
+                <li><?php esc_html_e( 'Open a page or template with Elementor and select a widget.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Use the qTranslate-XT language tabs shown above a supported text control and enter every translation.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Update the Elementor document, then preview each public language URL.', 'qtranslate' ); ?></li>
+            </ol>
+            <p>
+                <?php esc_html_e( 'The translations are stored as one normal qTranslate-XT scalar value inside the control. Elementor continues to own its private JSON document, layout, responsive settings and generated CSS. On the frontend, the bridge translates only finished widget HTML and safe visible attributes.', 'qtranslate' ); ?>
+            </p>
+            <h3><?php esc_html_e( 'Elementor boundaries', 'qtranslate' ); ?></h3>
+            <ul>
+                <li><?php esc_html_e( 'Supported editor controls: Text, Textarea and WYSIWYG. WYSIWYG translations are edited as HTML text in the language panels.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Links, media, CSS, HTML tags, IDs, queries, responsive settings and other technical controls are intentionally unchanged.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Third-party Elementor widgets are supported when they use the standard Text, Textarea or WYSIWYG control types. Custom editors or proprietary data sources need their own adapter.', 'qtranslate' ); ?></li>
+                <li><?php esc_html_e( 'Dynamic content coming from ACF, WooCommerce or another plugin is translated by that integration, not by changing Elementor document data.', 'qtranslate' ); ?></li>
+            </ul>
+
             <hr/>
 
             <h2><?php esc_html_e( 'Differences between the legacy and modern versions', 'qtranslate' ); ?></h2>
