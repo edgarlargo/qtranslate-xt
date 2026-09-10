@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
 Date: 2026-09-10
-Decision: **ELEMENTOR DELTA AUDITED — FINAL ZIP PENDING — PRODUCTION ACTIVATION BLOCKER OPEN**
+Decision: **LOCAL ELEMENTOR RC VALIDATED — PRODUCTION ACTIVATION BLOCKER OPEN**
 
 ## Current production incident
 
@@ -300,7 +300,7 @@ Current local candidate:
 ## 2026-09-10 Elementor release-gate cycle
 
 The previous `62bcc329…d262b` archive predates the built-in Elementor bridge
-and is superseded. Mandatory gates completed so far, in order:
+and is superseded. Mandatory gates completed in order:
 
 1. QTX4-SEC-001 remains **RESOLVED**.
 2. PHP/JavaScript run `34489033988`, Woo MySQL/Redis run `34489034009` and
@@ -308,11 +308,18 @@ and is superseded. Mandatory gates completed so far, in order:
 3. The Elementor delta security re-audit is **PASS** with zero confirmed
    Critical/High/Medium/Low findings.
 4. Release-blocking findings discovered by the delta audit: **0**.
-5. Exact post-audit ZIP construction/validation: **PENDING**.
+5. Exact post-audit ZIP construction/validation: **PASS** — PHP/JavaScript run
+   `34489941326`, Woo/exact-ZIP run `34489941550` and Elementor/exact-ZIP run
+   `34489941308` passed on audit commit `053b03a`.
 
 The real Elementor runtime matrix covers versions 3.35.9 and 4.2.4 on
 WordPress 7.1, PHP 8.4 and MySQL 8.4. It installs the exact candidate archive
 and verifies raw document integrity, assets, LV/RU/EN heading/body/button
 output, technical URL stability and cache isolation. Interactive editor browser
 click/save automation, templates and proprietary controls are not claimed.
-Production designation remains blocked by the unresolved real-site HTTP 500.
+The first Elementor 3.35.9 attempt ended with one transient empty response
+from the disposable loopback server; its failed job rerun passed all
+assertions, and 4.2.4 passed on both attempts. This status-recording commit is
+documentation-only; distribute only the exact archive downloaded from its
+successful CI run. Production designation remains blocked by the unresolved
+real-site HTTP 500.

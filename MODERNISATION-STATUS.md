@@ -291,7 +291,11 @@ per PHP 8.1-8.5 runtime, seven JavaScript tests, PHP 7.4/8.0 syntax, npm audit
 and bundle reproducibility. Woo run `34489034009` remained green at 176/176
 with MySQL/Redis/HPOS. Elementor run `34489034016` passed real versions 3.35.9
 and 4.2.4, exact-archive installation and isolated LV/RU/EN routes. Delta
-security audit: **PASS**, zero confirmed findings. Final post-audit ZIP gate is
-pending; the previous `62bcc329…d262b` ZIP is superseded. Interactive editor
-browser automation remains NOT TESTED. The production HTTP 500 blocker is
-unchanged.
+security audit: **PASS**, zero confirmed findings. Post-audit runs
+`34489941326`, `34489941550` and `34489941308` passed on audit commit
+`053b03a`; the latter two installed the exact ZIP, so gate 5 is **PASS** for
+the audited runtime. The first 3.35.9 attempt's transient loopback empty reply
+passed on failed-job rerun. The previous `62bcc329…d262b` ZIP is superseded;
+the downloadable archive must come from successful CI for the final
+documentation-only commit. Interactive editor browser automation remains NOT
+TESTED. The production HTTP 500 blocker is unchanged.

@@ -82,6 +82,13 @@ PHP run `34489033988` passed 366 tests / 8165 assertions per PHP 8.1-8.5
 runtime, PHP 7.4/8.0 syntax, seven JavaScript tests, npm audit and reproducible
 bundles. Woo regression run `34489034009` also remained green at 176/176.
 
+Post-audit runs `34489941326`, `34489941550` and `34489941308` passed on audit
+commit `053b03a`. The Elementor run installed the exact archive and passed the
+same 3.35.9/4.2.4 LV/RU/EN isolation matrix. Its first 3.35.9 attempt received
+one transient empty response from the disposable loopback PHP server; the
+failed job rerun passed every assertion. This completes the audited runtime's
+exact-archive gate.
+
 The editor bridge has executable parser/serialization and DOM-sink contracts,
 but an interactive browser session clicking language tabs and saving a page was
 not automated. Custom widgets are covered only when they use the supported

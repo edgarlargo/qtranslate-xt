@@ -3,8 +3,7 @@
 Date: 2026-09-10
 Branch: `modernisation`
 
-Current release status: **ELEMENTOR DELTA AUDITED; FINAL ZIP PENDING;
-PRODUCTION BLOCKED**. A
+Current release status: **LOCAL ELEMENTOR RC VALIDATED; PRODUCTION BLOCKED**. A
 real installation returns HTTP 500 with qTranslate-XT Modern active and
 recovers when the plugin is deactivated. The replacement Woo system-page ZIP
 passed its MySQL/Redis gate, delta security audit and post-audit exact-ZIP
@@ -28,7 +27,7 @@ compatibility with an absent WordPress or third-party runtime.
 | `git diff --check` | **PASS** | no whitespace errors |
 | Module loader traversal regression | **PASS** | registry, traversal, wrapper, absolute/unknown/corrupt-state cases covered |
 | Historical exact-ZIP HTTP language/REST routes | **PASS / SUPERSEDED** | run `33884767696` passed LV/RU/EN, raw-marker rejection, Cart/Checkout/My Account shared structure, REST and Store API; later runtime deltas supersede those bytes |
-| Current post-audit exact-ZIP construction/install | **PENDING** | Elementor audit is complete; new exact bytes must be built and validated by gate 5 |
+| Current post-audit exact-ZIP construction/install | **PASS CI** | runs `34489941550` and `34489941308` built/installed the exact audit-commit archive and passed Woo plus Elementor runtime gates |
 | Real production activation | **FAIL / BLOCKER** | production HTTP 500 only while qTranslate-XT Modern is active; exact PHP fatal/stack trace not yet available |
 | Elementor exact-ZIP frontend | **PASS CI** | run `34489034016`: Elementor 3.35.9/4.2.4, raw JSON, assets and isolated LV/RU/EN heading/body/button routes |
 
@@ -233,6 +232,10 @@ plugin root and zero forbidden entries. Gate 5 is complete.
 Pre-audit runs `34489033988`, `34489034009` and `34489034016` passed the
 PHP/JavaScript, complete WooCommerce MySQL/Redis and Elementor matrices. The
 Elementor delta security re-audit is **PASS** with zero confirmed findings.
-Post-audit exact-archive gate 5 is pending. The previous
-`62bcc329…d262b` ZIP is superseded by the Elementor runtime change and must not
-be installed. The independent production HTTP 500 blocker is unchanged.
+Post-audit runs `34489941326`, `34489941550` and `34489941308` passed on audit
+commit `053b03a`, including both exact-archive integrations. The first
+Elementor 3.35.9 attempt had a transient empty loopback response; its failed
+job rerun passed every assertion. Gate 5 is **PASS** for the audited runtime.
+The previous `62bcc329…d262b` ZIP remains superseded. The final downloadable
+archive is produced only from a successful CI run of the documentation-only
+status commit. The independent production HTTP 500 blocker is unchanged.

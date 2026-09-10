@@ -682,8 +682,18 @@ install, LV/RU/EN heading/body/button routes, technical URL stability and
 language/cache isolation.
 
 Release-blocking findings discovered by this delta audit: **0**. Gates 3 and
-4 are complete. Gate 5 must now rebuild and validate new exact bytes from the
-audit/documentation commit. Interactive browser editor automation remains an
-explicit compatibility limitation, not a confirmed security finding. The
-independent production HTTP 500 blocker remains open pending its fatal stack
-trace.
+4 are complete. Post-audit PHP/JavaScript run
+[`34489941326`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34489941326),
+Woo/exact-ZIP run
+[`34489941550`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34489941550)
+and Elementor/exact-ZIP run
+[`34489941308`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34489941308)
+subsequently passed on audit commit `053b03ac54241e405530a4373501a79f318bc23e`.
+The Elementor 3.35.9 job had one transient empty response from the disposable
+loopback PHP server; rerunning the failed job passed all assertions, while the
+4.2.4 job passed on both attempts. Gate 5: **PASS** for the audited runtime.
+The status-recording commit changes documentation only; its final archive must
+still be taken from a successful CI run for that exact commit. Interactive
+browser editor automation remains an explicit compatibility limitation, not a
+confirmed security finding. The independent production HTTP 500 blocker
+remains open pending its fatal stack trace.

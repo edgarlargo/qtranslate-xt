@@ -224,6 +224,9 @@ pre-audit run
 repeated the complete **176/176** WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
 MySQL 8.4.11, Redis 7.4.11 and HPOS matrix. Exact-ZIP activation,
 Cart/Checkout/My Account HTTP, REST, Store API, Latvian block catalog, mail
-capture and Redis connectivity all remained green. The prior ZIP is superseded;
-the post-audit replacement archive is pending. This does not resolve the
-separate production HTTP 500 blocker.
+capture and Redis connectivity all remained green. Post-audit run
+[`34489941550`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34489941550)
+repeated the complete matrix and exact-ZIP gate on audit commit `053b03a`.
+The prior ZIP remains superseded; the final downloadable archive must come
+from successful CI for the documentation-only status commit. This does not
+resolve the separate production HTTP 500 blocker.
