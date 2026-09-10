@@ -96,6 +96,10 @@ function get_option( string $name, $default = false ) {
     return $GLOBALS['qtx_test_options'][ $name ] ?? $default;
 }
 
+function get_metadata_raw( string $meta_type, int $object_id, string $meta_key = '', bool $single = false ) {
+    return $GLOBALS['qtx_test_raw_metadata'][ $meta_type ][ $object_id ][ $meta_key ] ?? ( $single ? '' : array() );
+}
+
 function acf() {
     return $GLOBALS['qtx_test_acf_instance'] ?? null;
 }
