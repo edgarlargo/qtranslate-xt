@@ -80,10 +80,13 @@ update_post_meta( $pageId, '_elementor_version', ELEMENTOR_VERSION );
 update_post_meta( $pageId, '_elementor_data', wp_slash( wp_json_encode( $data ) ) );
 
 $stored = get_post_meta( $pageId, '_elementor_data', true );
-$assert( is_string( $stored ) && strpos( $stored, $rawHeading ) !== false, 'raw multilingual heading preserved in Elementor JSON' );
-$assert( strpos( $stored, $rawBody ) !== false, 'raw multilingual WYSIWYG value preserved in Elementor JSON' );
-$assert( strpos( $stored, $technicalUrl ) !== false, 'technical URL preserved in Elementor JSON' );
-$assert( strpos( $stored, 'qtxbtn01' ) !== false, 'Elementor element ID preserved' );
+$storedData = is_string( $stored ) ? json_decode( $stored, true ) : null;
+$assert( is_array( $storedData ), 'Elementor JSON remains valid' );
+$widgets = $storedData[0]['elements'][0]['elements'] ?? array();
+$assert( ( $widgets[0]['settings']['title'] ?? null ) === $rawHeading, 'raw multilingual heading preserved in Elementor JSON' );
+$assert( ( $widgets[1]['settings']['editor'] ?? null ) === $rawBody, 'raw multilingual WYSIWYG value preserved in Elementor JSON' );
+$assert( ( $widgets[2]['settings']['link']['url'] ?? null ) === $technicalUrl, 'technical URL preserved in Elementor JSON' );
+$assert( ( $widgets[2]['id'] ?? null ) === 'qtxbtn01', 'Elementor element ID preserved' );
 
 global $q_config;
 $originalLanguage = $q_config['language'];
