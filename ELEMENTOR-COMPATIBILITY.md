@@ -69,7 +69,21 @@ responsibility of their dedicated qTranslate-XT integrations.
 
 ## Validation status
 
-The source has unit and JavaScript contracts for hook registration, language
-round trips, disabled-language preservation, output projection and forbidden
-DOM/metadata sinks. Interactive execution against a pinned Elementor release
-must pass in CI before a version range or final release claim is made.
+Pre-audit run `34489034016` is **PASS** with real Elementor 3.35.9 and 4.2.4,
+WordPress 7.1, PHP 8.4 and MySQL 8.4. Both jobs installed the exact candidate
+archive and verified:
+
+- valid, unchanged Elementor JSON plus stable element ID and technical URL;
+- LV/RU/EN heading, body and button output on separate public routes;
+- no raw marker or cross-language cache leakage;
+- editor/frontend production assets are registered from the archive.
+
+PHP run `34489033988` passed 366 tests / 8165 assertions per PHP 8.1-8.5
+runtime, PHP 7.4/8.0 syntax, seven JavaScript tests, npm audit and reproducible
+bundles. Woo regression run `34489034009` also remained green at 176/176.
+
+The editor bridge has executable parser/serialization and DOM-sink contracts,
+but an interactive browser session clicking language tabs and saving a page was
+not automated. Custom widgets are covered only when they use the supported
+standard control types; templates and proprietary controls require separate
+validation.

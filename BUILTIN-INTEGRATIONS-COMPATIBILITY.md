@@ -1,6 +1,6 @@
 # Built-in integrations compatibility status
 
-Date: 2026-08-24
+Date: 2026-09-10
 
 This document records Phase L2 source validation. It does not claim runtime
 compatibility with third-party versions that were not installed and executed.
@@ -22,10 +22,12 @@ rendering boundaries require dedicated compatibility evidence.
 
 The built-in bridge keeps Elementor's private JSON under Elementor ownership,
 adds editor language panels only to standard Text/Textarea/WYSIWYG controls and
-projects translations at finished widget HTML plus safe visible attributes.
-Unit/JavaScript/source validation is **PASS**. A pinned real Elementor editor,
-save, template and frontend matrix is required before claiming a supported
-Elementor version range. See `ELEMENTOR-COMPATIBILITY.md`.
+projects translations at finished page HTML plus safe visible attributes.
+Unit/JavaScript/source validation and real frontend execution are **PASS** for
+Elementor 3.35.9 and 4.2.4 on WordPress 7.1. The exact archive passed isolated
+LV/RU/EN heading, body and button routes without marker or cache leakage.
+Interactive editor click/save automation, templates and proprietary controls
+remain outside that version claim. See `ELEMENTOR-COMPATIBILITY.md`.
 
 ## Loading and trust boundary
 

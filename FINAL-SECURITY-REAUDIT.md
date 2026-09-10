@@ -1,6 +1,6 @@
 # QTX 4 final security re-audit
 
-Date: 2026-09-04
+Date: 2026-09-10
 Audited remediation commit: `7a0ca6553bddca329c5b871b589e75364551e59f`
 Post-Woo-Blocks delta audited source: `1f6db22834dae1ae96a972da12dea6d1a9b08841`
 CI reproducibility follow-up audited commit: `ef83e1effc3f60eb88c186ee0bb86371bbc30734`
@@ -10,6 +10,7 @@ Post-ACF-frontend-fallback delta audited source: `8fa5f23621b22dbc0a2782326796b4
 Post-Woo-core-block-bootstrap delta audited source: `26b49eef7b56418d74af3f90531a239c157d5172`
 Post-exact-ZIP-HTTP-gate delta audited source: `4c7f928f49a1997f67895730099beecd095ffbd0`
 Post-Woo-system-page-fallback delta audited source: `e1979506e8fc6a93e1639d68f90f403ab847129f`
+Post-Elementor-bridge delta audited source: `a128fae4f2ea601b0ea9dfaa1de021638001a1d5`
 Branch: `modernisation`
 
 ## Executive verdict
@@ -635,3 +636,54 @@ size 1,472,497 bytes and 1,140 entries, with one `qtranslate-xt/` root,
 required Latvian/Woo/ACF files and zero forbidden entries. Gate 5: **PASS**.
 The independent production HTTP 500 blocker remains open pending its fatal
 stack trace.
+
+## 2026-09-10 Elementor bridge delta security re-audit
+
+Audited source: `a128fae4f2ea601b0ea9dfaa1de021638001a1d5`.
+Delta verdict: **PASS**. Open confirmed Critical/High/Medium/Low findings in
+the delta: **0/0/0/0**. Confirmed exploitable findings: **0**.
+
+The runtime delta adds a built-in adapter for standard Elementor Text,
+Textarea and WYSIWYG controls, a text-only editor UI, final-output projection
+and a dynamic frontend text observer.
+
+- `_elementor_data` is passed unchanged to the normal WordPress metadata
+  reader. The adapter never writes, decodes or rewrites Elementor JSON.
+- Translation runs at `elementor/frontend/the_content`, after Elementor's
+  intermediate element cache. Removing the earlier widget-level projection
+  prevents the first rendered language from poisoning later language output.
+- Editor panels use `createElement`, `textContent`, value/attribute properties
+  and native `input`/`change` events. They add no named submission field and
+  preserve disabled historical language segments.
+- The frontend observer changes text nodes and the visible `alt`,
+  `aria-label`, `placeholder` and `title` attributes only. It skips code,
+  scripts, styles, textareas and editable surfaces and never changes `href`,
+  `src` or HTML markup.
+- No REST/AJAX/admin-post route, permission change, SQL, deserialization,
+  filesystem write, remote runtime request, credential, global cache flush or
+  production secret was introduced.
+- The workflow uses immutable action/image pins, a checksum-verified WP-CLI,
+  version-pinned public plugins, disposable credentials, a loopback-only HTTP
+  server and read-only GitHub permissions. Workflow and test files are absent
+  from the release archive.
+
+Pre-audit PHP/JavaScript run
+[`34489033988`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34489033988)
+passed PHP 7.4/8.0 production syntax, **366 tests / 8165 assertions** on each
+PHP 8.1-8.5 runtime, seven JavaScript tests, zero npm advisories, production
+build and bundle reproducibility. WooCommerce run
+[`34489034009`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34489034009)
+passed **176/176** with WordPress 7.1, WooCommerce 11.0.1, PHP 8.4, MySQL
+8.4.11, Redis 7.4.11, HPOS, exact-ZIP install/HTTP/REST and Latvian Blocks.
+Elementor run
+[`34489034016`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34489034016)
+passed real Elementor **3.35.9 and 4.2.4**, raw JSON integrity, exact-archive
+install, LV/RU/EN heading/body/button routes, technical URL stability and
+language/cache isolation.
+
+Release-blocking findings discovered by this delta audit: **0**. Gates 3 and
+4 are complete. Gate 5 must now rebuild and validate new exact bytes from the
+audit/documentation commit. Interactive browser editor automation remains an
+explicit compatibility limitation, not a confirmed security finding. The
+independent production HTTP 500 blocker remains open pending its fatal stack
+trace.

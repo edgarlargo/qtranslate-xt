@@ -215,3 +215,15 @@ stack. Post-audit runs `34109440811` and `34109440849` passed; the latter
 installed and exercised the exact replacement ZIP and repeated the Latvian
 Cart catalog assertion. Its independently verified SHA-256 is
 `62bcc3296cce0a61deb48ced0382cae935badbeb478be6e9485601797f1d262b`.
+
+## 2026-09-10 Elementor regression rerun
+
+The Elementor runtime delta did not change WooCommerce behavior. Required
+pre-audit run
+[`34489034009`](https://github.com/edgarlargo/qtranslate-xt/actions/runs/34489034009)
+repeated the complete **176/176** WordPress 7.1, WooCommerce 11.0.1, PHP 8.4,
+MySQL 8.4.11, Redis 7.4.11 and HPOS matrix. Exact-ZIP activation,
+Cart/Checkout/My Account HTTP, REST, Store API, Latvian block catalog, mail
+capture and Redis connectivity all remained green. The prior ZIP is superseded;
+the post-audit replacement archive is pending. This does not resolve the
+separate production HTTP 500 blocker.

@@ -1,9 +1,10 @@
 # QTX 4 full test matrix
 
-Date: 2026-09-04
+Date: 2026-09-10
 Branch: `modernisation`
 
-Current release status: **LOCAL RC VALIDATED; PRODUCTION BLOCKED**. A
+Current release status: **ELEMENTOR DELTA AUDITED; FINAL ZIP PENDING;
+PRODUCTION BLOCKED**. A
 real installation returns HTTP 500 with qTranslate-XT Modern active and
 recovers when the plugin is deactivated. The replacement Woo system-page ZIP
 passed its MySQL/Redis gate, delta security audit and post-audit exact-ZIP
@@ -17,18 +18,19 @@ compatibility with an absent WordPress or third-party runtime.
 
 | Gate | Status | Result |
 |---|---|---|
-| PHPUnit PHP 8.1–8.5 | **PASS CI** | post-audit run `33884767613`: 356 tests, 8120 assertions per runtime, 0 failures/errors |
+| PHPUnit PHP 8.1–8.5 | **PASS CI** | pre-audit run `34489033988`: 366 tests, 8165 assertions per runtime, 0 failures/errors |
 | Production PHP lint 7.4.33 / 8.0.30 | **PASS** | Covers the WordPress 7.1 backward-compatible PHP floor |
 | PHP syntax | **PASS** | all production PHP files, 0 lint failures |
-| JavaScript shared corpus/security | **PASS local and CI** | 27 corpus cases plus 6 Node tests; ACF bridge value round-trip and text-only DOM assertions PASS |
+| JavaScript shared corpus/security | **PASS local and CI** | 27 corpus cases plus 7 Node tests; ACF/Elementor round-trip and text-only DOM assertions PASS |
 | Webpack production build | **PASS** | Node 24.11.1 CI rebuild matched all committed bundles exactly |
 | npm audit | **PASS** | 0 development/runtime advisories after lock-graph update |
 | Composer audit | **PASS** | 0 advisories in installed test graph; Composer packages excluded from ZIP |
 | `git diff --check` | **PASS** | no whitespace errors |
 | Module loader traversal regression | **PASS** | registry, traversal, wrapper, absolute/unknown/corrupt-state cases covered |
-| Exact-ZIP HTTP language/REST routes | **PASS local and CI** | run `33884767696` passed LV/RU/EN, raw-marker rejection, Cart/Checkout/My Account shared structure, REST and Store API against the exact installed ZIP |
-| Post-audit exact-ZIP construction/install | **PASS** | run `33884767696`, source `9f34ca2`, SHA-256 `b433cc91…944644`, 1,140 entries, Redis connected |
+| Historical exact-ZIP HTTP language/REST routes | **PASS / SUPERSEDED** | run `33884767696` passed LV/RU/EN, raw-marker rejection, Cart/Checkout/My Account shared structure, REST and Store API; later runtime deltas supersede those bytes |
+| Current post-audit exact-ZIP construction/install | **PENDING** | Elementor audit is complete; new exact bytes must be built and validated by gate 5 |
 | Real production activation | **FAIL / BLOCKER** | production HTTP 500 only while qTranslate-XT Modern is active; exact PHP fatal/stack trace not yet available |
+| Elementor exact-ZIP frontend | **PASS CI** | run `34489034016`: Elementor 3.35.9/4.2.4, raw JSON, assets and isolated LV/RU/EN heading/body/button routes |
 
 Release CI uses exact Node 24.11.1, installs the lock graph with lifecycle
 scripts disabled, audits it, rebuilds production assets and fails on any bundle
@@ -216,3 +218,21 @@ The delta security re-audit reports zero confirmed findings. Post-audit PHP run
 `34109440811` and Woo/exact-ZIP run `34109440849` passed. The downloaded exact
 archive has SHA-256 `62bcc329…d262b`, size 1,472,497 bytes, 1,140 entries, one
 plugin root and zero forbidden entries. Gate 5 is complete.
+
+## 2026-09-10 Elementor bridge regression
+
+| Scenario | Status | Evidence |
+|---|---|---|
+| Raw `_elementor_data` JSON | **PASS** | valid and unchanged before Elementor decode; stable ID and technical URL |
+| Standard Text/Textarea/WYSIWYG editor bridge | **PASS contract** | scalar round-trip, disabled-language preservation, native input/change events, text-only DOM sinks |
+| Elementor 3.35.9 frontend | **PASS CI** | exact archive on WordPress 7.1; isolated LV/RU/EN heading/body/button routes |
+| Elementor 4.2.4 frontend | **PASS CI** | exact archive on WordPress 7.1; isolated LV/RU/EN heading/body/button routes |
+| Elementor element cache isolation | **PASS CI** | final page boundary prevents first-language widget cache poisoning |
+| Interactive browser editor save/templates/custom controls | **NOT TESTED** | no browser automation; support is limited to standard control types |
+
+Pre-audit runs `34489033988`, `34489034009` and `34489034016` passed the
+PHP/JavaScript, complete WooCommerce MySQL/Redis and Elementor matrices. The
+Elementor delta security re-audit is **PASS** with zero confirmed findings.
+Post-audit exact-archive gate 5 is pending. The previous
+`62bcc329…d262b` ZIP is superseded by the Elementor runtime change and must not
+be installed. The independent production HTTP 500 blocker is unchanged.

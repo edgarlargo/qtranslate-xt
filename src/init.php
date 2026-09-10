@@ -171,7 +171,7 @@ function qtranxf_init_language(): void {
     $GLOBALS['qtx_woocommerce_blocks_adapter'] = $woo_blocks;
 
     // Elementor owns its private JSON document. Translate only supported text
-    // controls in the editor and finished widget HTML on the frontend.
+    // controls in the editor and finished page HTML on the frontend.
     $elementor = new \QTX\Integration\Elementor\ElementorAdapter();
     $elementor->register();
     $GLOBALS['qtx_elementor_adapter'] = $elementor;

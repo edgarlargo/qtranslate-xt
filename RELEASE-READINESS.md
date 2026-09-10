@@ -1,7 +1,7 @@
 # QTX 4 release readiness
 
-Date: 2026-09-04
-Decision: **LOCAL RC VALIDATED — PRODUCTION ACTIVATION BLOCKER OPEN**
+Date: 2026-09-10
+Decision: **ELEMENTOR DELTA AUDITED — FINAL ZIP PENDING — PRODUCTION ACTIVATION BLOCKER OPEN**
 
 ## Current production incident
 
@@ -42,7 +42,7 @@ run `33884190637`; gates 3 and 4 passed for source `e197950` with no new
 finding; gate 5 passed in run `33884767696`. The production activation incident
 remains an independent release blocker.
 
-## Current locally validated release candidate
+## Previous locally validated candidate (superseded)
 
 - File: `build/qtranslate-xt-4.0.0-rc1.zip`
 - Source commit: `9f34ca2c73fcc5070ef3879ddc90324d69ca85aa`
@@ -296,3 +296,23 @@ Current local candidate:
 - size: 1,472,497 bytes; ZIP entries: 1,140;
 - exact install/reactivation, LV/RU/EN HTTP, Latvian Cart Gutenberg catalog,
   Woo matrix and Redis connectivity: **PASS**.
+
+## 2026-09-10 Elementor release-gate cycle
+
+The previous `62bcc329…d262b` archive predates the built-in Elementor bridge
+and is superseded. Mandatory gates completed so far, in order:
+
+1. QTX4-SEC-001 remains **RESOLVED**.
+2. PHP/JavaScript run `34489033988`, Woo MySQL/Redis run `34489034009` and
+   Elementor run `34489034016` are **PASS**.
+3. The Elementor delta security re-audit is **PASS** with zero confirmed
+   Critical/High/Medium/Low findings.
+4. Release-blocking findings discovered by the delta audit: **0**.
+5. Exact post-audit ZIP construction/validation: **PENDING**.
+
+The real Elementor runtime matrix covers versions 3.35.9 and 4.2.4 on
+WordPress 7.1, PHP 8.4 and MySQL 8.4. It installs the exact candidate archive
+and verifies raw document integrity, assets, LV/RU/EN heading/body/button
+output, technical URL stability and cache isolation. Interactive editor browser
+click/save automation, templates and proprietary controls are not claimed.
+Production designation remains blocked by the unresolved real-site HTTP 500.

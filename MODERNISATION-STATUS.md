@@ -277,3 +277,21 @@ runs `34109440811` and `34109440849` passed the final packaging gate. The
 current local ZIP has SHA-256 `62bcc329…d262b`, size 1,472,497 bytes and 1,140
 entries. The previous `b433cc91…944644` ZIP is preserved as withdrawn. The
 production HTTP 500 blocker is unchanged.
+
+## 2026-09-10 Elementor integration status
+
+The built-in Elementor bridge now provides isolated language panels for
+standard Text, Textarea and WYSIWYG controls while leaving Elementor's private
+JSON, IDs, links, media, layout and responsive settings under Elementor
+ownership. Frontend translation runs only after Elementor's element cache, and
+the dynamic observer is limited to text nodes and safe visible attributes.
+
+Pre-audit PHP/JavaScript run `34489033988` passed 366 tests / 8165 assertions
+per PHP 8.1-8.5 runtime, seven JavaScript tests, PHP 7.4/8.0 syntax, npm audit
+and bundle reproducibility. Woo run `34489034009` remained green at 176/176
+with MySQL/Redis/HPOS. Elementor run `34489034016` passed real versions 3.35.9
+and 4.2.4, exact-archive installation and isolated LV/RU/EN routes. Delta
+security audit: **PASS**, zero confirmed findings. Final post-audit ZIP gate is
+pending; the previous `62bcc329…d262b` ZIP is superseded. Interactive editor
+browser automation remains NOT TESTED. The production HTTP 500 blocker is
+unchanged.
