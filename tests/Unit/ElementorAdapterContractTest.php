@@ -16,7 +16,6 @@ final class ElementorAdapterContractTest extends TestCase {
     protected function tearDown(): void {
         global $q_config;
         $q_config = $this->baseConfig;
-        unset( $GLOBALS['qtx_test_raw_metadata'] );
     }
 
     public function testRenderedWidgetContentUsesCurrentLanguageWithoutAvailabilityNotice(): void {
@@ -49,19 +48,14 @@ final class ElementorAdapterContractTest extends TestCase {
         $actionHooks = array_column( $GLOBALS['qtx_test_actions'], 0 );
         self::assertSame( 1, count( array_keys( $filterHooks, 'elementor/widget/render_content', true ) ) );
         self::assertSame( 1, count( array_keys( $filterHooks, 'elementor/frontend/the_content', true ) ) );
-        self::assertSame( 1, count( array_keys( $filterHooks, 'get_post_metadata', true ) ) );
+        self::assertSame( 0, count( array_keys( $filterHooks, 'get_post_metadata', true ) ) );
         self::assertContains( 'wp_enqueue_scripts', $actionHooks );
         self::assertContains( 'elementor/editor/after_enqueue_scripts', $actionHooks );
     }
 
     public function testPrivateElementorDocumentBypassesLegacyMetadataTranslationAsRawJson(): void {
-        $raw = '[{"id":"fixed","settings":{"title":"[:lv]Sveiki[:en]Hello[:]"}}]';
-        $GLOBALS['qtx_test_raw_metadata']['post'][42]['_elementor_data'] = $raw;
-        $adapter = new ElementorAdapter( static fn (): bool => true );
-
-        self::assertSame( $raw, $adapter->preserveDocumentData( null, 42, '_elementor_data', true ) );
-        self::assertNull( $adapter->preserveDocumentData( null, 42, '_elementor_css', true ) );
-        self::assertSame( 'upstream', $adapter->preserveDocumentData( 'upstream', 42, '_elementor_data', true ) );
+        self::assertNull( qtranxf_filter_postmeta( null, 42, '_elementor_data', true ) );
+        self::assertSame( 'upstream', qtranxf_filter_postmeta( 'upstream', 42, '_elementor_data', true ) );
     }
 
     public function testImplementationNeverFiltersOrMutatesPrivateElementorJson(): void {
@@ -75,8 +69,9 @@ final class ElementorAdapterContractTest extends TestCase {
         self::assertStringContainsString( "elementor/frontend/the_content", $adapter );
         self::assertStringContainsString( "elementor/editor/after_enqueue_scripts", $adapter );
         self::assertStringContainsString( "new \\QTX\\Integration\\Elementor\\ElementorAdapter()", $init );
-        self::assertStringContainsString( "add_filter( 'get_post_metadata', array( \$this, 'preserveDocumentData' ), 4, 4 )", $adapter );
-        self::assertStringContainsString( "get_metadata_raw( 'post', \$objectId, \$metaKey, \$single )", $adapter );
+        self::assertStringNotContainsString( 'get_post_metadata', $adapter );
+        self::assertStringNotContainsString( 'get_metadata_raw', $adapter );
+        self::assertStringContainsString( "if ( \$meta_key === '_elementor_data' )", file_get_contents( $root . '/src/frontend.php' ) );
         self::assertStringNotContainsString( 'update_post_meta', $adapter );
         self::assertStringNotContainsString( 'active_plugins', $adapter );
         self::assertStringContainsString( '.elementor-control-type-wysiwyg textarea[data-setting]', $editor );

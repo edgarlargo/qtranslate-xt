@@ -28,28 +28,9 @@ final class ElementorAdapter {
 
         add_filter( 'elementor/widget/render_content', array( $this, 'translateRenderedContent' ), 99, 2 );
         add_filter( 'elementor/frontend/the_content', array( $this, 'translateRenderedContent' ), 99, 1 );
-        add_filter( 'get_post_metadata', array( $this, 'preserveDocumentData' ), 4, 4 );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueueFrontend' ), 30 );
         add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'enqueueEditor' ) );
         $this->registered = true;
-    }
-
-    /**
-     * Keep Elementor's private document raw until Elementor has decoded and
-     * rendered it. qTranslate-XT's legacy frontend metadata filter runs at
-     * priority 5 and must never project language markers inside JSON syntax.
-     * `get_metadata_raw()` reads the native cache/database without recursively
-     * invoking the metadata pre-filter.
-     *
-     * @param mixed $original
-     * @return mixed
-     */
-    public function preserveDocumentData( $original, int $objectId, string $metaKey = '', bool $single = false ) {
-        if ( $original !== null || $metaKey !== '_elementor_data' || ! function_exists( 'get_metadata_raw' ) ) {
-            return $original;
-        }
-
-        return get_metadata_raw( 'post', $objectId, $metaKey, $single );
     }
 
     /**

@@ -842,6 +842,14 @@ function qtranxf_translate_metadata( string $meta_type, $original_value, int $ob
  * @since 3.2.3 translation of postmeta
  */
 function qtranxf_filter_postmeta( $original_value, int $object_id, string $meta_key = '', bool $single = false ) {
+    // Elementor owns this value as one JSON document. Translating markers at
+    // the generic metadata boundary can corrupt the JSON before Elementor
+    // decodes it. Returning the upstream value (normally null) lets WordPress
+    // fetch the raw metadata; translation happens after Elementor renders it.
+    if ( $meta_key === '_elementor_data' ) {
+        return $original_value;
+    }
+
     return qtranxf_translate_metadata( 'post', $original_value, $object_id, $meta_key, $single );
 }
 

@@ -5,10 +5,11 @@ Date: 2026-09-10
 ## Data model
 
 Elementor remains the sole owner of `_elementor_data`, its JSON schema,
-responsive settings, layout identifiers and generated CSS. A priority-4 raw
-read guard prevents the legacy qTranslate post-meta projector from translating
-JSON syntax before Elementor decodes it. The guard neither rewrites nor updates
-the document and all other Elementor metadata keeps its normal WordPress path.
+responsive settings, layout identifiers and generated CSS. The legacy
+qTranslate post-meta projector explicitly passes this key through to the normal
+WordPress metadata reader, so JSON syntax is not translated before Elementor
+decodes it. The boundary neither rewrites nor updates the document and all
+other Elementor metadata keeps its normal WordPress path.
 
 Supported text controls store the established qTranslate-XT scalar format:
 
