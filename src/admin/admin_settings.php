@@ -1025,7 +1025,7 @@ class QTX_Admin_Settings {
                 <li><?php esc_html_e( 'Update the Elementor document, then preview each public language URL.', 'qtranslate' ); ?></li>
             </ol>
             <p>
-                <?php esc_html_e( 'The translations are stored as one normal qTranslate-XT scalar value inside the control. Elementor continues to own its private JSON document, layout, responsive settings and generated CSS. On the frontend, the bridge translates only finished widget HTML and safe visible attributes.', 'qtranslate' ); ?>
+                <?php esc_html_e( 'The translations are stored as one normal qTranslate-XT scalar value inside the control. Elementor continues to own its private JSON document, layout, responsive settings and generated CSS. On the frontend, the bridge translates only the finished Elementor page HTML and safe visible attributes.', 'qtranslate' ); ?>
             </p>
             <h3><?php esc_html_e( 'Elementor boundaries', 'qtranslate' ); ?></h3>
             <ul>

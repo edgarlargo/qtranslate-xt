@@ -46,7 +46,7 @@ final class ElementorAdapterContractTest extends TestCase {
 
         $filterHooks = array_column( $GLOBALS['qtx_test_filters'], 0 );
         $actionHooks = array_column( $GLOBALS['qtx_test_actions'], 0 );
-        self::assertSame( 1, count( array_keys( $filterHooks, 'elementor/widget/render_content', true ) ) );
+        self::assertSame( 0, count( array_keys( $filterHooks, 'elementor/widget/render_content', true ) ) );
         self::assertSame( 1, count( array_keys( $filterHooks, 'elementor/frontend/the_content', true ) ) );
         self::assertSame( 0, count( array_keys( $filterHooks, 'get_post_metadata', true ) ) );
         self::assertContains( 'wp_enqueue_scripts', $actionHooks );
@@ -65,7 +65,7 @@ final class ElementorAdapterContractTest extends TestCase {
         $frontend = file_get_contents( $root . '/js/elementor/frontend.js' );
         $init = file_get_contents( $root . '/src/init.php' );
 
-        self::assertStringContainsString( "elementor/widget/render_content", $adapter );
+        self::assertStringNotContainsString( "elementor/widget/render_content", $adapter );
         self::assertStringContainsString( "elementor/frontend/the_content", $adapter );
         self::assertStringContainsString( "elementor/editor/after_enqueue_scripts", $adapter );
         self::assertStringContainsString( "new \\QTX\\Integration\\Elementor\\ElementorAdapter()", $init );

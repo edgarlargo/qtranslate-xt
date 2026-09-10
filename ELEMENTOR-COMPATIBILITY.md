@@ -42,10 +42,10 @@ when the field is saved.
 
 ## Frontend behavior
 
-PHP projection runs at the rendered widget/content boundary:
-
-- `elementor/widget/render_content`;
-- `elementor/frontend/the_content`.
+PHP projection runs at Elementor's final rendered-content boundary,
+`elementor/frontend/the_content`. It intentionally does not translate at the
+individual widget boundary: Elementor may cache that intermediate HTML, which
+would otherwise allow the first rendered language to leak into later requests.
 
 The selected qTranslate language is applied to the finished HTML without an
 “available only in” notice. A small DOM observer also covers content rendered

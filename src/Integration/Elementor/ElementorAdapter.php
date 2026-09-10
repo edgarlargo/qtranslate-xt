@@ -26,7 +26,6 @@ final class ElementorAdapter {
             return;
         }
 
-        add_filter( 'elementor/widget/render_content', array( $this, 'translateRenderedContent' ), 99, 2 );
         add_filter( 'elementor/frontend/the_content', array( $this, 'translateRenderedContent' ), 99, 1 );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueueFrontend' ), 30 );
         add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'enqueueEditor' ) );
@@ -34,7 +33,8 @@ final class ElementorAdapter {
     }
 
     /**
-     * Translate only the finished HTML string. Technical Elementor settings,
+     * Translate only the finished page HTML string, after Elementor has read
+     * or populated its element cache. Technical Elementor settings,
      * layout IDs, links, queries and the private `_elementor_data` JSON are
      * never translated at this boundary.
      *
