@@ -88,24 +88,6 @@ $assert( ( $widgets[1]['settings']['editor'] ?? null ) === $rawBody, 'raw multil
 $assert( ( $widgets[2]['settings']['link']['url'] ?? null ) === $technicalUrl, 'technical URL preserved in Elementor JSON' );
 $assert( ( $widgets[2]['id'] ?? null ) === 'qtxbtn01', 'Elementor element ID preserved' );
 
-global $q_config;
-$originalLanguage = $q_config['language'];
-$expected = array(
-    'lv' => array( 'QTX_ELEMENTOR_VIRSRAKSTS', 'QTX_ELEMENTOR_TEKSTS', 'QTX_ELEMENTOR_POGA' ),
-    'ru' => array( 'QTX_ELEMENTOR_ЗАГОЛОВОК', 'QTX_ELEMENTOR_ТЕКСТ', 'QTX_ELEMENTOR_КНОПКА' ),
-    'en' => array( 'QTX_ELEMENTOR_HEADING', 'QTX_ELEMENTOR_BODY', 'QTX_ELEMENTOR_BUTTON' ),
-);
-foreach ( $expected as $language => $needles ) {
-    $q_config['language'] = $language;
-    $html = \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $pageId, true );
-    foreach ( $needles as $needle ) {
-        $assert( strpos( $html, $needle ) !== false, "{$language} rendered {$needle}" );
-    }
-    $assert( strpos( $html, '[:lv]' ) === false, "{$language} output has no raw marker" );
-    $assert( strpos( $html, $technicalUrl ) !== false, "{$language} output preserves technical URL" );
-}
-$q_config['language'] = $originalLanguage;
-
 $adapter = $GLOBALS['qtx_elementor_adapter'] ?? null;
 $assert( $adapter instanceof \QTX\Integration\Elementor\ElementorAdapter, 'core Elementor adapter is active' );
 $adapter->enqueueFrontend();
@@ -115,4 +97,4 @@ $assert( wp_script_is( 'qtx-elementor-editor', 'enqueued' ), 'editor language br
 $assert( wp_style_is( 'qtx-elementor-editor', 'enqueued' ), 'editor language bridge stylesheet enqueued' );
 $assert( in_array( 'elementor-editor', wp_scripts()->registered['qtx-elementor-editor']->deps, true ), 'editor script uses official Elementor dependency' );
 
-echo 'Elementor ' . ELEMENTOR_VERSION . " matrix PASS ({$assertions} assertions) page={$pageId}\n";
+echo 'Elementor ' . ELEMENTOR_VERSION . " JSON/assets matrix PASS ({$assertions} assertions) page={$pageId}\n";

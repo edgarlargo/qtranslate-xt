@@ -64,11 +64,24 @@ jobs:
           wp option update qtranslate_enabled_languages --format=json '["lv","ru","en"]' --path="$WP_PATH"
           wp option update qtranslate_default_language en --path="$WP_PATH"
           wp rewrite structure '/%postname%/' --path="$WP_PATH"
-      - name: Execute Elementor JSON/render/assets matrix
+      - name: Execute Elementor JSON/assets matrix
         env:
           WP_PATH: /tmp/qtx-elementor-wordpress
         run: wp eval-file "$GITHUB_WORKSPACE/tests/Integration/Elementor/render-matrix.php" --path="$WP_PATH"
-      - name: Exercise LV/RU/EN frontend routes
+      - name: Build, install and re-run the exact archive
+        env:
+          WP_PATH: /tmp/qtx-elementor-wordpress
+        run: |
+          git archive --format=zip --prefix=qtranslate-xt/ --output=/tmp/qtranslate-xt-4.0.0-rc1.zip "$GITHUB_SHA" -- qtranslate.php readme.txt license.txt changelog-qtranslate-x.md CHANGELOG.md UPGRADE.md ELEMENTOR-COMPATIBILITY.md css dist flags i18n-config.json i18n-config img lang src
+          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/dist/elementor-editor.js$')"
+          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/dist/elementor-frontend.js$')"
+          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/src/Integration/Elementor/ElementorAdapter.php$')"
+          wp plugin deactivate qtranslate-xt --path="$WP_PATH"
+          unlink "$WP_PATH/wp-content/plugins/qtranslate-xt"
+          wp plugin install /tmp/qtranslate-xt-4.0.0-rc1.zip --activate --path="$WP_PATH"
+          wp eval-file "$GITHUB_WORKSPACE/tests/Integration/Elementor/render-matrix.php" --path="$WP_PATH"
+          sha256sum /tmp/qtranslate-xt-4.0.0-rc1.zip
+      - name: Exercise exact-archive LV/RU/EN frontend routes
         env:
           WP_PATH: /tmp/qtx-elementor-wordpress
         run: |
@@ -83,26 +96,22 @@ jobs:
           done
           check_route() {
             route="$1"
-            expected="$2"
-            output="/tmp/qtx-elementor-${expected}.html"
+            language="$2"
+            expected_heading="$3"
+            expected_body="$4"
+            expected_button="$5"
+            forbidden_first="$6"
+            forbidden_second="$7"
+            output="/tmp/qtx-elementor-${language}.html"
             curl --fail --silent --show-error --location --max-redirs 5 --resolve 'qtx.test:8098:127.0.0.1' "http://qtx.test:8098${route}" --output "$output" || { cat /tmp/qtx-elementor-http.log; exit 1; }
-            grep --fixed-strings "$expected" "$output"
+            grep --fixed-strings "$expected_heading" "$output"
+            grep --fixed-strings "$expected_body" "$output"
+            grep --fixed-strings "$expected_button" "$output"
             grep --fixed-strings 'https://example.test/unchanged-target?ref=qtx' "$output"
             if grep --fixed-strings '[:lv]' "$output"; then exit 1; fi
+            if grep --fixed-strings "$forbidden_first" "$output"; then exit 1; fi
+            if grep --fixed-strings "$forbidden_second" "$output"; then exit 1; fi
           }
-          check_route '/lv/qtx-elementor/' 'QTX_ELEMENTOR_VIRSRAKSTS'
-          check_route '/ru/qtx-elementor/' 'QTX_ELEMENTOR_ЗАГОЛОВОК'
-          check_route '/en/qtx-elementor/' 'QTX_ELEMENTOR_HEADING'
-      - name: Build, install and re-run the exact archive
-        env:
-          WP_PATH: /tmp/qtx-elementor-wordpress
-        run: |
-          git archive --format=zip --prefix=qtranslate-xt/ --output=/tmp/qtranslate-xt-4.0.0-rc1.zip "$GITHUB_SHA" -- qtranslate.php readme.txt license.txt changelog-qtranslate-x.md CHANGELOG.md UPGRADE.md ELEMENTOR-COMPATIBILITY.md css dist flags i18n-config.json i18n-config img lang src
-          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/dist/elementor-editor.js$')"
-          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/dist/elementor-frontend.js$')"
-          test -n "$(unzip -Z1 /tmp/qtranslate-xt-4.0.0-rc1.zip | grep '^qtranslate-xt/src/Integration/Elementor/ElementorAdapter.php$')"
-          wp plugin deactivate qtranslate-xt --path="$WP_PATH"
-          unlink "$WP_PATH/wp-content/plugins/qtranslate-xt"
-          wp plugin install /tmp/qtranslate-xt-4.0.0-rc1.zip --activate --path="$WP_PATH"
-          wp eval-file "$GITHUB_WORKSPACE/tests/Integration/Elementor/render-matrix.php" --path="$WP_PATH"
-          sha256sum /tmp/qtranslate-xt-4.0.0-rc1.zip
+          check_route '/lv/qtx-elementor/' lv 'QTX_ELEMENTOR_VIRSRAKSTS' 'QTX_ELEMENTOR_TEKSTS' 'QTX_ELEMENTOR_POGA' 'QTX_ELEMENTOR_ЗАГОЛОВОК' 'QTX_ELEMENTOR_HEADING'
+          check_route '/ru/qtx-elementor/' ru 'QTX_ELEMENTOR_ЗАГОЛОВОК' 'QTX_ELEMENTOR_ТЕКСТ' 'QTX_ELEMENTOR_КНОПКА' 'QTX_ELEMENTOR_VIRSRAKSTS' 'QTX_ELEMENTOR_HEADING'
+          check_route '/en/qtx-elementor/' en 'QTX_ELEMENTOR_HEADING' 'QTX_ELEMENTOR_BODY' 'QTX_ELEMENTOR_BUTTON' 'QTX_ELEMENTOR_VIRSRAKSTS' 'QTX_ELEMENTOR_ЗАГОЛОВОК'
